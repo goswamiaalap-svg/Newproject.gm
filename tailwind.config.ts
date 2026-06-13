@@ -11,8 +11,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],
-        heading: ['var(--font-syne)', 'sans-serif'],
-        display: ['var(--font-syne)', 'sans-serif'],
+        heading: ['var(--font-outfit)', 'sans-serif'],
+        display: ['var(--font-outfit)', 'sans-serif'],
         body: ['var(--font-inter)', 'sans-serif'],
       },
       colors: {

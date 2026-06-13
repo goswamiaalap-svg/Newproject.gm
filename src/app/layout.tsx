@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { inter, syne } from '@/lib/fonts';
+import { inter, outfit } from '@/lib/fonts';
 import './globals.css';
 import { ReducedMotionProvider } from '@/providers/ReducedMotionProvider';
 import LenisProvider from '@/providers/LenisProvider';
@@ -25,12 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-      </head>
-      <body className={`${inter.variable} ${syne.variable} font-sans bg-bg-base text-text-primary antialiased min-h-screen`}>
+      <body className={`${inter.variable} ${outfit.variable} font-sans bg-bg-base text-text-primary antialiased min-h-screen`}>
         <ReducedMotionProvider>
           <LenisProvider>
             {/* Persistent ambient particle canvas behind everything */}

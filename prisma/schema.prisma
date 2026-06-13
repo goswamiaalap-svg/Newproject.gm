@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roadmaps   Roadmap[]
+  projects   Project[]
+  interviews Interview[]
+  resumes    ResumeAnalysis[]
+}
+
+model Roadmap {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  progress  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  weeks     RoadmapWeek[]
+}
+
+model RoadmapWeek {
+  id        String   @id @default(cuid())
+  roadmapId String
+  roadmap   Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  weekNum   Int
+  title     String
+  
+  items     RoadmapItem[]
+}
+
+model RoadmapItem {
+  id            String      @id @default(cuid())
+  roadmapWeekId String
+  roadmapWeek   RoadmapWeek @relation(fields: [roadmapWeekId], references: [id], onDelete: Cascade)
+  title         String
+  type          String      // e.g. "DSA", "PROJECT", "SUBJECT"
+  completed     Boolean     @default(false)
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  description String
+  tags        String   // comma separated
+  createdAt   DateTime @default(now())
+}
+
+model Interview {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  role        String
+  score       Int
+  feedback    String
+  createdAt   DateTime @default(now())
+}
+
+model ResumeAnalysis {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  score       Int
+  feedback    String   // Stored as JSON string
+  breakdown   String   // Stored as JSON string
+  createdAt   DateTime @default(now())
+}

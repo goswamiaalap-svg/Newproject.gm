@@ -3,13 +3,26 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, FileText, CheckCircle, AlertTriangle, XCircle, ArrowLeft, RefreshCw, Sparkles } from 'lucide-react'
-import { mockResumeAnalysis } from '@/lib/mock-data'
 
 export default function ResumePage() {
   const [step, setStep] = useState<'upload' | 'loading' | 'results'>('upload')
   const [fileName, setFileName] = useState('')
   const [progress, setProgress] = useState(0)
   const [loadingMessage, setLoadingMessage] = useState('Parsing document structure...')
+  const [analysisData, setAnalysisData] = useState<any>(null)
+
+  // Fetch existing resume analysis from DB on load
+  useEffect(() => {
+    fetch('/api/resume')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.id) {
+          setAnalysisData(data)
+          setStep('results')
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   const loadingMessages = [
     'Parsing document structure...',
@@ -53,7 +66,17 @@ export default function ResumePage() {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval)
-          setTimeout(() => setStep('results'), 500)
+          // Hit the backend to process and save the resume
+          fetch('/api/resume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fileName })
+          })
+          .then(res => res.json())
+          .then(data => {
+            setAnalysisData(data)
+            setStep('results')
+          })
           return 100
         }
         return prev + 4
@@ -277,13 +300,13 @@ export default function ResumePage() {
                       fill="transparent"
                       strokeDasharray={2 * Math.PI * 48}
                       initial={{ strokeDashoffset: 2 * Math.PI * 48 }}
-                      animate={{ strokeDashoffset: 2 * Math.PI * 48 * (1 - mockResumeAnalysis.overallScore / 100) }}
+                      animate={{ strokeDashoffset: 2 * Math.PI * 48 * (1 - (analysisData?.overallScore || 0) / 100) }}
                       transition={{ duration: 1.2, ease: 'easeOut' }}
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute flex flex-col items-center">
-                    <span className="text-2xl font-extrabold text-text-primary">{mockResumeAnalysis.overallScore}</span>
+                    <span className="text-2xl font-extrabold text-text-primary">{analysisData?.overallScore}</span>
                     <span className="text-[9px] text-text-muted font-bold uppercase">ATS Score</span>
                   </div>
                 </div>
@@ -304,7 +327,7 @@ export default function ResumePage() {
               <div className="bg-white border border-border-default rounded-card p-6 shadow-card space-y-4">
                 <h4 className="font-display text-sm font-bold text-text-primary">Score Breakdown</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {mockResumeAnalysis.breakdown.map((item, idx) => (
+                  {analysisData?.breakdown.map((item: any, idx: number) => (
                     <div key={idx} className="space-y-1">
                       <div className="flex justify-between text-[11px] font-medium text-text-secondary">
                         <span>{item.label}</span>
@@ -328,7 +351,7 @@ export default function ResumePage() {
                 <h4 className="font-display text-sm font-bold text-text-primary">Actionable Suggestions</h4>
                 
                 <div className="space-y-3">
-                  {mockResumeAnalysis.feedback.map((item, idx) => (
+                  {analysisData?.feedback.map((item: any, idx: number) => (
                     <div
                       key={idx}
                       className={`p-4 rounded-btn border text-xs leading-relaxed space-y-1.5 ${

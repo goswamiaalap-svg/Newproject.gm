@@ -1,4 +1,4 @@
-import { Inter, Syne } from 'next/font/google'
+import { Inter, Outfit } from 'next/font/google'
 
 export const inter = Inter({
   subsets: ['latin'],
@@ -7,9 +7,9 @@ export const inter = Inter({
   display: 'swap',
 })
 
-export const syne = Syne({
+export const outfit = Outfit({
   subsets: ['latin'],
-  weight: ['700', '800'],
-  variable: '--font-syne',
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-outfit',
   display: 'swap',
 })

@@ -23,6 +23,7 @@ export default function MockInterviewPage() {
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [currentAnswer, setCurrentAnswer] = useState('')
   const [timeLeft, setTimeLeft] = useState(180)
+  const [interviewResult, setInterviewResult] = useState<any>(null)
   
   // Typewriter effect state
   const [displayedQuestion, setDisplayedQuestion] = useState('')
@@ -91,10 +92,25 @@ export default function MockInterviewPage() {
       setCurrentAnswer('')
     } else {
       setStage('evaluating')
-      // Simulate evaluation loader
-      setTimeout(() => {
+      
+      // Submit interview data to backend
+      fetch('/api/interview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetRole: company,
+          answers: {
+            ...answers,
+            [activeQuestions[currentQuestionIdx].id]: currentAnswer,
+          }
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        setInterviewResult(data)
         setStage('results')
-      }, 3000)
+      })
+      .catch(console.error)
     }
   }
 
@@ -375,13 +391,13 @@ export default function MockInterviewPage() {
                     fill="transparent"
                     strokeDasharray={2 * Math.PI * 48}
                     initial={{ strokeDashoffset: 2 * Math.PI * 48 }}
-                    animate={{ strokeDashoffset: 2 * Math.PI * 48 * (1 - mockInterviewResults.overallScore / 100) }}
+                    animate={{ strokeDashoffset: 2 * Math.PI * 48 * (1 - (interviewResult?.overallScore || 0) / 100) }}
                     transition={{ duration: 1.2 }}
                     strokeLinecap="round"
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-2xl font-extrabold text-text-primary">{mockInterviewResults.overallScore}%</span>
+                  <span className="text-2xl font-extrabold text-text-primary">{interviewResult?.overallScore || 0}%</span>
                   <span className="text-[8px] text-text-muted font-bold uppercase">Average Score</span>
                 </div>
               </div>
@@ -408,10 +424,10 @@ export default function MockInterviewPage() {
             <div className="bg-white border border-border-default rounded-card p-6 shadow-card space-y-4">
               <h4 className="font-display text-sm font-bold text-text-primary">Performance Parameters</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-                {Object.entries(mockInterviewResults.breakdown).map(([label, val], idx) => (
+                {interviewResult && Object.entries(interviewResult.breakdown).map(([label, val], idx) => (
                   <div key={idx} className="bg-bg-base/50 p-4 rounded-btn border border-border-subtle text-center">
                     <p className="text-text-muted text-[10px] uppercase font-bold tracking-wider">{label}</p>
-                    <p className="font-display text-2xl font-bold text-text-primary mt-2">{val}%</p>
+                    <p className="font-display text-2xl font-bold text-text-primary mt-2">{val as any}%</p>
                     <div className="w-full h-1 bg-bg-subtle rounded-full overflow-hidden mt-3">
                       <div className="bg-indigo h-full" style={{ width: `${val}%` }} />
                     </div>
@@ -424,7 +440,7 @@ export default function MockInterviewPage() {
             <div className="space-y-3">
               <h4 className="font-display text-sm font-bold text-text-primary">Detailed Answers Review</h4>
 
-              {mockInterviewResults.questionResults.map((qRes, idx) => {
+              {interviewResult?.questionResults?.map((qRes: any, idx: number) => {
                 const isOpened = activeAccordionIdx === idx
                 return (
                   <div

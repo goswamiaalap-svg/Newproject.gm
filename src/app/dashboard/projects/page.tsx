@@ -16,6 +16,19 @@ export default function ProjectsPage() {
   const [savedProjects, setSavedProjects] = useState<string[]>([])
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
+  useEffect(() => {
+    fetch('/api/projects/save')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // data is array of saved projects, map by title
+          setSavedProjects(data.map(p => p.title))
+        }
+      })
+      .catch(console.error)
+  }, [])
+  const [expandedCard, setExpandedCard] = useState<string | null>(null)
+
   const presetSkills = ['React', 'Node.js', 'Python', 'TensorFlow', 'MongoDB', 'PostgreSQL', 'WebSocket', 'Flask', 'Docker']
 
   const handleAddSkill = (skill: string) => {
@@ -30,11 +43,30 @@ export default function ProjectsPage() {
     setSelectedSkills(selectedSkills.filter((s) => s !== skill))
   }
 
-  const handleToggleSave = (id: string) => {
-    if (savedProjects.includes(id)) {
-      setSavedProjects(savedProjects.filter((pId) => pId !== id))
+  const handleToggleSave = async (project: any) => {
+    const isSaved = savedProjects.includes(project.name);
+    
+    // Optimistic UI update
+    if (isSaved) {
+      setSavedProjects(savedProjects.filter((name) => name !== project.name))
     } else {
-      setSavedProjects([...savedProjects, id])
+      setSavedProjects([...savedProjects, project.name])
+    }
+
+    // Sync to DB
+    try {
+      await fetch('/api/projects/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: isSaved ? 'unsave' : 'save',
+          title: project.name,
+          description: project.description,
+          tags: project.techStack.join(',')
+        })
+      })
+    } catch (e) {
+      console.error('Failed to sync save state to db', e)
     }
   }
 
@@ -197,7 +229,7 @@ export default function ProjectsPage() {
                 className="space-y-4"
               >
                 {mockProjectIdeas.map((project, idx) => {
-                  const isSaved = savedProjects.includes(project.id)
+                  const isSaved = savedProjects.includes(project.name)
                   const isExpanded = expandedCard === project.id
                   
                   return (
@@ -232,7 +264,7 @@ export default function ProjectsPage() {
                         </div>
                         
                         <button
-                          onClick={() => handleToggleSave(project.id)}
+                          onClick={() => handleToggleSave(project)}
                           className={cn(
                             'p-2 rounded-btn border transition-all flex items-center justify-center',
                             isSaved
