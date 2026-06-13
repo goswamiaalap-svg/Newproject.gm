@@ -1,0 +1,294 @@
+'use client'
+
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Map, RefreshCw, CheckCircle, ChevronRight, CheckSquare, Square, Award, BookOpen, Code2, Sparkles, Sliders } from 'lucide-react'
+import { mockRoadmapWeeks } from '@/lib/mock-data'
+import { cn } from '@/lib/utils'
+
+interface Task {
+  id: string
+  task: string
+  type: string
+  completed: boolean
+}
+
+export default function RoadmapPage() {
+  const [hasRoadmap, setHasRoadmap] = useState(true)
+  
+  // Onboarding wizard states
+  const [targetCompany, setTargetCompany] = useState('Tier-1 Product')
+  const [durationWeeks, setDurationWeeks] = useState(4)
+  const [skillsSelected, setSkillsSelected] = useState<string[]>(['React', 'DSA'])
+  
+  const [roadmapWeeks, setRoadmapWeeks] = useState(mockRoadmapWeeks)
+
+  const handleToggleTask = (weekIndex: number, taskId: string) => {
+    setRoadmapWeeks((prev) =>
+      prev.map((week, wIdx) => {
+        if (wIdx === weekIndex) {
+          return {
+            ...week,
+            tasks: week.tasks.map((task) => {
+              if (task.id === taskId) {
+                return { ...task, completed: !task.completed }
+              }
+              return task
+            }),
+          }
+        }
+        return week
+      })
+    )
+  }
+
+  // Calculate progress
+  const totalTasks = roadmapWeeks.reduce((acc, week) => acc + week.tasks.length, 0)
+  const completedTasks = roadmapWeeks.reduce(
+    (acc, week) => acc + week.tasks.filter((t) => t.completed).length,
+    0
+  )
+  const progressPct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+
+  const handleGenerate = () => {
+    setHasRoadmap(true)
+  }
+
+  const getTaskIcon = (type: string) => {
+    switch (type) {
+      case 'dsa':
+        return <Code2 className="w-4 h-4 text-teal" />
+      case 'subject':
+        return <BookOpen className="w-4 h-4 text-indigo" />
+      case 'project':
+        return <Award className="w-4 h-4 text-gold" />
+      default:
+        return <CheckCircle className="w-4 h-4 text-text-muted" />
+    }
+  }
+
+  const getTaskBadge = (type: string) => {
+    switch (type) {
+      case 'dsa':
+        return 'bg-teal/5 text-teal border-teal/10'
+      case 'subject':
+        return 'bg-indigo/5 text-indigo border-indigo/10'
+      case 'project':
+        return 'bg-gold/5 text-gold border-gold/10'
+      default:
+        return 'bg-bg-subtle text-text-secondary border-border-default'
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl font-extrabold text-text-primary">
+            Placement Prep Learning Path
+          </h1>
+          <p className="text-text-secondary text-sm mt-1">
+            Personalized week-by-week preparation plan generated for your timeline.
+          </p>
+        </div>
+
+        {hasRoadmap && (
+          <button
+            onClick={() => setHasRoadmap(false)}
+            className="px-4 py-2 bg-white border border-border-default hover:bg-bg-base text-text-secondary hover:text-text-primary text-xs font-bold rounded-btn transition-colors flex items-center gap-1.5 self-start sm:self-center shadow-sm"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Regenerate Roadmap</span>
+          </button>
+        )}
+      </div>
+
+      <AnimatePresence mode="wait">
+        {/* Onboarding Wizard Form */}
+        {!hasRoadmap && (
+          <motion.div
+            key="wizard"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="bg-white border border-border-default rounded-card p-6 shadow-card max-w-2xl mx-auto space-y-6"
+          >
+            <div className="flex items-center gap-2 pb-3 border-b border-border-subtle">
+              <Sparkles className="w-5 h-5 text-teal fill-teal/10" />
+              <h3 className="font-display text-lg font-bold text-text-primary">
+                Roadmap Setup Wizard
+              </h3>
+            </div>
+
+            <div className="space-y-4">
+              {/* Target tier */}
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">
+                  Dream Company Tier
+                </label>
+                <select
+                  value={targetCompany}
+                  onChange={(e) => setTargetCompany(e.target.value)}
+                  className="w-full px-3 py-2 bg-bg-base border border-border-default rounded-btn text-xs focus:outline-none focus:border-teal text-text-primary transition-colors cursor-pointer"
+                >
+                  <option value="FAANG">FAANG (Google, Amazon, etc.)</option>
+                  <option value="Tier-1 Product">Tier-1 Product (Flipkart, Razorpay, etc.)</option>
+                  <option value="Service">Mass Recruiters (TCS, Infosys, Wipro)</option>
+                  <option value="Startups">Early Stage Startups</option>
+                </select>
+              </div>
+
+              {/* Prep duration */}
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">
+                  Preparation Window
+                </label>
+                <select
+                  value={durationWeeks}
+                  onChange={(e) => setDurationWeeks(Number(e.target.value))}
+                  className="w-full px-3 py-2 bg-bg-base border border-border-default rounded-btn text-xs focus:outline-none focus:border-teal text-text-primary transition-colors cursor-pointer"
+                >
+                  <option value={4}>4 Weeks (Crash course/Revision)</option>
+                  <option value={8}>8 Weeks (Balanced prep)</option>
+                  <option value={12}>12 Weeks (Comprehensive syllabus)</option>
+                </select>
+              </div>
+
+              {/* Select focus skills */}
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">
+                  Focus Areas
+                </label>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {['React & Frontend', 'Node & Backend', 'Data Structures (DSA)', 'OS/DBMS Fundamentals', 'System Design Basics'].map((skill) => (
+                    <label
+                      key={skill}
+                      className={cn(
+                        'flex items-center gap-2 p-2.5 rounded-btn border cursor-pointer hover:bg-bg-subtle/50 transition-colors',
+                        skillsSelected.includes(skill)
+                          ? 'border-indigo bg-indigo/5 text-indigo font-semibold'
+                          : 'border-border-default text-text-secondary'
+                      )}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={skillsSelected.includes(skill)}
+                        onChange={() => {
+                          if (skillsSelected.includes(skill)) {
+                            setSkillsSelected(skillsSelected.filter((s) => s !== skill))
+                          } else {
+                            setSkillsSelected([...skillsSelected, skill])
+                          }
+                        }}
+                        className="hidden"
+                      />
+                      <span>{skill}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleGenerate}
+              className="w-full py-3.5 bg-teal hover:bg-teal-600 text-white font-bold rounded-btn flex items-center justify-center gap-1.5 shadow-teal-glow transition-all active:scale-95 text-xs"
+            >
+              <Sparkles className="w-4 h-4 fill-current" />
+              <span>Generate Roadmap</span>
+            </button>
+          </motion.div>
+        )}
+
+        {/* Roadmap Timeline view */}
+        {hasRoadmap && (
+          <motion.div
+            key="roadmap"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+          >
+            {/* Progress Bar Card */}
+            <div className="bg-white border border-border-default rounded-card p-5 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h3 className="font-display text-sm font-bold text-text-primary">
+                  Overall Preparation Progress
+                </h3>
+                <p className="text-[10px] text-text-muted mt-0.5">
+                  {completedTasks} of {totalTasks} milestones achieved
+                </p>
+              </div>
+
+              <div className="flex-1 max-w-md w-full flex items-center gap-3">
+                <div className="flex-1 h-3 bg-bg-subtle rounded-full overflow-hidden border border-border-subtle">
+                  <motion.div
+                    className="bg-gradient-to-r from-teal to-teal-500 h-full rounded-full"
+                    animate={{ width: `${progressPct}%` }}
+                    transition={{ duration: 0.8 }}
+                  />
+                </div>
+                <span className="font-mono text-sm font-bold text-text-primary">{progressPct}%</span>
+              </div>
+            </div>
+
+            {/* Timeline Weeks list */}
+            <div className="relative border-l-2 border-border-subtle pl-6 md:pl-8 ml-3 space-y-8">
+              {roadmapWeeks.map((week, weekIdx) => (
+                <div key={week.week} className="relative group">
+                  {/* Timeline week badge node */}
+                  <div className="absolute -left-[39px] md:-left-[47px] top-0.5 w-7 h-7 md:w-9 md:h-9 rounded-full bg-white border-2 border-teal flex items-center justify-center font-display font-extrabold text-[10px] md:text-xs text-teal shadow-sm">
+                    W{week.week}
+                  </div>
+
+                  {/* Week info block */}
+                  <div className="space-y-3">
+                    <div>
+                      <span className="text-[9px] uppercase font-bold text-text-muted tracking-wider">
+                        Timeline Step {week.week}
+                      </span>
+                      <h4 className="font-display text-base font-bold text-text-primary group-hover:text-teal transition-colors">
+                        {week.title}
+                      </h4>
+                    </div>
+
+                    {/* Task checklist */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {week.tasks.map((task) => (
+                        <div
+                          key={task.id}
+                          onClick={() => handleToggleTask(weekIdx, task.id)}
+                          className={cn(
+                            'flex items-start justify-between p-3.5 bg-white border border-border-default rounded-card shadow-sm cursor-pointer hover:border-teal/30 transition-all select-none',
+                            task.completed && 'bg-bg-base/30 opacity-70 border-border-subtle'
+                          )}
+                        >
+                          <div className="flex items-start gap-2.5 min-w-0">
+                            <button className="focus:outline-none flex-shrink-0 mt-0.5">
+                              {task.completed ? (
+                                <CheckSquare className="w-4 h-4 text-teal fill-teal/5" />
+                              ) : (
+                                <Square className="w-4 h-4 text-text-muted hover:text-teal" />
+                              )}
+                            </button>
+                            <span className={cn('text-xs text-text-secondary leading-snug', task.completed && 'line-through text-text-muted')}>
+                              {task.task}
+                            </span>
+                          </div>
+
+                          <span className={cn('text-[8px] font-bold px-2 py-0.5 rounded border uppercase flex items-center gap-1 flex-shrink-0 ml-2 mt-0.5', getTaskBadge(task.type))}>
+                            {getTaskIcon(task.type)}
+                            <span>{task.type}</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
