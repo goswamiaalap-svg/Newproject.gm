@@ -25,33 +25,7 @@ export default function MockInterviewPage() {
   const [timeLeft, setTimeLeft] = useState(180)
   const [interviewResult, setInterviewResult] = useState<any>(null)
   
-  // Typewriter effect state
-  const [displayedQuestion, setDisplayedQuestion] = useState('')
-  
-  // Accordion active index
-  const [activeAccordionIdx, setActiveAccordionIdx] = useState<number | null>(null)
-
-  const activeQuestions: Question[] = mockInterviewQuestions.slice(0, 3)
-
-  // Typewriter animation
-  useEffect(() => {
-    if (stage !== 'interview') return
-    
-    setDisplayedQuestion('')
-    const qText = activeQuestions[currentQuestionIdx].question
-    let charIdx = 0
-    
-    const timer = setInterval(() => {
-      if (charIdx < qText.length) {
-        setDisplayedQuestion((prev) => prev + qText.charAt(charIdx))
-        charIdx++
-      } else {
-        clearInterval(timer)
-      }
-    }, 15)
-
-    return () => clearInterval(timer)
-  }, [stage, currentQuestionIdx])
+  // We'll just display the question directly to avoid React state race conditions with fast intervals causing typos.
 
   // Interview timer
   useEffect(() => {
@@ -233,56 +207,56 @@ export default function MockInterviewPage() {
           </motion.div>
         )}
 
-        {/* Stage 2: Interview Room (Dark Navy) */}
+        {/* Stage 2: Interview Room (Light Mode) */}
         {stage === 'interview' && (
           <motion.div
             key="interview"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0D1321] text-white flex flex-col justify-between p-6 overflow-hidden"
+            className="fixed inset-0 z-50 bg-bg-subtle text-text-primary flex flex-col justify-between p-6 overflow-hidden"
           >
             {/* Header info */}
-            <div className="flex justify-between items-center border-b border-white/10 pb-4">
+            <div className="flex justify-between items-center border-b border-border-default pb-4">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                <span className="font-mono text-xs text-white/60 tracking-wider">LIVE MOCK SIMULATION • {company} Round</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+                <span className="font-mono text-xs text-text-secondary tracking-wider font-bold">LIVE MOCK SIMULATION • {company} Round</span>
               </div>
-              <div className="flex items-center gap-4 text-xs font-mono text-white/80 bg-white/5 px-4 py-1.5 rounded-full border border-white/10">
+              <div className="flex items-center gap-4 text-xs font-mono font-bold text-text-primary bg-white px-4 py-1.5 rounded-full border border-border-default shadow-sm">
                 <Clock className="w-4 h-4 text-teal" />
-                <span>{formatTime(timeLeft)}</span>
+                <span className={timeLeft <= 30 ? 'text-red-500 animate-pulse' : ''}>{formatTime(timeLeft)}</span>
               </div>
             </div>
 
             {/* Layout: Video Feed on Left, Question & Answer Box on Right */}
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 py-6 overflow-hidden">
               {/* Webcam Placeholder (Col 4) */}
-              <div className="lg:col-span-4 bg-white/5 rounded-hero border border-white/10 overflow-hidden flex flex-col justify-between p-5 relative">
+              <div className="lg:col-span-4 bg-white rounded-hero border border-border-default shadow-card overflow-hidden flex flex-col justify-between p-5 relative">
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] uppercase font-bold text-white/40 tracking-wider">Webcam Interface</span>
+                  <span className="text-[10px] uppercase font-bold text-text-muted tracking-wider">Webcam Interface</span>
                   <div className="flex gap-1.5">
-                    <span className="p-1 rounded bg-white/5"><Camera className="w-3.5 h-3.5 text-teal" /></span>
-                    <span className="p-1 rounded bg-white/5"><Mic className="w-3.5 h-3.5 text-teal" /></span>
+                    <span className="p-1 rounded bg-teal/10"><Camera className="w-3.5 h-3.5 text-teal" /></span>
+                    <span className="p-1 rounded bg-teal/10"><Mic className="w-3.5 h-3.5 text-teal" /></span>
                   </div>
                 </div>
 
                 {/* Simulated Webcam Silhouette / Audio Waveform */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                  <div className="w-20 h-20 rounded-full bg-teal/10 flex items-center justify-center text-teal border border-teal/20 animate-pulse">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-slate-50/50">
+                  <div className="w-20 h-20 rounded-full bg-teal-light flex items-center justify-center text-teal border border-teal/20 shadow-soft">
                     <Video className="w-8 h-8" />
                   </div>
                   <div className="flex gap-1 items-end h-8">
                     {[1, 2, 3, 4, 3, 2, 4, 5, 2, 1, 3, 4, 2].map((v, i) => (
                       <div
                         key={i}
-                        className="w-0.5 rounded-full bg-teal animate-bounce"
+                        className="w-1 rounded-full bg-teal shadow-teal-glow animate-bounce"
                         style={{ height: `${v * 15}%`, animationDelay: `${i * 0.1}s`, animationDuration: '1s' }}
                       />
                     ))}
                   </div>
                 </div>
 
-                <div className="text-[10px] text-white/30 text-center relative z-10">
+                <div className="text-[10px] text-text-muted font-semibold text-center relative z-10">
                   Audio & Video streams are encrypted.
                 </div>
               </div>
@@ -290,35 +264,35 @@ export default function MockInterviewPage() {
               {/* Question & Input Area (Col 8) */}
               <div className="lg:col-span-8 flex flex-col justify-between gap-4 overflow-y-auto">
                 {/* Question */}
-                <div className="bg-white/5 rounded-hero border border-white/10 p-6 space-y-3 min-h-[160px]">
-                  <span className="text-[10px] text-teal font-bold uppercase tracking-wider">
+                <div className="bg-white rounded-hero border border-border-default shadow-card p-6 space-y-3 min-h-[160px]">
+                  <span className="text-[10px] text-teal font-extrabold uppercase tracking-widest bg-teal-light px-2.5 py-1 rounded-full">
                     Question {currentQuestionIdx + 1} of {activeQuestions.length}
                   </span>
-                  <p className="font-display text-base font-bold text-white leading-relaxed">
-                    {displayedQuestion}
+                  <p className="font-display text-lg md:text-xl font-bold text-text-primary leading-relaxed mt-4">
+                    {activeQuestions[currentQuestionIdx]?.question}
                   </p>
                 </div>
 
                 {/* Textarea answer */}
-                <div className="flex-1 flex flex-col bg-white/5 rounded-hero border border-white/10 p-5 gap-3">
-                  <span className="text-[10px] text-white/40 uppercase font-bold tracking-wider">Your Transcript / Code Solution</span>
+                <div className="flex-1 flex flex-col bg-white rounded-hero border border-border-default shadow-card p-5 gap-3">
+                  <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider">Your Transcript / Code Solution</span>
                   <textarea
                     value={currentAnswer}
                     onChange={(e) => setCurrentAnswer(e.target.value)}
                     placeholder="Type your explanation, algorithm approach, or standard bulleted code blocks here..."
-                    className="flex-1 w-full bg-transparent text-sm resize-none focus:outline-none text-white leading-relaxed placeholder-white/20 font-mono"
+                    className="flex-1 w-full bg-transparent text-sm resize-none focus:outline-none text-text-primary leading-relaxed placeholder-text-muted font-mono"
                   />
                 </div>
 
                 {/* Navigation CTA */}
-                <div className="flex justify-end items-center gap-4">
+                <div className="flex justify-end items-center gap-4 pt-2">
                   <button
                     onClick={() => {
                       if (confirm('Are you sure you want to quit the current interview? Your progress will not be saved.')) {
                         setStage('setup')
                       }
                     }}
-                    className="text-xs text-white/60 hover:text-white font-semibold"
+                    className="text-xs text-text-muted hover:text-red-500 font-bold transition-colors"
                   >
                     Quit Session
                   </button>

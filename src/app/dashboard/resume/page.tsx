@@ -77,11 +77,15 @@ export default function ResumePage() {
             setAnalysisData(data)
             setStep('results')
           })
+          .catch(err => {
+            console.error(err)
+            setLoadingMessage('Analysis failed. Please try again.')
+          })
           return 100
         }
-        return prev + 4
+        return prev + 20
       })
-    }, 100)
+    }, 50)
 
     const messageInterval = setInterval(() => {
       currentMsgIdx = (currentMsgIdx + 1) % loadingMessages.length

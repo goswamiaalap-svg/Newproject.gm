@@ -27,7 +27,6 @@ export default function ProjectsPage() {
       })
       .catch(console.error)
   }, [])
-  const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
   const presetSkills = ['React', 'Node.js', 'Python', 'TensorFlow', 'MongoDB', 'PostgreSQL', 'WebSocket', 'Flask', 'Docker']
 

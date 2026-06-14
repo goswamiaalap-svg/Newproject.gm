@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useSpring, animated } from '@react-spring/web'
-import { FileText, Flame, Clock, CheckCircle2, ChevronRight, Award } from 'lucide-react'
+import { FileText, Flame, Clock, CheckCircle2, ChevronRight, Award, Lock, Mic, Video, Activity, User, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /* ── Floating Glass Card with React Spring ─────────────────────── */
@@ -53,12 +53,14 @@ export default function PhoneMockup() {
 
   useEffect(() => {
     return scrollYProgress.on('change', (v) => {
-      if (v < 0.35) {
+      if (v < 0.25) {
         setActiveState(0) // Dashboard Home
-      } else if (v < 0.65) {
+      } else if (v < 0.50) {
         setActiveState(1) // Resume Reviewer
-      } else {
+      } else if (v < 0.75) {
         setActiveState(2) // DSA Roadmap
+      } else {
+        setActiveState(3) // Mock Interview
       }
     })
   }, [scrollYProgress])
@@ -131,7 +133,7 @@ export default function PhoneMockup() {
           </div>
 
           {/* Screen Content Wrapper */}
-          <div className="relative flex-1 bg-[#F8F9FF] rounded-[36px] overflow-hidden flex flex-col text-left p-4 pt-8">
+          <div className="relative flex-1 bg-[#F8F9FF] rounded-[36px] overflow-hidden flex flex-col text-left px-4 pt-8 pb-16">
             <AnimatePresence mode="wait">
               {activeState === 0 && (
                 <motion.div
@@ -171,6 +173,21 @@ export default function PhoneMockup() {
                         <p className="text-xs font-bold text-indigo mt-0.5">14 Days</p>
                       </div>
                     </div>
+
+                    {/* Activity Graph */}
+                    <div className="p-3 bg-white border border-border-default rounded-card shadow-soft">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Activity</span>
+                        <Activity className="w-3 h-3 text-teal" />
+                      </div>
+                      <div className="flex items-end gap-1 h-8">
+                        {[40, 70, 45, 90, 65, 80, 100].map((h, i) => (
+                          <div key={i} className="flex-1 bg-teal/10 rounded-t-sm relative overflow-hidden">
+                            <div className="absolute bottom-0 w-full bg-teal rounded-t-sm" style={{ height: `${h}%` }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="p-2.5 bg-indigo/5 border border-indigo/10 rounded-card text-[9px] text-indigo font-medium text-center">
@@ -207,12 +224,22 @@ export default function PhoneMockup() {
                     </div>
 
                     {/* Suggestions checklist */}
-                    <div className="space-y-1.5">
-                      <div className="p-2 bg-red-50/50 border border-red-100 rounded text-[7px] text-red-800">
-                        🔴 Add quantified metrics in projects section.
+                    <div className="space-y-1.5 mt-2 border-t border-border-default pt-2">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-[9px] font-bold text-text-primary">Action Items</span>
+                        <span className="text-[7px] text-text-muted">4 pending fixes</span>
                       </div>
-                      <div className="p-2 bg-amber-50/50 border border-amber-100 rounded text-[7px] text-amber-800">
-                        🟡 Replace passive verbs with developed/implemented.
+                      <div className="p-2 bg-red-50/50 border border-red-100 rounded-md text-[8px] text-red-800 font-medium flex gap-1.5 items-start">
+                        <span>🔴</span>
+                        <span>Add quantified metrics (%, $, x) in your Tech Solutions project section.</span>
+                      </div>
+                      <div className="p-2 bg-amber-50/50 border border-amber-100 rounded-md text-[8px] text-amber-800 font-medium flex gap-1.5 items-start">
+                        <span>🟡</span>
+                        <span>Replace passive verb "worked on" with active verbs like "architected" or "spearheaded".</span>
+                      </div>
+                      <div className="p-2 bg-indigo-50 border border-indigo-100 rounded-md text-[8px] text-indigo-800 font-medium flex gap-1.5 items-start">
+                        <span>🔵</span>
+                        <span>Include link to live deployment for Smart Attendance System.</span>
                       </div>
                     </div>
                   </div>
@@ -236,22 +263,54 @@ export default function PhoneMockup() {
                     <span className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-light text-indigo font-bold">DSA Learning Map</span>
                     <h5 className="text-xs font-bold text-text-primary">Algorithm Nodes</h5>
 
-                    {/* Simple Vertical Timeline Mock */}
-                    <div className="relative pl-4 border-l border-slate-200 ml-1.5 space-y-3 mt-4 text-[8px]">
+                    {/* Complex Vertical Timeline Mock */}
+                    <div className="relative pl-4 border-l-2 border-slate-200 ml-1.5 space-y-4 mt-3 text-[9px]">
+                      
                       <div className="relative">
-                        <div className="absolute -left-[20px] top-0.5 w-2.5 h-2.5 rounded-full bg-teal border border-white" />
-                        <p className="font-bold text-text-primary">Arrays & Hashing</p>
-                        <p className="text-text-muted">Completed (10/10)</p>
+                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-teal border-2 border-white shadow-soft" />
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-bold text-text-primary text-[10px]">Arrays & Hashing</p>
+                            <p className="text-text-muted mt-0.5">Mastered • 15/15 Solved</p>
+                          </div>
+                          <span className="bg-teal/10 text-teal px-1.5 py-0.5 rounded text-[7px] font-bold">100%</span>
+                        </div>
                       </div>
+
                       <div className="relative">
-                        <div className="absolute -left-[20px] top-0.5 w-2.5 h-2.5 rounded-full bg-gold border border-white animate-pulse" />
-                        <p className="font-bold text-text-primary">Linked Lists</p>
-                        <p className="text-text-muted">In Progress (4/8)</p>
+                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-gold border-2 border-white shadow-soft animate-pulse" />
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-bold text-text-primary text-[10px]">Two Pointers</p>
+                            <p className="text-gold font-semibold mt-0.5">In Progress • 4/8 Solved</p>
+                          </div>
+                          <span className="bg-gold/10 text-gold px-1.5 py-0.5 rounded text-[7px] font-bold">50%</span>
+                        </div>
+                        <div className="w-full h-1 bg-slate-100 rounded-full mt-1.5">
+                          <div className="h-full bg-gold w-1/2 rounded-full" />
+                        </div>
                       </div>
+
                       <div className="relative">
-                        <div className="absolute -left-[20px] top-0.5 w-2.5 h-2.5 rounded-full bg-slate-200 border border-white" />
-                        <p className="font-bold text-text-muted">Trees & Graphs</p>
-                        <p className="text-text-muted">Locked</p>
+                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-200 border-2 border-white" />
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-bold text-text-muted text-[10px]">Sliding Window</p>
+                            <p className="text-slate-400 mt-0.5">Locked • Requires previous</p>
+                          </div>
+                          <Lock className="w-2.5 h-2.5 text-slate-400 mt-0.5" />
+                        </div>
+                      </div>
+
+                      <div className="relative">
+                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-200 border-2 border-white" />
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-bold text-text-muted text-[10px]">Trees & Graphs</p>
+                            <p className="text-slate-400 mt-0.5">Locked • Advanced</p>
+                          </div>
+                          <Lock className="w-2.5 h-2.5 text-slate-400 mt-0.5" />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -261,7 +320,75 @@ export default function PhoneMockup() {
                   </div>
                 </motion.div>
               )}
+
+              {activeState === 3 && (
+                <motion.div
+                  key="mock-interview"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-3 flex flex-col h-full justify-between"
+                >
+                  <div className="space-y-3">
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold">Live Mock Interview</span>
+                    <h5 className="text-xs font-bold text-text-primary">Behavioral Session</h5>
+                    
+                    {/* Video Call Mock */}
+                    <div className="relative w-full h-32 bg-slate-900 rounded-xl overflow-hidden shadow-soft">
+                      <div className="absolute inset-0 flex items-center justify-center opacity-50">
+                        <div className="w-16 h-16 rounded-full bg-indigo-500 blur-xl animate-pulse" />
+                      </div>
+                      <div className="absolute bottom-2 left-2 flex gap-1">
+                        <div className="bg-black/50 backdrop-blur-md p-1.5 rounded-full">
+                          <Mic className="w-3 h-3 text-white" />
+                        </div>
+                        <div className="bg-black/50 backdrop-blur-md p-1.5 rounded-full">
+                          <Video className="w-3 h-3 text-white" />
+                        </div>
+                      </div>
+                      <div className="absolute top-2 right-2 bg-red-500 text-white text-[7px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> REC
+                      </div>
+                      <div className="absolute bottom-2 right-2 w-10 h-14 bg-slate-800 rounded border border-white/20 overflow-hidden shadow-lg">
+                        <div className="w-full h-full bg-gradient-to-t from-teal-500/30 to-indigo-500/30" />
+                      </div>
+                    </div>
+
+                    <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1">
+                      <span className="text-[8px] text-text-muted font-bold uppercase">AI Feedback</span>
+                      <p className="text-[9px] text-text-primary leading-tight">
+                        "Great STAR method usage! Try to speak a bit slower when explaining the technical constraints."
+                      </p>
+                    </div>
+                  </div>
+
+                  <button className="w-full py-2 bg-purple-600 text-white rounded-btn text-[8px] font-bold">
+                    End Session
+                  </button>
+                </motion.div>
+              )}
             </AnimatePresence>
+
+            {/* Bottom Dock Navigation */}
+            <div className="absolute bottom-0 left-0 w-full bg-white/80 backdrop-blur-md border-t border-slate-200/50 px-5 py-3 flex justify-between items-center z-20">
+              <div className="flex flex-col items-center gap-1 text-teal">
+                <Home className="w-[14px] h-[14px]" />
+                <span className="text-[6px] font-bold">Home</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 text-slate-400">
+                <FileText className="w-[14px] h-[14px]" />
+                <span className="text-[6px] font-medium">Resume</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 text-slate-400">
+                <Activity className="w-[14px] h-[14px]" />
+                <span className="text-[6px] font-medium">Prep</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 text-slate-400">
+                <User className="w-[14px] h-[14px]" />
+                <span className="text-[6px] font-medium">Profile</span>
+              </div>
+            </div>
           </div>
 
           {/* Home indicator bar */}

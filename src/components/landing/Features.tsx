@@ -294,24 +294,65 @@ export default function Features() {
         isLeftText={true}
         pills={['Simulated Webcam', 'Live Timer', 'Score Accordion']}
       >
-        <div className="w-full max-w-sm bg-[#0D1321] text-white rounded-card p-6 border border-white/10 shadow-medium space-y-4 font-mono text-[10px]">
-          <div className="flex justify-between items-center border-b border-white/5 pb-2 text-[8px] text-white/40">
-            <span>LIVE RECORDING SESSION • SDE Round</span>
-            <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-500 animate-pulse font-bold">LIVE</span>
-          </div>
-          <div className="bg-white/5 p-4 rounded border border-white/10 space-y-1.5">
-            <span className="text-teal font-bold uppercase text-[7px]">Question 1 of 3</span>
-            <p className="text-white/90 text-xs font-semibold leading-relaxed font-sans">
-              Explain the difference between a process and a thread. When would you use one over the other?
-            </p>
-          </div>
-          <div className="flex justify-between items-center pt-2">
-            <div className="flex gap-1 items-end h-5">
-              {[1, 2, 4, 3, 2, 1, 3, 5, 2, 1].map((v, i) => (
-                <div key={i} className="w-0.5 rounded bg-teal animate-bounce" style={{ height: `${v * 15}%`, animationDelay: `${i * 0.05}s` }} />
-              ))}
+        <div className="relative w-full max-w-md h-[280px] flex items-center justify-center">
+          {/* Main Mockup Card */}
+          <div className="w-full max-w-sm bg-[#0D1321] text-white rounded-card p-6 border border-white/10 shadow-medium space-y-4 font-mono text-[10px] relative z-10">
+            <div className="flex justify-between items-center border-b border-white/5 pb-2 text-[8px] text-white/40">
+              <span>LIVE RECORDING SESSION • SDE Round</span>
+              <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-500 animate-pulse font-bold">LIVE</span>
             </div>
-            <span className="text-xs font-bold text-white/60 font-mono">Timer: 12:45</span>
+            
+            <div className="flex gap-4">
+              {/* Fake Webcam frame */}
+              <div className="w-20 h-24 bg-white/5 rounded border border-white/10 flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-teal/20 flex items-center justify-center animate-pulse text-teal">
+                  <span className="text-xl">🧑‍💻</span>
+                </div>
+                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-0.5">
+                   {[1,2,3,4,3,2].map((v,i) => <div key={i} className="w-0.5 bg-teal rounded-full animate-pulse" style={{height: `${v*4}px`}} />)}
+                </div>
+              </div>
+
+              <div className="flex-1 bg-white/5 p-4 rounded border border-white/10 space-y-1.5 flex flex-col justify-between">
+                <div>
+                  <span className="text-teal font-bold uppercase text-[7px]">Question 1 of 3</span>
+                  <p className="text-white/90 text-xs font-semibold leading-relaxed font-sans mt-1">
+                    Explain the difference between a process and a thread. When would you use one over the other?
+                  </p>
+                </div>
+                <div className="flex justify-end items-center mt-2">
+                  <span className="text-[10px] font-bold text-white/60 font-mono flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" />
+                    Timer: 12:45
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Floating AI Analytics Elements */}
+          <div className="absolute -left-4 top-4 bg-white border border-border-default rounded-card p-3 shadow-medium flex flex-col items-center z-20 space-y-1">
+             <span className="text-[7px] font-bold text-text-muted uppercase tracking-wider">Confidence Score</span>
+             <div className="relative w-10 h-10 flex items-center justify-center">
+                <svg className="w-full h-full -rotate-90">
+                  <circle cx="20" cy="20" r="16" stroke="#F1F5F9" strokeWidth="4" fill="none" />
+                  <circle cx="20" cy="20" r="16" stroke="#6366F1" strokeWidth="4" fill="none" strokeDasharray={2*Math.PI*16} strokeDashoffset={2*Math.PI*16*0.08} />
+                </svg>
+                <span className="absolute text-[10px] font-extrabold text-indigo">92%</span>
+             </div>
+          </div>
+
+          <div className="absolute -right-6 bottom-8 bg-white border border-border-default rounded-lg p-2 shadow-medium flex items-center gap-2 z-20">
+             <span className="w-5 h-5 rounded bg-green-100 text-green-600 flex items-center justify-center text-[10px]">👁️</span>
+             <div>
+                <p className="text-[9px] font-bold text-text-primary">Eye Contact</p>
+                <p className="text-[7px] text-text-muted font-semibold">Perfect alignment</p>
+             </div>
+          </div>
+
+          <div className="absolute left-6 -bottom-4 bg-[#0D9488] text-white rounded-lg p-2.5 shadow-medium flex items-center gap-2 z-20 border border-teal-600">
+             <span className="text-[10px] font-mono">Pace:</span>
+             <span className="text-[10px] font-bold">140 WPM (Good)</span>
           </div>
         </div>
       </FeatureRow>
