@@ -39,5 +39,5 @@ next-env.d.ts
 
 # Database and secrets
 .env
-*.db
-*.db-journal
+
+.vercel
