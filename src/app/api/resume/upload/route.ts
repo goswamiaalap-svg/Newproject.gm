@@ -110,9 +110,8 @@ export async function POST(req: Request) {
   try {
     if (fileExtension === 'pdf') {
       // Dynamically import pdf-parse (ESM / CJS wrapper)
-      const { PDFParse } = await import('pdf-parse')
-      const parser = new PDFParse({ data: fileBuffer })
-      const pdfData = await parser.getText()
+      const pdf = (await import('pdf-parse')).default
+      const pdfData = await pdf(fileBuffer)
       extractedText = pdfData.text
     } else if (fileExtension === 'docx') {
       // Dynamically import mammoth (CommonJS module)
