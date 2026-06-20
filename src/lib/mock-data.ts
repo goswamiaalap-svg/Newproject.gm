@@ -459,6 +459,7 @@ export const mockOpportunities = [
     logo: '🅰️',
     applied: false,
     reminded: false,
+    applyUrl: 'https://www.amazon.jobs/en/search?base_query=software%20development%20engineer%20intern',
   },
   {
     id: '2',
@@ -469,6 +470,7 @@ export const mockOpportunities = [
     logo: '🔵',
     applied: true,
     reminded: true,
+    applyUrl: 'https://summerofcode.withgoogle.com/',
   },
   {
     id: '3',
@@ -479,6 +481,7 @@ export const mockOpportunities = [
     logo: '🟡',
     applied: false,
     reminded: false,
+    applyUrl: 'https://flipkartgrid.com/',
   },
   {
     id: '4',
@@ -489,6 +492,7 @@ export const mockOpportunities = [
     logo: '🟢',
     applied: false,
     reminded: false,
+    applyUrl: 'https://jobs.careers.microsoft.com/',
   },
   {
     id: '5',
@@ -499,6 +503,7 @@ export const mockOpportunities = [
     logo: '🔴',
     applied: false,
     reminded: true,
+    applyUrl: 'https://fellowship.mlh.io/',
   },
   {
     id: '6',
@@ -509,6 +514,7 @@ export const mockOpportunities = [
     logo: '🟣',
     applied: false,
     reminded: false,
+    applyUrl: 'https://codeforces.com/contests',
   },
 ]
 
