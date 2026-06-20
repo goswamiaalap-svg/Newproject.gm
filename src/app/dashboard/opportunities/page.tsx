@@ -179,12 +179,6 @@ export default function OpportunitiesPage() {
     }
   }
 
-  const handleApplyClick = (applyUrl: string) => {
-    if (applyUrl) {
-      window.open(applyUrl, '_blank', 'noopener,noreferrer')
-    }
-  }
-
   const handleToggleReminder = async (id: string, title: string) => {
     const currentOpportunity = opportunities.find((item) => item.id === id)
 
@@ -211,6 +205,9 @@ export default function OpportunitiesPage() {
       toast.error('Failed to update reminder')
     }
   }
+
+  console.log("FILTER TYPE:", filterType)
+  console.log("OPPORTUNITIES:", opportunities.length)
 
   const filteredOpps = opportunities
 
@@ -410,13 +407,12 @@ export default function OpportunitiesPage() {
                       </div>
 
                       <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => handleApplyClick(opp.applyUrl)}
-                          className="px-4 py-2.5 rounded-btn text-xs font-bold border transition-colors flex items-center gap-1 bg-white border-border-default text-text-secondary hover:text-text-primary cursor-pointer"
+                        <a
+                          href={opp.applyUrl}
+                          className="px-4 py-2.5 rounded-btn text-xs font-bold border transition-colors flex items-center gap-1 bg-white border-border-default text-text-secondary hover:text-text-primary"
                         >
                           Apply Now
-                        </button>
+                        </a>
 
                         <button
                           onClick={() => handleToggleReminder(opp.id, opp.title)}
