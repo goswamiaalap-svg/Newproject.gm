@@ -73,6 +73,15 @@ export async function POST(req: Request) {
   const fileArrayBuffer = await file.arrayBuffer()
   const fileBuffer = Buffer.from(fileArrayBuffer)
 
+  // Ensure the bucket exists (create programmatically if it doesn't exist)
+  try {
+    await getSupabaseAdmin().storage.createBucket(RESUMES_BUCKET, {
+      public: true,
+    })
+  } catch (err) {
+    // Ignore error if bucket already exists
+  }
+
   const { data: uploadData, error: uploadError } = await getSupabaseAdmin().storage
     .from(RESUMES_BUCKET)
     .upload(storagePath, fileBuffer, {
@@ -83,7 +92,7 @@ export async function POST(req: Request) {
   if (uploadError) {
     console.error('[Resume Upload] Supabase upload error:', uploadError)
     return NextResponse.json(
-      { error: 'Failed to upload file. Please try again.' },
+      { error: `Failed to upload file: ${uploadError.message || JSON.stringify(uploadError)}` },
       { status: 500 }
     )
   }
