@@ -18,14 +18,27 @@ export default function MockInterviewPage() {
   const [category, setCategory] = useState('DSA')
   const [difficulty, setDifficulty] = useState('Medium')
   const [company, setCompany] = useState('Amazon')
+  const [activeAccordionIdx, setActiveAccordionIdx] = useState<number | null>(null)
   
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0)
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [currentAnswer, setCurrentAnswer] = useState('')
   const [timeLeft, setTimeLeft] = useState(180)
   const [interviewResult, setInterviewResult] = useState<any>(null)
-  
-  // We'll just display the question directly to avoid React state race conditions with fast intervals causing typos.
+
+  // Filter questions based on category and difficulty, fallback to matching category or all questions if none match
+  const activeQuestions = (() => {
+    let filtered = mockInterviewQuestions.filter(
+      (q) => q.category === category && q.difficulty === difficulty
+    )
+    if (filtered.length === 0) {
+      filtered = mockInterviewQuestions.filter((q) => q.category === category)
+    }
+    if (filtered.length === 0) {
+      filtered = mockInterviewQuestions
+    }
+    return filtered
+  })()
 
   // Interview timer
   useEffect(() => {
