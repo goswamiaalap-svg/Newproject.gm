@@ -10,10 +10,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)', 'sans-serif'],
-        heading: ['var(--font-syne)', 'sans-serif'],
-        display: ['var(--font-syne)', 'sans-serif'],
-        body: ['var(--font-inter)', 'sans-serif'],
+        sans: ['"Inter"', 'sans-serif'],
+        heading: ['"Outfit"', 'sans-serif'],
+        display: ['"Outfit"', 'sans-serif'],
+        body: ['"Inter"', 'sans-serif'],
       },
       colors: {
         'bg-base': '#FFFFFF',

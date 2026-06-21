@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "src/app/api/resume/upload/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/resume/review/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/webhooks/clerk/route.ts": {
+      "maxDuration": 10
+    }
+  }
+}
