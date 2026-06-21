@@ -1,12 +1,28 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, useInView, useSpring, useTransform } from 'framer-motion'
 import { cn } from '@/lib/utils'
+
+function Counter({ value }: { value: number }) {
+  const ref = React.useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-20px' })
+  const springValue = useSpring(0, { bounce: 0, duration: 1500 })
+  const displayValue = useTransform(springValue, (current) => Math.round(current))
+
+  React.useEffect(() => {
+    if (inView) {
+      springValue.set(value)
+    }
+  }, [inView, springValue, value])
+
+  return <motion.span ref={ref}>{displayValue}</motion.span>
+}
 
 interface StatCardProps {
   title: string
   value: string | number
+  suffix?: string
   subtext?: string
   icon?: React.ReactNode
   accentColor?: 'teal' | 'indigo' | 'gold'
@@ -17,6 +33,7 @@ interface StatCardProps {
 export default function StatCard({
   title,
   value,
+  suffix = '',
   subtext,
   icon,
   accentColor = 'teal',
@@ -44,7 +61,8 @@ export default function StatCard({
             {title}
           </p>
           <h3 className="font-display text-2xl font-bold text-text-primary mt-2">
-            {value}
+            {typeof value === 'number' ? <Counter value={value} /> : value}
+            {suffix}
           </h3>
           {subtext && (
             <p className="text-text-secondary text-xs mt-1.5 font-medium flex items-center gap-1">

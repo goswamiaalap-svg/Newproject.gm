@@ -296,32 +296,32 @@ export default function Features() {
       >
         <div className="relative w-full max-w-md h-[280px] flex items-center justify-center">
           {/* Main Mockup Card */}
-          <div className="w-full max-w-sm bg-[#0D1321] text-white rounded-card p-6 border border-white/10 shadow-medium space-y-4 font-mono text-[10px] relative z-10">
-            <div className="flex justify-between items-center border-b border-white/5 pb-2 text-[8px] text-white/40">
+          <div className="w-full max-w-sm bg-white text-text-primary rounded-card p-6 border border-border-default shadow-medium space-y-4 font-mono text-[10px] relative z-10">
+            <div className="flex justify-between items-center border-b border-border-subtle pb-2 text-[8px] text-text-muted">
               <span>LIVE RECORDING SESSION • SDE Round</span>
-              <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-500 animate-pulse font-bold">LIVE</span>
+              <span className="px-2 py-0.5 rounded bg-red-50 text-red-600 animate-pulse font-bold border border-red-100">LIVE</span>
             </div>
             
             <div className="flex gap-4">
               {/* Fake Webcam frame */}
-              <div className="w-20 h-24 bg-white/5 rounded border border-white/10 flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="w-8 h-8 rounded-full bg-teal/20 flex items-center justify-center animate-pulse text-teal">
+              <div className="w-20 h-24 bg-bg-subtle rounded border border-border-default flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-teal/10 flex items-center justify-center animate-pulse text-teal-600">
                   <span className="text-xl">🧑‍💻</span>
                 </div>
                 <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-0.5">
-                   {[1,2,3,4,3,2].map((v,i) => <div key={i} className="w-0.5 bg-teal rounded-full animate-pulse" style={{height: `${v*4}px`}} />)}
+                   {[1,2,3,4,3,2].map((v,i) => <div key={i} className="w-0.5 bg-teal-500 rounded-full animate-pulse" style={{height: `${v*4}px`}} />)}
                 </div>
               </div>
 
-              <div className="flex-1 bg-white/5 p-4 rounded border border-white/10 space-y-1.5 flex flex-col justify-between">
+              <div className="flex-1 bg-bg-subtle p-4 rounded border border-border-default space-y-1.5 flex flex-col justify-between">
                 <div>
                   <span className="text-teal font-bold uppercase text-[7px]">Question 1 of 3</span>
-                  <p className="text-white/90 text-xs font-semibold leading-relaxed font-sans mt-1">
+                  <p className="text-text-primary text-xs font-semibold leading-relaxed font-sans mt-1">
                     Explain the difference between a process and a thread. When would you use one over the other?
                   </p>
                 </div>
                 <div className="flex justify-end items-center mt-2">
-                  <span className="text-[10px] font-bold text-white/60 font-mono flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold text-text-muted font-mono flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" />
                     Timer: 12:45
                   </span>

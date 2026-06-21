@@ -126,10 +126,10 @@ export default function PhoneMockup() {
         </FloatingCard>
 
         {/* CSS iPhone Frame Mockup */}
-        <div className="relative w-[280px] h-[560px] bg-slate-900 rounded-[44px] p-3 shadow-medium border-4 border-slate-800 z-10 flex flex-col overflow-hidden">
+        <div className="relative w-[280px] h-[560px] bg-white rounded-[44px] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-4 border-slate-200 z-10 flex flex-col overflow-hidden">
           {/* Speaker / Camera Notch */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-6 bg-slate-900 rounded-b-2xl z-30 flex items-center justify-center">
-            <div className="w-12 h-1 bg-slate-800 rounded-full" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-6 bg-white border-x border-b border-slate-200 rounded-b-2xl z-30 flex items-center justify-center shadow-sm">
+            <div className="w-12 h-1 bg-slate-200 rounded-full" />
           </div>
 
           {/* Screen Content Wrapper */}
@@ -420,9 +420,9 @@ export default function PhoneMockup() {
                   <h5 className="text-xs font-bold text-text-primary">Behavioral Session</h5>
                   
                   {/* Video Call Mock */}
-                  <div className="relative w-full h-28 bg-slate-900 rounded-xl overflow-hidden shadow-soft">
+                  <div className="relative w-full h-28 bg-slate-100 rounded-xl overflow-hidden shadow-inner border border-slate-200">
                     <div className="absolute inset-0 flex items-center justify-center opacity-50">
-                      <div className="w-16 h-16 rounded-full bg-indigo-500 blur-xl animate-pulse" />
+                      <div className="w-16 h-16 rounded-full bg-indigo-200 blur-xl animate-pulse" />
                     </div>
                     <div className="absolute bottom-2 left-2 flex gap-1">
                       <div className="bg-black/50 backdrop-blur-md p-1.5 rounded-full">
@@ -432,10 +432,10 @@ export default function PhoneMockup() {
                         <Video className="w-3 h-3 text-white" />
                       </div>
                     </div>
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-[7px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> REC
+                    <div className="absolute top-2 right-2 bg-red-50 text-red-600 border border-red-100 text-[7px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> REC
                     </div>
-                    <div className="absolute bottom-2 right-2 w-10 h-14 bg-slate-800 rounded border border-white/20 overflow-hidden shadow-lg">
+                    <div className="absolute bottom-2 right-2 w-10 h-14 bg-white rounded border border-slate-200 overflow-hidden shadow-sm">
                       <div className="w-full h-full bg-gradient-to-t from-teal-500/30 to-indigo-500/30" />
                     </div>
                   </div>
@@ -511,7 +511,7 @@ export default function PhoneMockup() {
           </div>
 
           {/* Home indicator bar */}
-          <div className="w-24 h-1 bg-slate-700 rounded-full mx-auto my-1.5" />
+          <div className="w-24 h-1 bg-slate-300 rounded-full mx-auto my-1.5" />
         </div>
       </div>
     </section>

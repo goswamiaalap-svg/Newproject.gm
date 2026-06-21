@@ -7,7 +7,7 @@
   /* Background */
   --color-bg-base: #F8F9FF;
   --color-bg-subtle: #EEF2FF;
-  --color-hero-bg: #0D1321;
+  --color-hero-bg: #F8F9FF;
 
   /* Surfaces */
   --color-surface-card: #FFFFFF;
@@ -135,7 +135,7 @@ html.lenis body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-hero-bg);
+  background: var(--color-bg-subtle);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -150,7 +150,7 @@ html.lenis body {
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-teal-600) var(--color-hero-bg);
+  scrollbar-color: var(--color-teal-600) var(--color-bg-subtle);
 }
 
 /* ─── Component Classes ─── */
@@ -164,13 +164,13 @@ html.lenis body {
     box-shadow: 0 8px 32px rgba(99, 102, 241, 0.08);
   }
 
-  /* Glass morphism - dark (for hero/dark sections) */
+  /* Glass morphism - dark (converted to light for new design) */
   .glass-dark {
-    background: rgba(13, 19, 33, 0.6);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
   }
 
   /* Skeleton shimmer loading */
@@ -260,11 +260,11 @@ section {
 /* ─── Hero Background Animated Gradient Mesh (FIX 1) ─── */
 .hero-animated-mesh {
   position: relative;
-  background: #06070A;
+  background: #FFFFFF;
   background-image: 
-    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(13,148,136,0.16) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(245,158,11,0.1) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 50% at 50% 80%, rgba(13,148,136,0.08) 0%, transparent 55%);
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(13,148,136,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(99,102,241,0.1) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 50% 80%, rgba(13,148,136,0.05) 0%, transparent 55%);
   background-size: 200% 200%;
   animation: meshMove 8s ease-in-out infinite alternate;
 }
@@ -279,8 +279,8 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+  opacity: 0.02;
   pointer-events: none;
   z-index: 1;
 }

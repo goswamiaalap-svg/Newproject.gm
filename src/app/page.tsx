@@ -15,11 +15,7 @@ import Footer from '@/components/landing/Footer'
 import LoadingScreen from '@/components/shared/LoadingScreen'
 import dynamic from 'next/dynamic'
 
-// Load ambient canvas only on client (WebGL)
-const AmbientCanvas = dynamic(
-  () => import('@/components/three/AmbientCanvas'),
-  { ssr: false }
-);
+// Removed AmbientCanvas for clean light aesthetic
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -37,7 +33,7 @@ export default function Home() {
       <LoadingScreen isLoading={isLoading} />
       
       <main className="relative min-h-screen overflow-x-hidden bg-white" style={{ position: 'relative', zIndex: 1 }}>
-        <AmbientCanvas />
+        {/* Ambient Canvas Removed */}
         {/* Navigation */}
         <Navbar />
 

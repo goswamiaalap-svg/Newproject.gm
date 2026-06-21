@@ -86,14 +86,16 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Resume Score"
-          value={dashboardData ? `${dashboardData.resumeScore}/100` : '-'}
+          value={dashboardData ? dashboardData.resumeScore : 0}
+          suffix={dashboardData ? "/100" : "-"}
           subtext={dashboardData?.resumeScore > 0 ? "ATS compatible format" : "No resume uploaded"}
           icon={<FileText className="w-5 h-5" />}
           accentColor="teal"
         />
         <StatCard
           title="DSA Streak"
-          value={dashboardData ? `${dashboardData.dsaStreak} Days` : '-'}
+          value={dashboardData ? dashboardData.dsaStreak : 0}
+          suffix={dashboardData ? " Days" : "-"}
           subtext={dashboardData?.dsaStreak > 0 ? "🔥 Keep it up!" : "Start solving today"}
           icon={<Flame className="w-5 h-5" />}
           accentColor="indigo"

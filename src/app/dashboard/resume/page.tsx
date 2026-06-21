@@ -83,7 +83,7 @@ const LOADING_MESSAGES = [
   'Evaluating action verbs...',
   'Checking ATS keyword matching...',
   'Quantifying impact statements...',
-  'Running Claude AI analysis...',
+  'Running AI analysis...',
   'Compiling evaluation report...',
 ]
 
@@ -321,7 +321,7 @@ export default function ResumePage() {
               Upload your resume
             </h3>
             <p className="text-text-muted text-xs max-w-sm mb-8">
-              Supports PDF and DOCX formats. Maximum size 5MB. Files are analyzed securely using Claude AI.
+              Supports PDF and DOCX formats. Maximum size 5MB. Files are analyzed securely using AI.
             </p>
 
             <label className="px-6 py-3 bg-teal hover:bg-teal-600 text-white text-xs font-bold rounded-btn cursor-pointer transition-all shadow-teal-glow active:scale-95">
@@ -483,7 +483,7 @@ export default function ResumePage() {
                 <div className="flex-1 space-y-2 text-center sm:text-left">
                   <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal/5 text-teal text-[10px] font-bold border border-teal/10">
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>Claude AI Analysis</span>
+                    <span>AI Analysis</span>
                   </div>
                   <h3 className="font-display text-xl font-bold text-text-primary">
                     {review.overallScore >= 80

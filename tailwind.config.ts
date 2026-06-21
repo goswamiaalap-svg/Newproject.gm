@@ -18,7 +18,7 @@ const config: Config = {
       colors: {
         'bg-base': '#FFFFFF',
         'bg-subtle': '#F7F8FC',
-        'hero-bg': '#0D1321',
+        'hero-bg': '#F8F9FF',
         'surface-card': '#FFFFFF',
         'surface-elevated': '#F7F8FC',
         'surface-glass': 'rgba(255,255,255,0.65)',
@@ -85,7 +85,7 @@ const config: Config = {
         'card-hover': '0 4px 8px rgba(0,0,0,0.06), 0 12px 28px rgba(0,0,0,0.08)',
       },
       backgroundImage: {
-        'gradient-hero': 'linear-gradient(135deg, #0D1321 0%, #0D2137 50%, #0A2E2B 100%)',
+        'gradient-hero': 'linear-gradient(135deg, #F8F9FF 0%, #F0F4FF 50%, #EEF2FF 100%)',
         'gradient-teal': 'linear-gradient(135deg, #0D9488, #0EA5E9)',
         'gradient-indigo': 'linear-gradient(135deg, #6366F1, #8B5CF6)',
         'gradient-card-shine': 'linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,244,255,0.6))',

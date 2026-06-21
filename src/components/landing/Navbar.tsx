@@ -30,7 +30,7 @@ export default function Navbar() {
         'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         scrolled
           ? 'bg-white/85 backdrop-blur-2xl shadow-soft'
-          : 'bg-transparent'
+          : 'bg-white/50 backdrop-blur-sm'
       )}
     >
       <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
@@ -38,10 +38,10 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-1 group">
           <span className={cn(
             "font-heading font-800 text-xl transition-colors duration-300",
-            scrolled ? "text-[#0F172A]" : "text-white"
+            scrolled ? "text-[#0F172A]" : "text-[#0F172A]"
           )}>
-            Launch<span className={cn("transition-colors duration-300", scrolled ? "text-[#0D9488]" : "text-teal-400")}>Pad</span>
-            <span className="inline-block w-2 h-2 rounded-full bg-[#0D9488] ml-1 mb-1 animate-pulse" />
+            Launch<span className="text-teal transition-colors duration-300">Pad</span>
+            <span className="inline-block w-2 h-2 rounded-full bg-teal ml-1 mb-1 animate-pulse" />
           </span>
         </Link>
 
@@ -53,14 +53,14 @@ export default function Navbar() {
               href={link.href}
               className={cn(
                 "text-sm font-medium transition-colors duration-300 relative py-1 group/item",
-                scrolled ? "text-text-primary hover:text-teal" : "text-white/80 hover:text-white"
+                scrolled ? "text-text-primary hover:text-teal" : "text-text-secondary hover:text-text-primary"
               )}
             >
               <span>{link.label}</span>
               {/* Animated underline */}
               <span className={cn(
                 "absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-hover/item:scale-x-100 transition-transform duration-300 origin-left",
-                scrolled ? "bg-teal" : "bg-white"
+                "bg-teal"
               )} />
             </Link>
           ))}
@@ -72,7 +72,7 @@ export default function Navbar() {
             href="/sign-in"
             className={cn(
               "text-sm font-semibold transition-colors duration-300",
-              scrolled ? "text-text-secondary hover:text-text-primary" : "text-white/80 hover:text-white"
+              "text-text-secondary hover:text-text-primary"
             )}
           >
             Login
