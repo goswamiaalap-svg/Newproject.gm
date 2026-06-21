@@ -185,10 +185,19 @@ export default function ResumePage() {
         body: formData,
       })
 
-      const uploadData = await uploadRes.json()
+      let uploadData: any = {}
+      let isJson = false
+      try {
+        const text = await uploadRes.text()
+        uploadData = JSON.parse(text)
+        isJson = true
+      } catch (e) {
+        // Response is not valid JSON
+      }
 
       if (!uploadRes.ok) {
-        throw new Error(uploadData.error || 'Upload failed')
+        const errorMsg = isJson ? uploadData.error : `Server Error: ${uploadRes.status}`
+        throw new Error(errorMsg || 'Upload failed')
       }
 
       resumeId = uploadData.resumeId
@@ -209,10 +218,19 @@ export default function ResumePage() {
         body: JSON.stringify({ resumeId }),
       })
 
-      const reviewData = await reviewRes.json()
+      let reviewData: any = {}
+      let isJson = false
+      try {
+        const text = await reviewRes.text()
+        reviewData = JSON.parse(text)
+        isJson = true
+      } catch (e) {
+        // Response is not valid JSON
+      }
 
       if (!reviewRes.ok) {
-        throw new Error(reviewData.error || 'AI analysis failed')
+        const errorMsg = isJson ? reviewData.error : `Server Error: ${reviewRes.status}`
+        throw new Error(errorMsg || 'AI analysis failed')
       }
 
       // Complete the progress bar
