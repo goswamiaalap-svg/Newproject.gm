@@ -282,6 +282,19 @@ export default function PhoneMockup() {
                     </div>
                   </div>
 
+                  {/* Target Roles Match */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Role Matching</span>
+                    <div className="flex justify-between items-center text-[8px]">
+                      <span className="text-text-primary font-medium">Software Engineer (SDE-1)</span>
+                      <span className="text-teal font-bold bg-teal/5 px-1.5 py-0.5 rounded">84% Match</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[8px]">
+                      <span className="text-text-primary font-medium">Full Stack Developer</span>
+                      <span className="text-teal font-bold bg-teal/5 px-1.5 py-0.5 rounded">80% Match</span>
+                    </div>
+                  </div>
+
                   <button className="w-full py-1.5 bg-teal text-white rounded-btn text-[8px] font-bold mt-auto">
                     Re-upload Resume
                   </button>
@@ -362,6 +375,32 @@ export default function PhoneMockup() {
                     </div>
                   </div>
 
+                  {/* AI Daily Goal */}
+                  <div className="p-2 bg-indigo-50/50 border border-indigo-100/50 rounded-card text-[8px] text-text-secondary leading-normal flex items-start gap-1.5">
+                    <span>💡</span>
+                    <p>
+                      Solve 2 more questions in <strong>Two Pointers</strong> to unlock the <strong>Sliding Window</strong> node.
+                    </p>
+                  </div>
+
+                  {/* AI Recommendations */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <div className="flex justify-between items-center text-[7px] text-text-muted font-bold uppercase tracking-wider">
+                      <span>Recommended Problems</span>
+                      <span className="text-indigo font-bold">Try Next</span>
+                    </div>
+                    <div className="space-y-1 text-[8px]">
+                      <div className="flex items-center justify-between p-1 bg-slate-50 border border-slate-100 rounded-md">
+                        <span className="font-medium text-text-primary">3Sum</span>
+                        <span className="text-gold font-bold">Medium</span>
+                      </div>
+                      <div className="flex items-center justify-between p-1 bg-slate-50 border border-slate-100 rounded-md">
+                        <span className="font-medium text-text-primary">Container With Most Water</span>
+                        <span className="text-gold font-bold">Medium</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="p-2 bg-indigo/5 border border-indigo/10 rounded-card text-[8px] text-text-secondary text-center mt-auto">
                     Solved: <strong>120 / 200</strong> problems
                   </div>
@@ -426,6 +465,21 @@ export default function PhoneMockup() {
 
                   <div className="p-2 bg-purple-50 border border-purple-100 rounded-card text-[8px] text-purple-700 font-medium text-center">
                     📊 Session 3 of 5 completed
+                  </div>
+
+                  {/* Key Takeaways */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Key Strengths</span>
+                    <div className="space-y-1 text-[8px]">
+                      <div className="flex items-center gap-1.5 text-text-secondary">
+                        <span className="text-purple-600 font-bold">✓</span>
+                        <span>Structured response format (STAR method)</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-text-secondary">
+                        <span className="text-purple-600 font-bold">✓</span>
+                        <span>Clear communication of technical constraints</span>
+                      </div>
+                    </div>
                   </div>
 
                   <button className="w-full py-1.5 bg-purple-600 text-white rounded-btn text-[8px] font-bold mt-auto">
