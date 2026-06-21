@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -17,6 +17,7 @@ import {
   Rocket,
   ShieldCheck,
   Sparkles,
+  Star,
   Target,
   Timer,
   Wand2,
@@ -174,8 +175,8 @@ export default function ProjectsPage() {
   const [copied, setCopied] = useState(false)
   const [generatedIdeas, setGeneratedIdeas] = useState<ProjectIdea[]>(templates)
   const [generationNote, setGenerationNote] = useState('Ideas are ready. Add GROQ_API_KEY to enable live Groq generation.')
+  const [savedProjects, setSavedProjects] = useState<string[]>([])
 
-<<<<<<< HEAD
   const projects = useMemo(() => {
     const roleBoost = role.includes('AI') ? ['Groq optional', 'Prompt design'] : role.includes('Backend') ? ['API design', 'PostgreSQL'] : ['UI systems', 'Analytics']
     return generatedIdeas.map((project, index) => ({
@@ -184,7 +185,7 @@ export default function ProjectsPage() {
       stack: Array.from(new Set([...project.stack, ...selectedSkills.slice(0, 2), ...roleBoost.slice(0, 1)])),
     }))
   }, [generatedIdeas, role, selectedSkills, timeline])
-=======
+
   useEffect(() => {
     fetch('/api/projects/save')
       .then(res => res.json())
@@ -196,9 +197,6 @@ export default function ProjectsPage() {
       })
       .catch(console.error)
   }, [])
-
-  const presetSkills = ['React', 'Node.js', 'Python', 'TensorFlow', 'MongoDB', 'PostgreSQL', 'WebSocket', 'Flask', 'Docker']
->>>>>>> 26d993bb1ba80812a939e001cdae6956df4dda54
 
   const bestProject = [...projects].sort(
     (a, b) => b.fitScore - a.fitScore
@@ -221,42 +219,34 @@ export default function ProjectsPage() {
     setSkillInput('')
   }
 
-<<<<<<< HEAD
-  const generateIdeas = async () => {
-=======
-  const handleRemoveSkill = (skill: string) => {
-    setSelectedSkills(selectedSkills.filter((s) => s !== skill))
-  }
 
-  const handleToggleSave = async (project: any) => {
-    const isSaved = savedProjects.includes(project.name);
-    
-    // Optimistic UI update
+  const handleToggleSave = async (project: ProjectIdea, event: React.MouseEvent) => {
+    event.stopPropagation()
+    const isSaved = savedProjects.includes(project.title)
+
     if (isSaved) {
-      setSavedProjects(savedProjects.filter((name) => name !== project.name))
+      setSavedProjects(savedProjects.filter((title) => title !== project.title))
     } else {
-      setSavedProjects([...savedProjects, project.name])
+      setSavedProjects([...savedProjects, project.title])
     }
 
-    // Sync to DB
     try {
       await fetch('/api/projects/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: isSaved ? 'unsave' : 'save',
-          title: project.name,
-          description: project.description,
-          tags: project.techStack.join(',')
-        })
+          title: project.title,
+          description: project.problem,
+          tags: project.stack.join(','),
+        }),
       })
     } catch (e) {
       console.error('Failed to sync save state to db', e)
     }
   }
 
-  const handleGenerate = () => {
->>>>>>> 26d993bb1ba80812a939e001cdae6956df4dda54
+  const generateIdeas = async () => {
     setIsGenerating(true)
     try {
       const response = await fetch('/api/projects', {
@@ -440,7 +430,10 @@ export default function ProjectsPage() {
 
         <main className="space-y-5 xl:col-span-8">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {sortedProjects.map((project, index) => (
+            {sortedProjects.map((project, index) => {
+              const isSaved = savedProjects.includes(project.title)
+
+              return (
               <motion.button
                 type="button"
                 key={project.id}
@@ -453,75 +446,12 @@ export default function ProjectsPage() {
                   activeProject.id === project.id ? 'border-teal/30 ring-4 ring-teal/5' : 'border-border-default'
                 )}
               >
-<<<<<<< HEAD
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="rounded-full bg-bg-subtle px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-text-secondary">
                         {project.role}
                       </span>
-=======
-                <div className="w-12 h-12 border-4 border-teal/10 border-t-teal rounded-full animate-spin mb-4" />
-                <p className="text-xs font-bold text-text-primary">Structuring Standout Architectures...</p>
-                <p className="text-text-muted text-[10px] mt-1.5">Checking company target parameters for {domain} projects</p>
-              </motion.div>
-            ) : showResults ? (
-              <motion.div
-                key="results"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-4"
-              >
-                {mockProjectIdeas.map((project, idx) => {
-                  const isSaved = savedProjects.includes(project.name)
-                  const isExpanded = expandedCard === project.id
-                  
-                  return (
-                    <motion.div
-                      key={project.id}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className="bg-white border border-border-default rounded-card p-5 shadow-card hover:shadow-card-hover transition-all space-y-4"
-                    >
-                      {/* Card Title & Save Button */}
-                      <div className="flex justify-between items-start gap-4">
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-teal/5 text-teal border border-teal/10 uppercase tracking-wider">
-                              {project.domain}
-                            </span>
-                            <span
-                              className={cn(
-                                'text-[9px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider',
-                                project.complexity === 'Advanced'
-                                  ? 'bg-red-50 text-red-600 border-red-100'
-                                  : 'bg-amber-50 text-amber-600 border-amber-100'
-                              )}
-                            >
-                              {project.complexity}
-                            </span>
-                          </div>
-                          <h4 className="font-display text-base font-bold text-text-primary mt-2">
-                            {project.name}
-                          </h4>
-                        </div>
-                        
-                        <button
-                          onClick={() => handleToggleSave(project)}
-                          className={cn(
-                            'p-2 rounded-btn border transition-all flex items-center justify-center',
-                            isSaved
-                              ? 'bg-gold-light border-gold text-gold shadow-sm'
-                              : 'bg-white border-border-default text-text-muted hover:text-text-primary'
-                          )}
-                          title="Save project idea"
-                        >
-                          <Star className={cn('w-4 h-4', isSaved && 'fill-current')} />
-                        </button>
-                      </div>
->>>>>>> 26d993bb1ba80812a939e001cdae6956df4dda54
-
                       <span
                         className={`rounded-full px-2 py-1 text-[9px] font-bold ${project.id === bestProject.id
                             ? 'bg-green-100 text-green-700'
@@ -533,14 +463,28 @@ export default function ProjectsPage() {
                           : 'Strong Match'}
                       </span>
                     </div>
-
                     <h3 className={`${headingFont} mt-3 font-display text-base font-bold leading-tight text-text-primary`}>
                       {project.title}
                     </h3>
                   </div>
-                  <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-teal-light text-teal">
-                    <span className="text-lg font-black leading-none">{project.fitScore}</span>
-                    <span className="text-[8px] font-bold uppercase">Fit</span>
+                  <div className="flex shrink-0 flex-col items-end gap-2">
+                    <button
+                      type="button"
+                      onClick={(event) => handleToggleSave(project, event)}
+                      className={cn(
+                        'rounded-btn border p-2 transition-all',
+                        isSaved
+                          ? 'border-gold bg-gold-light text-gold shadow-sm'
+                          : 'border-border-default bg-white text-text-muted hover:text-text-primary'
+                      )}
+                      title="Save project idea"
+                    >
+                      <Star className={cn('h-4 w-4', isSaved && 'fill-current')} />
+                    </button>
+                    <div className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl bg-teal-light text-teal">
+                      <span className="text-lg font-black leading-none">{project.fitScore}</span>
+                      <span className="text-[8px] font-bold uppercase">Fit</span>
+                    </div>
                   </div>
                 </div>
                 <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-text-secondary">{project.problem}</p>
@@ -552,7 +496,8 @@ export default function ProjectsPage() {
                   ))}
                 </div>
               </motion.button>
-            ))}
+              )
+            })}
           </div>
 
           <section className="rounded-card border border-border-default bg-white p-5 shadow-card">
