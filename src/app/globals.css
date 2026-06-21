@@ -2,73 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Token Custom Properties ─── */
+/* ════════════════════════════════════════════════════════════
+   THEME TOKENS — values are "R G B" triples (no commas) so
+   Tailwind's rgb(var(--x) / <alpha-value>) opacity trick works.
+   ════════════════════════════════════════════════════════════ */
+
 :root {
-  /* Background */
-  --color-bg-base: #F8F9FF;
-  --color-bg-subtle: #EEF2FF;
-  --color-hero-bg: #0D1321;
+  /* Surfaces — warm off-white, barely-there pastel paper */
+  --c-bg-base:    250 249 246;   /* #FAF9F6 */
+  --c-bg-subtle:  244 242 237;   /* #F4F2ED */
+  --c-bg-card:    255 255 255;   /* #FFFFFF */
+  --c-bg-raised:  255 255 255;
 
-  /* Surfaces */
-  --color-surface-card: #FFFFFF;
-  --color-surface-elevated: #F0F4FF;
-  --color-surface-glass: rgba(255, 255, 255, 0.65);
-
-  /* Teal palette */
-  --color-teal: #0D9488;
-  --color-teal-light: #CCFBF1;
-  --color-teal-glow: rgba(13, 148, 136, 0.15);
-  --color-teal-50: #F0FDFA;
-  --color-teal-100: #CCFBF1;
-  --color-teal-200: #99F6E4;
-  --color-teal-300: #5EEAD4;
-  --color-teal-400: #2DD4BF;
-  --color-teal-500: #14B8A6;
-  --color-teal-600: #0D9488;
-  --color-teal-700: #0F766E;
-  --color-teal-800: #115E59;
-  --color-teal-900: #134E4A;
-
-  /* Indigo palette */
-  --color-indigo: #6366F1;
-  --color-indigo-light: #EEF2FF;
-  --color-indigo-glow: rgba(99, 102, 241, 0.12);
-  --color-indigo-50: #EEF2FF;
-  --color-indigo-100: #E0E7FF;
-  --color-indigo-200: #C7D2FE;
-  --color-indigo-300: #A5B4FC;
-  --color-indigo-400: #818CF8;
-  --color-indigo-500: #6366F1;
-  --color-indigo-600: #4F46E5;
-  --color-indigo-700: #4338CA;
-  --color-indigo-800: #3730A3;
-  --color-indigo-900: #312E81;
-
-  /* Gold palette */
-  --color-gold: #F59E0B;
-  --color-gold-light: #FEF3C7;
-
-  /* Text */
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #334155;
-  --color-text-muted: #94A3B8;
+  /* Ink / text */
+  --c-ink:            30 29 31;
+  --c-text-primary:   38 37 41;   /* near-black, soft */
+  --c-text-secondary: 113 111 117;
+  --c-text-muted:      164 162 167;
 
   /* Borders */
-  --color-border-default: #E2E8F0;
-  --color-border-subtle: #F1F5F9;
+  --c-border-default: 230 227 221;
+  --c-border-subtle:  238 236 230;
 
-  /* Radii */
-  --radius-card: 16px;
-  --radius-btn: 12px;
-  --radius-hero: 24px;
+  /* Muted multi-pastel accent family */
+  --c-lavender:        176 169 219;  /* #B0A9DB */
+  --c-lavender-light:  236 233 248;
+  --c-sage:            150 184 156;  /* #96B89C */
+  --c-sage-light:      228 238 229;
+  --c-blush:           224 156 164;  /* #E09CA4 */
+  --c-blush-light:     249 233 235;
+  --c-butter:          214 178 110;  /* #D6B26E */
+  --c-butter-light:    248 240 224;
+  --c-sky:             137 175 199;  /* #89AFC7 */
+  --c-sky-light:       230 239 244;
+}
 
-  /* Shadows */
-  --shadow-glass: 0 8px 32px rgba(99, 102, 241, 0.08);
-  --shadow-glass-hover: 0 12px 40px rgba(99, 102, 241, 0.15);
-  --shadow-teal-glow: 0 0 20px rgba(13, 148, 136, 0.3);
-  --shadow-indigo-glow: 0 0 20px rgba(99, 102, 241, 0.3);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 16px rgba(0, 0, 0, 0.04);
-  --shadow-card-hover: 0 4px 8px rgba(0, 0, 0, 0.06), 0 12px 28px rgba(0, 0, 0, 0.08);
+.dark {
+  /* Surfaces — soft charcoal, low contrast, cozy (not pure black) */
+  --c-bg-base:    30 29 32;     /* #1E1D20 */
+  --c-bg-subtle:  37 36 40;     /* #252428 */
+  --c-bg-card:    42 41 46;     /* #2A292E */
+  --c-bg-raised:  48 47 52;     /* #302F34 */
+
+  --c-ink:            245 244 242;
+  --c-text-primary:   232 230 227;
+  --c-text-secondary: 162 160 165;
+  --c-text-muted:      112 110 116;
+
+  --c-border-default: 58 57 62;
+  --c-border-subtle:  50 49 54;
+
+  /* Same pastel family, gently desaturated/dimmed to sit well on charcoal */
+  --c-lavender:        158 150 199;
+  --c-lavender-light:  54 51 66;
+  --c-sage:            132 165 139;
+  --c-sage-light:      45 54 47;
+  --c-blush:           202 138 148;
+  --c-blush-light:     58 44 47;
+  --c-butter:          196 162 102;
+  --c-butter-light:    54 47 33;
+  --c-sky:             122 158 182;
+  --c-sky-light:       40 50 57;
 }
 
 /* ─── Lenis Smooth Scroll ─── */
@@ -76,255 +70,96 @@ html.lenis,
 html.lenis body {
   height: auto;
 }
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
 
 /* ─── Base Styles ─── */
 @layer base {
   body {
     @apply font-sans text-text-primary antialiased;
-    background-color: var(--color-bg-base);
+    background-color: rgb(var(--c-bg-base));
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-display;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
   }
 
-  /* Selection */
   ::selection {
-    background-color: var(--color-teal-200);
-    color: var(--color-teal-900);
+    background-color: rgb(var(--c-lavender-light));
+    color: rgb(var(--c-lavender));
   }
-
   ::-moz-selection {
-    background-color: var(--color-teal-200);
-    color: var(--color-teal-900);
+    background-color: rgb(var(--c-lavender-light));
+    color: rgb(var(--c-lavender));
   }
 
-  /* Focus ring */
   *:focus-visible {
-    @apply outline-2 outline-offset-2 outline-teal-500;
-    outline-style: solid;
+    outline: 2px solid rgb(var(--c-lavender));
+    outline-offset: 2px;
   }
 
-  /* Prevent pure black */
   * {
-    border-color: var(--color-border-default);
+    border-color: rgb(var(--c-border-default));
   }
 }
 
 /* ─── Custom Scrollbar ─── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-hero-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-teal-600);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-teal-500);
-}
-
-/* Firefox scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-teal-600) var(--color-hero-bg);
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgb(var(--c-bg-subtle)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--c-text-muted)); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-text-secondary)); }
+* { scrollbar-width: thin; scrollbar-color: rgb(var(--c-text-muted)) rgb(var(--c-bg-subtle)); }
 
 /* ─── Component Classes ─── */
 @layer components {
-  /* Glass morphism - light */
-  .glass {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.08);
+  /* Minimal flat card — no heavy glass, just a hairline border + soft shadow */
+  .card-flat {
+    background: rgb(var(--c-bg-card));
+    border: 1px solid rgb(var(--c-border-default));
   }
 
-  /* Glass morphism - dark (for hero/dark sections) */
-  .glass-dark {
-    background: rgba(13, 19, 33, 0.6);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  }
-
-  /* Skeleton shimmer loading */
   .skeleton {
-    background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+    background: linear-gradient(90deg, rgb(var(--c-border-default)) 25%, rgb(var(--c-border-subtle)) 50%, rgb(var(--c-border-default)) 75%);
     background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
+    animation: shimmer 2.5s linear infinite;
   }
 
-  /* Gradient text - teal */
-  .text-gradient-teal {
-    background: linear-gradient(135deg, #0D9488, #0EA5E9);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Very low-key dotted paper background, theme aware */
+  .dot-bg {
+    background-color: rgb(var(--c-bg-base));
+    background-image: radial-gradient(rgb(var(--c-border-default)) 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 
-  /* Gradient text - indigo */
-  .text-gradient-indigo {
-    background: linear-gradient(135deg, #6366F1, #8B5CF6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Gradient text - gold */
-  .text-gradient-gold {
-    background: linear-gradient(135deg, #F59E0B, #F97316);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-
-/* ─── Custom Cursor (hide default on non-touch) ─── */
-@media (pointer: fine) {
-  html.custom-cursor,
-  html.custom-cursor * {
-    cursor: none !important;
+  .mono-pill {
+    @apply inline-flex items-center gap-2 font-mono text-xs font-medium px-3 py-1.5 rounded-full border border-border-default bg-bg-card;
   }
 }
 
 /* ─── Reduced Motion ─── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-
-  .skeleton {
-    animation: none;
-  }
+  .skeleton { animation: none; }
 }
 
-/* ─── Utility Keyframes (referenced by Tailwind config) ─── */
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-/* ─── Google Fonts Global Overrides (FIX 2) ─── */
-h1, h2, h3, h4, .font-heading {
-  font-family: 'Syne', sans-serif !important;
-}
-body, p, span, a, button, input, select, textarea, .font-body {
-  font-family: 'Inter', sans-serif !important;
-}
-
-/* ─── Global Whitespace Adjustments (FIX 5) ─── */
-section {
-  padding-top: 80px !important;
-  padding-bottom: 80px !important;
-}
-.feature-row {
-  padding-top: 60px !important;
-  padding-bottom: 60px !important;
-}
-
-/* ─── Hero Background Animated Gradient Mesh (FIX 1) ─── */
-.hero-animated-mesh {
-  position: relative;
-  background: #06070A;
-  background-image: 
-    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(13,148,136,0.16) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(245,158,11,0.1) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 50% at 50% 80%, rgba(13,148,136,0.08) 0%, transparent 55%);
-  background-size: 200% 200%;
-  animation: meshMove 8s ease-in-out infinite alternate;
-}
-
-@keyframes meshMove {
-  0%   { background-position: 0% 0%, 100% 0%, 50% 100%; }
-  100% { background-position: 10% 10%, 90% 10%, 60% 90%; }
-}
-
-/* Grain texture overlay — removes flat AI-generated look */
-.hero-animated-mesh::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.04;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* ─── 3D Perspective Utilities ─── */
-.perspective-800 { perspective: 800px; }
-.perspective-1000 { perspective: 1000px; }
-.preserve-3d { transform-style: preserve-3d; }
-
-/* ─── Shine sweep keyframe ─── */
-@keyframes shine-sweep {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-.animate-shine {
-  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
-  background-size: 200% 100%;
-  animation: shine-sweep 2s linear infinite;
-}
-
-/* ─── Glow pulse ring ─── */
-@keyframes glow-expand {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0); }
-  50%       { box-shadow: 0 0 0 16px rgba(13, 148, 136, 0); }
-}
-
-/* ─── Number counter animation ─── */
-@keyframes count-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ─── Stagger children fade-up ─── */
-.stagger-children > * {
-  animation: fade-up 0.6s ease-out both;
-}
+.stagger-children > * { animation: fade-up 0.6s ease-out both; }
 .stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
 .stagger-children > *:nth-child(2) { animation-delay: 0.1s;  }
 .stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
 .stagger-children > *:nth-child(4) { animation-delay: 0.2s;  }
 .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
 
-/* ─── Remove hero section fixed padding for hero section override ─── */
-section.hero-section {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
+section { padding-top: 88px; padding-bottom: 88px; }
+.feature-row { padding-top: 56px; padding-bottom: 56px; }
+section.hero-section { padding-top: 0 !important; padding-bottom: 0 !important; }
