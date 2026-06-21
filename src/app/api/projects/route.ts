@@ -6,6 +6,7 @@ import {
   type ProjectLabProfile,
 } from '@/lib/project-lab'
 
+<<<<<<< HEAD
 const GROQ_CHAT_COMPLETIONS_URL = 'https://api.groq.com/openai/v1/chat/completions'
 const DEFAULT_GROQ_MODEL = 'llama-3.3-70b-versatile'
 
@@ -101,4 +102,8 @@ export async function POST(request: Request) {
       ideas: fallbackIdeas,
     })
   }
+=======
+export async function GET() {
+  return NextResponse.json(mockProjectIdeas)
+>>>>>>> 26d993bb1ba80812a939e001cdae6956df4dda54
 }

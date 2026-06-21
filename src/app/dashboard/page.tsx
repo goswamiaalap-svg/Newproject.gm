@@ -21,17 +21,20 @@ import { mockDashboardStats, mockOpportunities } from '@/lib/mock-data'
 import { getGreeting } from '@/lib/utils'
 
 export default function DashboardPage() {
-  const [userName, setUserName] = useState('Demo Student')
+  const [userName, setUserName] = useState('Student')
+  const [dashboardData, setDashboardData] = useState<any>(null)
   const greeting = getGreeting()
 
   useEffect(() => {
-    const userStr = localStorage.getItem('launchpad_user')
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr)
-        if (user.name) setUserName(user.name)
-      } catch (e) {}
-    }
+    fetch('/api/dashboard')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          setDashboardData(data)
+          if (data.userName) setUserName(data.userName)
+        }
+      })
+      .catch(console.error)
   }, [])
 
   // Quick Action Buttons
@@ -55,15 +58,17 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden rounded-hero bg-gradient-hero p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg"
       >
-        <div className="relative z-10 max-w-lg">
-          <span className="text-teal text-xs font-semibold uppercase tracking-wider block mb-1">
-            ✦ Welcome Back
+        <div className="relative z-10 max-w-xl">
+          <span className="text-teal text-[10px] font-bold uppercase tracking-widest block mb-2 opacity-80">
+            ✦ Welcome to LaunchPad
           </span>
-          <h1 className="font-display text-3xl font-bold">
+          <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">
             {greeting}, {userName}!
           </h1>
-          <p className="text-white/60 text-sm mt-2 leading-relaxed">
-            Your ATS resume compatibility score is at 78%. You are in the top 15% of your batch at JKLU. Keep up the streak!
+          <p className="text-white/80 text-sm mt-3 leading-relaxed max-w-lg">
+            {dashboardData?.resumeScore > 0 
+              ? `Your ATS resume compatibility score is at ${dashboardData.resumeScore}%. Keep pushing your limits to hit 90%+ for top FAANG tier roles!`
+              : "You haven't uploaded a resume yet. Kickstart your career journey by running your first AI resume scan to get your baseline score."}
           </p>
         </div>
         <div className="relative z-10 flex gap-3">
@@ -81,15 +86,15 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Resume Score"
-          value={`${mockDashboardStats.resumeScore}/100`}
-          subtext="ATS compatible format"
+          value={dashboardData ? `${dashboardData.resumeScore}/100` : '-'}
+          subtext={dashboardData?.resumeScore > 0 ? "ATS compatible format" : "No resume uploaded"}
           icon={<FileText className="w-5 h-5" />}
           accentColor="teal"
         />
         <StatCard
           title="DSA Streak"
-          value={`${mockDashboardStats.dsaStreak} Days`}
-          subtext="🔥 14 days active"
+          value={dashboardData ? `${dashboardData.dsaStreak} Days` : '-'}
+          subtext={dashboardData?.dsaStreak > 0 ? "🔥 Keep it up!" : "Start solving today"}
           icon={<Flame className="w-5 h-5" />}
           accentColor="indigo"
         />
@@ -102,12 +107,12 @@ export default function DashboardPage() {
         />
         <StatCard
           title="DSA Solved"
-          value={mockDashboardStats.problemsSolved}
-          subtext="Out of 200 target"
+          value={dashboardData ? dashboardData.problemsSolved : 0}
+          subtext={`Out of ${dashboardData?.totalProblems || 200} target`}
           icon={<CheckCircle2 className="w-5 h-5" />}
           accentColor="teal"
           type="progress"
-          progressValue={Math.round((mockDashboardStats.problemsSolved / 200) * 100)}
+          progressValue={dashboardData ? Math.round((dashboardData.problemsSolved / dashboardData.totalProblems) * 100) : 0}
         />
       </div>
 
