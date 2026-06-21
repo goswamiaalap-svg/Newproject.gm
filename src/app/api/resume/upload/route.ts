@@ -17,6 +17,7 @@ import { auth } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/mongoose'
 import Resume from '@/lib/models/Resume'
 import { getSupabaseAdmin, RESUMES_BUCKET } from '@/lib/supabase'
+import { createRequire } from 'module'
 
 // Max file size: 5MB in bytes
 const MAX_FILE_SIZE = 5 * 1024 * 1024
@@ -110,7 +111,6 @@ export async function POST(req: Request) {
   try {
     if (fileExtension === 'pdf') {
       // Use pdf-parse required via createRequire to bypass ESM module.parent crash in Next.js Serverless runtime
-      const { createRequire } = await import('module')
       const requireFn = createRequire(import.meta.url)
       const pdf = requireFn('pdf-parse')
 

@@ -50,9 +50,17 @@ export async function POST(req: Request) {
   }
 
   // ---- 3. Fetch resume from MongoDB ----
-  await connectToDatabase()
-
-  const resume = await Resume.findById(resumeId)
+  let resume
+  try {
+    await connectToDatabase()
+    resume = await Resume.findById(resumeId)
+  } catch (dbError: any) {
+    console.error('[Resume Review] MongoDB read error:', dbError)
+    return NextResponse.json(
+      { error: `Database connection failed: ${dbError.message || 'Unknown database error'}` },
+      { status: 500 }
+    )
+  }
 
   if (!resume) {
     return NextResponse.json({ error: 'Resume not found' }, { status: 404 })
@@ -64,10 +72,14 @@ export async function POST(req: Request) {
   }
 
   if (!resume.extractedText || resume.extractedText.trim().length < 50) {
-    await Resume.findByIdAndUpdate(resumeId, {
-      status: 'error',
-      errorMessage: 'Resume text is too short to analyze.',
-    })
+    try {
+      await Resume.findByIdAndUpdate(resumeId, {
+        status: 'error',
+        errorMessage: 'Resume text is too short to analyze.',
+      })
+    } catch (dbError) {
+      console.error('[Resume Review] MongoDB update error for short text:', dbError)
+    }
     return NextResponse.json(
       { error: 'Resume text is too short to generate a meaningful review.' },
       { status: 422 }
@@ -95,14 +107,18 @@ export async function POST(req: Request) {
       throw new Error('No text content in Claude response')
     }
     claudeResponse = textBlock.text
-  } catch (claudeError) {
+  } catch (claudeError: any) {
     console.error('[Resume Review] Claude API error:', claudeError)
 
     // Update resume status to error
-    await Resume.findByIdAndUpdate(resumeId, {
-      status: 'error',
-      errorMessage: 'AI analysis failed. Please try again.',
-    })
+    try {
+      await Resume.findByIdAndUpdate(resumeId, {
+        status: 'error',
+        errorMessage: `AI analysis failed: ${claudeError.message || 'Unknown error'}. Please try again.`,
+      })
+    } catch (dbError) {
+      console.error('[Resume Review] MongoDB update error after Claude failure:', dbError)
+    }
 
     return NextResponse.json(
       { error: 'AI analysis failed. Please try uploading your resume again.' },
@@ -132,14 +148,18 @@ export async function POST(req: Request) {
     ) {
       throw new Error('Unexpected JSON shape from Claude')
     }
-  } catch (parseError) {
+  } catch (parseError: any) {
     console.error('[Resume Review] Failed to parse Claude JSON:', parseError)
     console.error('[Resume Review] Raw Claude response:', claudeResponse)
 
-    await Resume.findByIdAndUpdate(resumeId, {
-      status: 'error',
-      errorMessage: 'Failed to parse AI response. Please try again.',
-    })
+    try {
+      await Resume.findByIdAndUpdate(resumeId, {
+        status: 'error',
+        errorMessage: `Failed to process AI response: ${parseError.message || 'Unknown error'}. Please try again.`,
+      })
+    } catch (dbError) {
+      console.error('[Resume Review] MongoDB update error after parse failure:', dbError)
+    }
 
     return NextResponse.json(
       { error: 'Failed to process AI response. Please try uploading again.' },
