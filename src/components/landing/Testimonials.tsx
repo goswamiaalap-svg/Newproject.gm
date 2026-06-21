@@ -19,7 +19,7 @@ const row2Testimonials = [
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex gap-0.5 text-gold">
+    <div className="flex gap-0.5 text-butter">
       {Array.from({ length: 5 }).map((_, i) => (
         <Star key={i} className={`w-3.5 h-3.5 ${i < rating ? 'fill-current' : 'text-text-muted opacity-30'}`} />
       ))}
@@ -30,22 +30,22 @@ function StarRating({ rating }: { rating: number }) {
 function TestimonialCard({ t }: { t: typeof row1Testimonials[0] }) {
   return (
     <motion.div
-      whileHover={{ y: -4, boxShadow: '0 12px 40px rgba(13,148,136,0.15)' }}
+      whileHover={{ y: -3 }}
       transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-      className="flex-shrink-0 w-80 bg-white rounded-card p-5 shadow-soft border border-border-default flex flex-col justify-between h-48 select-none cursor-default"
+      className="flex-shrink-0 w-80 bg-bg-card rounded-card p-5 border border-border-default flex flex-col justify-between h-48 select-none cursor-default"
     >
       <div className="space-y-2.5">
         <div className="flex justify-between items-center">
           <StarRating rating={t.rating} />
           <span className="text-[9px] text-text-muted font-bold font-mono">{t.date}</span>
         </div>
-        <h5 className="font-display font-bold text-xs text-text-primary">{t.title}</h5>
-        <p className="text-text-secondary text-[11px] leading-relaxed font-sans font-medium line-clamp-3">
+        <h5 className="font-serif text-sm text-text-primary">{t.title}</h5>
+        <p className="text-text-secondary text-[11px] leading-relaxed line-clamp-3">
           &ldquo;{t.body}&rdquo;
         </p>
       </div>
       <div className="border-t border-border-subtle pt-2 text-[10px]">
-        <span className="font-bold text-text-primary block">{t.name}</span>
+        <span className="font-medium text-text-primary block">{t.name}</span>
         <span className="text-text-muted">{t.college}</span>
       </div>
     </motion.div>
@@ -63,7 +63,7 @@ export default function Testimonials() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         className="text-center px-6 max-w-2xl mx-auto mb-20"
       >
-        <h2 className="font-display font-extrabold text-4xl md:text-5xl text-text-primary tracking-tight leading-tight">
+        <h2 className="font-serif font-medium text-3xl md:text-[44px] text-text-primary tracking-tight leading-tight">
           Loved by students everywhere.
         </h2>
       </motion.div>

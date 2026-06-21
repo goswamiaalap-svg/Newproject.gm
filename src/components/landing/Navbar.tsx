@@ -3,14 +3,17 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import { Telescope, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import ThemeToggle from '@/components/shared/ThemeToggle'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
+    const handleScroll = () => setScrolled(window.scrollY > 24)
+    handleScroll()
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -19,97 +22,74 @@ export default function Navbar() {
     { label: 'Features', href: '#features' },
     { label: 'How It Works', href: '#how-it-works' },
     { label: 'Team', href: '#testimonials' },
+    { label: 'Docs', href: '#' },
   ]
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      initial={{ y: -32, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+        'fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b',
         scrolled
-          ? 'bg-white/85 backdrop-blur-2xl shadow-soft'
-          : 'bg-transparent'
+          ? 'bg-bg-base/85 backdrop-blur-xl border-border-default'
+          : 'bg-bg-base border-transparent'
       )}
     >
-      <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 md:px-8 h-[72px] flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1 group">
-          <span className={cn(
-            "font-heading font-800 text-xl transition-colors duration-300",
-            scrolled ? "text-[#0F172A]" : "text-white"
-          )}>
-            Launch<span className={cn("transition-colors duration-300", scrolled ? "text-[#0D9488]" : "text-teal-400")}>Pad</span>
-            <span className="inline-block w-2 h-2 rounded-full bg-[#0D9488] ml-1 mb-1 animate-pulse" />
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <span className="flex items-center justify-center w-8 h-8 rounded-full border border-border-default bg-bg-card text-text-primary">
+            <Telescope className="w-[15px] h-[15px]" strokeWidth={1.75} />
+          </span>
+          <span className="font-serif text-lg text-text-primary tracking-tight">
+            Launch<span className="italic text-lavender">Pad</span>
           </span>
         </Link>
 
         {/* Center: Nav Links */}
-        <div className="hidden md:flex items-center gap-10">
+        <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link, i) => (
             <Link
               key={i}
               href={link.href}
-              className={cn(
-                "text-sm font-medium transition-colors duration-300 relative py-1 group/item",
-                scrolled ? "text-text-primary hover:text-teal" : "text-white/80 hover:text-white"
-              )}
+              className="font-mono text-[12.5px] text-text-secondary hover:text-text-primary transition-colors duration-200"
             >
-              <span>{link.label}</span>
-              {/* Animated underline */}
-              <span className={cn(
-                "absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-hover/item:scale-x-100 transition-transform duration-300 origin-left",
-                scrolled ? "bg-teal" : "bg-white"
-              )} />
+              {link.label}
             </Link>
           ))}
         </div>
 
-        {/* Right Buttons */}
-        <div className="hidden md:flex items-center gap-6">
+        {/* Right: theme toggle + auth buttons */}
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+
           <Link
             href="/sign-in"
-            className={cn(
-              "text-sm font-semibold transition-colors duration-300",
-              scrolled ? "text-text-secondary hover:text-text-primary" : "text-white/80 hover:text-white"
-            )}
+            className="hidden md:inline-block font-mono text-[12.5px] text-text-secondary hover:text-text-primary px-3 py-2.5 transition-colors duration-200"
           >
             Login
           </Link>
           <Link
             href="/sign-up"
-            className="px-6 py-3 bg-gradient-to-r from-teal to-[#0EA5E9] text-white text-xs font-bold rounded-full hover:shadow-medium hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="hidden md:flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-text-primary text-bg-base font-mono text-[12.5px] font-medium hover:opacity-85 transition-opacity duration-200"
           >
-            Get Started Free
+            Get Started
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
-        </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2 text-text-primary"
-          aria-label="Toggle menu"
-        >
-          <span
-            className={cn(
-              'w-6 h-0.5 bg-current transition-all duration-300',
-              mobileOpen && 'rotate-45 translate-y-2'
-            )}
-          />
-          <span
-            className={cn(
-              'w-6 h-0.5 bg-current transition-all duration-300',
-              mobileOpen && 'opacity-0'
-            )}
-          />
-          <span
-            className={cn(
-              'w-6 h-0.5 bg-current transition-all duration-300',
-              mobileOpen && '-rotate-45 -translate-y-2'
-            )}
-          />
-        </button>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden flex flex-col gap-1.5 p-2 text-text-primary"
+            aria-label="Toggle menu"
+          >
+            <span className={cn('w-5 h-[1.5px] bg-current transition-all duration-300', mobileOpen && 'rotate-45 translate-y-[6.5px]')} />
+            <span className={cn('w-5 h-[1.5px] bg-current transition-all duration-300', mobileOpen && 'opacity-0')} />
+            <span className={cn('w-5 h-[1.5px] bg-current transition-all duration-300', mobileOpen && '-rotate-45 -translate-y-[6.5px]')} />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -119,15 +99,15 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-border-default shadow-soft"
+            className="md:hidden bg-bg-base border-t border-border-default"
           >
-            <div className="px-8 py-6 flex flex-col gap-4">
+            <div className="px-6 py-6 flex flex-col gap-4">
               {navLinks.map((link, i) => (
                 <Link
                   key={i}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-text-primary font-medium py-2 hover:text-teal transition-colors"
+                  className="font-mono text-sm text-text-primary py-2 hover:text-lavender transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -136,16 +116,16 @@ export default function Navbar() {
                 <Link
                   href="/sign-in"
                   onClick={() => setMobileOpen(false)}
-                  className="text-center py-2 text-sm font-semibold text-text-secondary hover:text-text-primary"
+                  className="text-center py-2.5 font-mono text-sm text-text-secondary border border-border-default rounded-full"
                 >
                   Login
                 </Link>
                 <Link
                   href="/sign-up"
                   onClick={() => setMobileOpen(false)}
-                  className="px-5 py-3 bg-gradient-to-r from-teal to-[#0EA5E9] text-white font-bold rounded-full text-center text-xs shadow-soft"
+                  className="px-5 py-2.5 bg-text-primary text-bg-base font-mono text-sm font-medium rounded-full text-center"
                 >
-                  Get Started Free
+                  Get Started
                 </Link>
               </div>
             </div>

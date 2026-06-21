@@ -2,58 +2,18 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { FileText, Flame, Code, Calendar, Users, Briefcase, Lock, ArrowRight, CheckCircle2, Gauge, Lightbulb, Sparkles } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface FeatureRowProps {
   badgeText: string
-  badgeColor: 'teal' | 'indigo' | 'purple' | 'gold'
+  badgeColor: 'sage' | 'lavender' | 'butter'
   heading: string
   bodyText: string
   isLeftText: boolean
   pills?: string[]
   children: React.ReactNode
   customPadding?: string
-  noMockupWrapper?: boolean
-}
-
-/* ── Tilt card wrapper ──────────────────────────────────── */
-function TiltCard({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
-  return (
-    <motion.div
-      className={cn('relative overflow-hidden', className)}
-      style={style}
-      whileHover="hover"
-      initial="rest"
-      animate="rest"
-    >
-      {/* Main tilt */}
-      <motion.div
-        variants={{
-          rest:  { rotateY: 0,   rotateX: 0,   scale: 1,    z: 0 },
-          hover: { rotateY: 6,   rotateX: -4,  scale: 1.025, z: 30 },
-        }}
-        transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-        style={{ transformStyle: 'preserve-3d', transformOrigin: 'center center' }}
-      >
-        {children}
-      </motion.div>
-
-      {/* Shine sweep on hover */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none rounded-[24px]"
-        style={{
-          background: 'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%)',
-          backgroundSize: '200% 100%',
-        }}
-        variants={{
-          rest:  { backgroundPosition: '-100% 0', opacity: 0 },
-          hover: { backgroundPosition:  '200% 0', opacity: 1 },
-        }}
-        transition={{ duration: 0.55, ease: 'easeInOut' }}
-      />
-    </motion.div>
-  )
 }
 
 function FeatureRow({
@@ -65,51 +25,45 @@ function FeatureRow({
   pills = [],
   children,
   customPadding,
-  noMockupWrapper = false,
 }: FeatureRowProps) {
   const badgeClasses = {
-    teal:   'bg-teal-light text-teal border-teal/10',
-    indigo: 'bg-indigo-light text-indigo border-indigo/10',
-    purple: 'bg-purple-50 text-purple-600 border-purple-100',
-    gold:   'bg-gold-light text-gold border-gold/10',
+    sage:     'bg-sage-light text-sage border-sage/15',
+    lavender: 'bg-lavender-light text-lavender border-lavender/15',
+    butter:   'bg-butter-light text-butter border-butter/15',
   }
 
   const textPanel = (
     <motion.div
-      initial={{ opacity: 0, x: isLeftText ? -50 : 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="flex flex-col justify-center space-y-5"
     >
       <div>
         <span className={cn(
-          'text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border',
+          'text-[10.5px] font-mono font-medium uppercase tracking-wider px-3.5 py-1.5 rounded-full border',
           badgeClasses[badgeColor]
         )}>
           {badgeText}
         </span>
       </div>
-      <h3 className="font-display font-extrabold text-3xl md:text-4xl text-text-primary tracking-tight leading-tight">
+      <h3 className="font-serif font-medium text-2xl md:text-[34px] text-text-primary tracking-tight leading-tight">
         {heading}
       </h3>
-      <p className="text-text-secondary text-sm md:text-base leading-relaxed font-sans font-medium">
+      <p className="text-text-secondary text-sm md:text-base leading-relaxed max-w-md">
         {bodyText}
       </p>
 
       {pills.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="flex flex-wrap gap-2 pt-1">
           {pills.map((pill, idx) => (
-            <motion.span
+            <span
               key={idx}
-              initial={{ opacity: 0, scale: 0.85 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 * idx, duration: 0.4 }}
-              className="text-[10px] font-bold px-3 py-1.5 bg-bg-subtle text-text-secondary rounded-full border border-border-default shadow-soft"
+              className="text-[10.5px] font-mono px-3 py-1.5 bg-bg-card text-text-secondary rounded-full border border-border-default"
             >
               {pill}
-            </motion.span>
+            </span>
           ))}
         </div>
       )}
@@ -118,28 +72,22 @@ function FeatureRow({
 
   const mockupPanel = (
     <motion.div
-      initial={{ opacity: 0, x: isLeftText ? 50 : -50, y: 20 }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="flex items-stretch justify-center w-full h-full"
     >
-      {noMockupWrapper ? (
-        <TiltCard className="w-full h-full">
-          <div className="shadow-medium rounded-[24px]">{children}</div>
-        </TiltCard>
-      ) : (
-        <TiltCard className="w-full bg-bg-subtle rounded-[24px] border border-border-default shadow-soft relative overflow-hidden flex items-center justify-center p-6 md:p-8 min-h-[360px] md:min-h-[420px]">
-          {children}
-        </TiltCard>
-      )}
+      <div className="w-full bg-bg-subtle rounded-card border border-border-default flex items-center justify-center p-6 md:p-8 min-h-[340px] md:min-h-[400px]">
+        {children}
+      </div>
     </motion.div>
   )
 
   return (
     <div className={cn(
-      'max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 feature-row items-center',
-      customPadding ? customPadding : 'py-[60px]'
+      'max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 feature-row items-center',
+      customPadding ? customPadding : 'py-[52px]'
     )}>
       {isLeftText ? (
         <>{textPanel}{mockupPanel}</>
@@ -152,67 +100,75 @@ function FeatureRow({
 
 export default function Features() {
   return (
-    <div className="bg-white">
+    <div className="bg-bg-base">
+      {/* Section intro */}
+      <div className="max-w-3xl mx-auto px-6 text-center pb-6">
+        <span className="inline-block font-mono text-[10.5px] uppercase tracking-wider text-text-muted border border-border-default px-3 py-1.5 rounded-full mb-5">
+          What you get
+        </span>
+        <h2 className="font-serif font-medium text-3xl md:text-[44px] text-text-primary tracking-tight leading-tight">
+          A quiet set of tools that do a lot.
+        </h2>
+      </div>
+
       {/* Row 1: Resume */}
       <FeatureRow
         badgeText="Resume Reviewer"
-        badgeColor="teal"
+        badgeColor="sage"
         heading="Get feedback that actually helps."
-        bodyText="Upload your resume and get structured, actionable feedback aligned with Indian startup and product company hiring standards. Know exactly what to fix and why."
+        bodyText="Upload your resume and get structured, actionable feedback aligned with Indian startup and product company hiring standards."
         isLeftText={true}
         pills={['ATS Score', 'Impact Language', 'Keyword Gaps']}
       >
-        <div className="w-full bg-white rounded-card border border-border-default p-6 shadow-medium space-y-4 max-w-sm">
+        <div className="w-full bg-bg-card rounded-card border border-border-default p-6 space-y-4 max-w-sm">
           <div className="flex items-center gap-4 border-b border-border-subtle pb-3">
             <div className="relative w-12 h-12 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90">
-                <circle cx="24" cy="24" r="20" stroke="#F1F5F9" strokeWidth="4" fill="none" />
-                <circle cx="24" cy="24" r="20" stroke="#0D9488" strokeWidth="4" fill="none" strokeDasharray={2*Math.PI*20} strokeDashoffset={2*Math.PI*20*0.22} />
+                <circle cx="24" cy="24" r="20" stroke="rgb(var(--c-border-default))" strokeWidth="4" fill="none" />
+                <circle cx="24" cy="24" r="20" stroke="rgb(var(--c-sage))" strokeWidth="4" fill="none" strokeDasharray={2 * Math.PI * 20} strokeDashoffset={2 * Math.PI * 20 * 0.22} strokeLinecap="round" />
               </svg>
-              <span className="absolute text-[11px] font-bold text-text-primary">78</span>
+              <span className="absolute text-[11px] font-medium text-text-primary">78</span>
             </div>
             <div>
-              <p className="text-xs font-bold text-text-primary">Resume Score Report</p>
-              <p className="text-[10px] text-text-muted font-sans font-medium">ATS Readability Check</p>
+              <p className="text-xs font-medium text-text-primary">Resume Score Report</p>
+              <p className="text-[10px] text-text-muted">ATS Readability Check</p>
             </div>
           </div>
 
-          <div className="space-y-2 text-[10px] font-sans font-semibold text-text-secondary">
+          <div className="space-y-2 text-[10px] font-medium text-text-secondary">
             <div className="flex justify-between">
               <span>ATS Compatibility</span>
-              <span className="text-teal">82%</span>
+              <span className="text-sage">82%</span>
             </div>
             <div className="w-full h-1.5 bg-bg-subtle rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-teal"
+                className="h-full bg-sage"
                 initial={{ width: 0 }}
                 whileInView={{ width: '82%' }}
                 viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.3 }}
+                transition={{ duration: 1, delay: 0.2 }}
               />
             </div>
             <div className="flex justify-between">
               <span>Quantified Achievements</span>
-              <span className="text-gold">65%</span>
+              <span className="text-butter">65%</span>
             </div>
             <div className="w-full h-1.5 bg-bg-subtle rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gold"
+                className="h-full bg-butter"
                 initial={{ width: 0 }}
                 whileInView={{ width: '65%' }}
                 viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.5 }}
+                transition={{ duration: 1, delay: 0.35 }}
               />
             </div>
           </div>
 
-          <div className="pt-2 border-t border-border-subtle space-y-1.5 font-sans">
-            <div className="p-2.5 bg-red-50 text-red-700 rounded text-[9px] flex gap-1.5 items-start leading-relaxed font-semibold">
-              <span>🔴</span>
+          <div className="pt-2 border-t border-border-subtle space-y-1.5">
+            <div className="p-2.5 bg-blush-light text-blush rounded text-[9px] flex gap-1.5 items-start leading-relaxed">
               <span>Missing metrics: add project percentages and margins.</span>
             </div>
-            <div className="p-2.5 bg-amber-50 text-amber-700 rounded text-[9px] flex gap-1.5 items-start leading-relaxed font-semibold">
-              <span>🟡</span>
+            <div className="p-2.5 bg-butter-light text-butter rounded text-[9px] flex gap-1.5 items-start leading-relaxed">
               <span>Weak verbs: replace &quot;worked on&quot; with &quot;architected&quot;.</span>
             </div>
           </div>
@@ -222,65 +178,67 @@ export default function Features() {
       {/* Row 2: DSA Roadmap */}
       <FeatureRow
         badgeText="DSA Roadmap"
-        badgeColor="indigo"
+        badgeColor="lavender"
         heading="Stop grinding. Start progressing."
-        bodyText="A structured, topic-by-topic DSA learning path with daily streaks, progress tracking, and weak-area identification. Know exactly where you are and what to do next."
+        bodyText="A structured, topic-by-topic DSA learning path with daily streaks, progress tracking, and weak-area identification."
         isLeftText={false}
-        pills={['🔥 14 Days Streak', '234 problems solved']}
-        customPadding="py-20"
-        noMockupWrapper={true}
+        pills={['14 Day Streak', '234 Problems Solved']}
+        customPadding="py-16"
       >
-        <div className="w-full h-full min-h-[480px] bg-[#F8F9FF] rounded-3xl p-8 relative overflow-hidden border border-border-default shadow-soft flex flex-col justify-between">
+        <div className="w-full h-full min-h-[400px] bg-bg-card rounded-card p-7 relative border border-border-default flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
-              <span className="font-heading font-700 text-lg text-[#0F172A] tracking-tight">DSA Roadmap</span>
-              <span className="text-[#0D9488] font-semibold text-sm">14 / 20 Complete</span>
+              <span className="font-serif text-lg text-text-primary tracking-tight">DSA Roadmap</span>
+              <span className="text-sage font-mono text-xs">14 / 20</span>
             </div>
-            <div className="w-full h-2 bg-[#E2E8F0] rounded-full mb-8">
+            <div className="w-full h-1.5 bg-bg-subtle rounded-full mb-8">
               <motion.div
-                className="h-2 bg-gradient-to-r from-[#0D9488] to-[#0EA5E9] rounded-full"
+                className="h-1.5 bg-lavender rounded-full"
                 initial={{ width: 0 }}
                 whileInView={{ width: '70%' }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: 'easeOut' }}
+                transition={{ duration: 1.1, ease: 'easeOut' }}
               />
             </div>
 
-            <div className="relative h-48 w-full mt-4 flex items-center justify-center">
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                <path d="M 40 50 Q 80 120, 110 130 T 180 60 T 250 140 T 320 50 T 380 90" fill="none" stroke="#E2E8F0" strokeWidth="4" />
-                <path d="M 40 50 Q 80 120, 110 130" fill="none" stroke="#0D9488" strokeWidth="4" />
-                <path d="M 110 130 Q 145 140, 180 60" fill="none" stroke="#F59E0B" strokeWidth="4" strokeDasharray="6,6" />
+            <div className="relative h-40 w-full mt-4 flex items-center justify-center">
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 160">
+                <path d="M 40 50 Q 80 120, 110 130 T 180 60 T 250 140 T 320 50 T 380 90" fill="none" stroke="rgb(var(--c-border-default))" strokeWidth="3" />
+                <path d="M 40 50 Q 80 120, 110 130" fill="none" stroke="rgb(var(--c-sage))" strokeWidth="3" />
               </svg>
 
-              {/* Nodes */}
               {[
-                { left: '5%',  top: '10%',   bg: 'bg-[#0D9488]',   text: '✓',  label: 'Arrays', opacity: '' },
-                { left: '22%', bottom: '10%', bg: 'bg-white',        text: '🔥', label: 'Linked Lists', opacity: '', pulse: true, border: 'border-[#F59E0B]' },
-                { left: '40%', top: '15%',   bg: 'bg-white',        lock: true, label: 'Stacks', opacity: 'opacity-60' },
-                { left: '58%', bottom: '15%', bg: 'bg-white',        lock: true, label: 'Trees',  opacity: 'opacity-60' },
-                { left: '75%', top: '10%',   bg: 'bg-white',        lock: true, label: 'Graphs', opacity: 'opacity-60' },
-                { right: '5%', top: '40%',   bg: 'bg-white',        lock: true, label: 'DP',     opacity: 'opacity-60' },
+                { left: '5%',  top: '10%',   state: 'done',  label: 'Arrays' },
+                { left: '22%', bottom: '10%', state: 'active', label: 'Linked Lists' },
+                { left: '40%', top: '15%',   state: 'locked', label: 'Stacks' },
+                { left: '58%', bottom: '15%', state: 'locked', label: 'Trees' },
+                { left: '75%', top: '10%',   state: 'locked', label: 'Graphs' },
+                { right: '5%', top: '40%',   state: 'locked', label: 'DP' },
               ].map((node, i) => (
                 <div
                   key={i}
-                  className={`absolute flex flex-col items-center ${node.opacity}`}
+                  className={cn('absolute flex flex-col items-center', node.state === 'locked' && 'opacity-50')}
                   style={{ left: node.left, right: (node as any).right, top: node.top, bottom: (node as any).bottom }}
                 >
-                  <div className={`relative w-8 h-8 rounded-full ${node.bg} flex items-center justify-center font-display font-extrabold ${node.lock ? 'border border-border-default text-text-muted shadow-soft' : `border-2 ${(node as any).border || 'border-white'} text-white shadow-soft`}`}>
-                    {(node as any).pulse && <span className="absolute inset-0 w-full h-full rounded-full bg-[#F59E0B]/20 animate-ping" />}
-                    {node.lock ? <Lock className="w-3.5 h-3.5" /> : node.text}
+                  <div className={cn(
+                    'relative w-7 h-7 rounded-full flex items-center justify-center text-[10px]',
+                    node.state === 'done' && 'bg-sage text-white',
+                    node.state === 'active' && 'bg-bg-card border-2 border-butter text-butter',
+                    node.state === 'locked' && 'bg-bg-card border border-border-default text-text-muted'
+                  )}>
+                    {node.state === 'done' && '✓'}
+                    {node.state === 'locked' && <Lock className="w-3 h-3" />}
                   </div>
-                  <span className="text-[9px] font-bold text-text-secondary mt-1">{node.label}</span>
+                  <span className="text-[8.5px] text-text-muted mt-1">{node.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2.5 mt-8 font-sans">
-            <span className="bg-[#E6FAF8] text-[#0D9488] text-xs font-semibold px-4 py-2 rounded-full border border-[#0D9488]/10 shadow-soft">🔥 14 Days Streak</span>
-            <span className="bg-[#EEF2FF] text-[#6366F1] text-xs font-semibold px-4 py-2 rounded-full border border-[#6366F1]/10 shadow-soft">234 Problems Solved</span>
-            <span className="bg-[#FEF3C7] text-[#D97706] text-xs font-semibold px-4 py-2 rounded-full border border-[#FBBF24]/10 shadow-soft">⚡ 3 Topics In Progress</span>
+          <div className="flex flex-wrap gap-2 mt-6">
+            <span className="bg-sage-light text-sage text-[10.5px] font-mono px-3.5 py-1.5 rounded-full border border-sage/15">14 Day Streak</span>
+            <span className="bg-lavender-light text-lavender text-[10.5px] font-mono px-3.5 py-1.5 rounded-full border border-lavender/15">234 Solved</span>
+            <span className="bg-butter-light text-butter text-[10.5px] font-mono px-3.5 py-1.5 rounded-full border border-butter/15">3 In Progress</span>
           </div>
         </div>
       </FeatureRow>
@@ -288,71 +246,30 @@ export default function Features() {
       {/* Row 3: Mock Interview */}
       <FeatureRow
         badgeText="Mock Interview"
-        badgeColor="purple"
+        badgeColor="lavender"
         heading="Practice like it's the real thing."
-        bodyText="AI-driven technical and HR interview rounds with detailed performance feedback. Personalised by your target company — startup, mid-size, or FAANG."
+        bodyText="AI-driven technical and HR interview rounds with detailed performance feedback, personalised by your target company."
         isLeftText={true}
         pills={['Simulated Webcam', 'Live Timer', 'Score Accordion']}
       >
-        <div className="relative w-full max-w-md h-[280px] flex items-center justify-center">
-          {/* Main Mockup Card */}
-          <div className="w-full max-w-sm bg-[#0D1321] text-white rounded-card p-6 border border-white/10 shadow-medium space-y-4 font-mono text-[10px] relative z-10">
-            <div className="flex justify-between items-center border-b border-white/5 pb-2 text-[8px] text-white/40">
-              <span>LIVE RECORDING SESSION • SDE Round</span>
-              <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-500 animate-pulse font-bold">LIVE</span>
+        <div className="w-full max-w-sm bg-ink text-bg-base rounded-card p-6 border border-border-default space-y-4 font-mono text-[10px]">
+          <div className="flex justify-between items-center border-b border-white/10 pb-2 text-[8px] text-white/40">
+            <span>RECORDING SESSION • SDE Round</span>
+            <span className="px-2 py-0.5 rounded bg-blush/20 text-blush">LIVE</span>
+          </div>
+          <div className="bg-white/5 p-4 rounded border border-white/10 space-y-1.5">
+            <span className="text-sage uppercase text-[7px]">Question 1 of 3</span>
+            <p className="text-white/85 text-xs leading-relaxed">
+              Explain the difference between a process and a thread. When would you use one over the other?
+            </p>
+          </div>
+          <div className="flex justify-between items-center pt-2">
+            <div className="flex gap-1 items-end h-5">
+              {[1, 2, 4, 3, 2, 1, 3, 5, 2, 1].map((v, i) => (
+                <div key={i} className="w-0.5 rounded bg-sage" style={{ height: `${v * 15}%`, opacity: 0.7 }} />
+              ))}
             </div>
-            
-            <div className="flex gap-4">
-              {/* Fake Webcam frame */}
-              <div className="w-20 h-24 bg-white/5 rounded border border-white/10 flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="w-8 h-8 rounded-full bg-teal/20 flex items-center justify-center animate-pulse text-teal">
-                  <span className="text-xl">🧑‍💻</span>
-                </div>
-                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-0.5">
-                   {[1,2,3,4,3,2].map((v,i) => <div key={i} className="w-0.5 bg-teal rounded-full animate-pulse" style={{height: `${v*4}px`}} />)}
-                </div>
-              </div>
-
-              <div className="flex-1 bg-white/5 p-4 rounded border border-white/10 space-y-1.5 flex flex-col justify-between">
-                <div>
-                  <span className="text-teal font-bold uppercase text-[7px]">Question 1 of 3</span>
-                  <p className="text-white/90 text-xs font-semibold leading-relaxed font-sans mt-1">
-                    Explain the difference between a process and a thread. When would you use one over the other?
-                  </p>
-                </div>
-                <div className="flex justify-end items-center mt-2">
-                  <span className="text-[10px] font-bold text-white/60 font-mono flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" />
-                    Timer: 12:45
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Floating AI Analytics Elements */}
-          <div className="absolute -left-4 top-4 bg-white border border-border-default rounded-card p-3 shadow-medium flex flex-col items-center z-20 space-y-1">
-             <span className="text-[7px] font-bold text-text-muted uppercase tracking-wider">Confidence Score</span>
-             <div className="relative w-10 h-10 flex items-center justify-center">
-                <svg className="w-full h-full -rotate-90">
-                  <circle cx="20" cy="20" r="16" stroke="#F1F5F9" strokeWidth="4" fill="none" />
-                  <circle cx="20" cy="20" r="16" stroke="#6366F1" strokeWidth="4" fill="none" strokeDasharray={2*Math.PI*16} strokeDashoffset={2*Math.PI*16*0.08} />
-                </svg>
-                <span className="absolute text-[10px] font-extrabold text-indigo">92%</span>
-             </div>
-          </div>
-
-          <div className="absolute -right-6 bottom-8 bg-white border border-border-default rounded-lg p-2 shadow-medium flex items-center gap-2 z-20">
-             <span className="w-5 h-5 rounded bg-green-100 text-green-600 flex items-center justify-center text-[10px]">👁️</span>
-             <div>
-                <p className="text-[9px] font-bold text-text-primary">Eye Contact</p>
-                <p className="text-[7px] text-text-muted font-semibold">Perfect alignment</p>
-             </div>
-          </div>
-
-          <div className="absolute left-6 -bottom-4 bg-[#0D9488] text-white rounded-lg p-2.5 shadow-medium flex items-center gap-2 z-20 border border-teal-600">
-             <span className="text-[10px] font-mono">Pace:</span>
-             <span className="text-[10px] font-bold">140 WPM (Good)</span>
+            <span className="text-xs text-white/50">12:45</span>
           </div>
         </div>
       </FeatureRow>
@@ -360,95 +277,58 @@ export default function Features() {
       {/* Row 4: Projects */}
       <FeatureRow
         badgeText="Project Ideas"
-        badgeColor="gold"
-        heading="Build projects recruiters can evaluate."
-        bodyText="Project Lab turns your skills, year, target role, and deadline into placement-ready project briefs with fit scores, resume bullets, validation plans, and interview defense points."
+        badgeColor="butter"
+        heading="Build projects that stand out."
+        bodyText="Get high-impact project ideas based on your skills and target companies — with tech stack and complexity level."
         isLeftText={false}
-        pills={['Fit Score', 'Resume Bullets', 'Validation Plan', 'Interview Defense']}
+        pills={['Tech Stack Chips', 'Complexity Badges', 'Standout Tips']}
       >
-        <div className="w-full max-w-md rounded-card border border-border-default bg-white p-5 shadow-medium font-sans">
-          <div className="flex items-center justify-between border-b border-border-subtle pb-3">
-            <div>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-gold">Project Lab Preview</p>
-              <h5 className="font-display text-base font-extrabold text-text-primary">AI Resume-to-Job Match Analyzer</h5>
+        <div className="relative w-full max-w-xs h-44 flex items-center justify-center">
+          <div className="absolute top-0 w-64 bg-bg-card border border-border-default rounded-card p-5 rotate-[-3deg] z-10 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[8px] px-2 py-0.5 rounded bg-butter-light text-butter border border-butter/15">ADVANCED</span>
+              <span className="text-[8px] text-text-muted">AI / ML</span>
             </div>
-            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl bg-teal-light text-teal">
-              <span className="text-lg font-black leading-none">91</span>
-              <span className="text-[8px] font-bold uppercase">Fit</span>
-            </div>
+            <h5 className="font-serif text-sm text-text-primary">Smart Attendance face recognition</h5>
+            <p className="text-[9px] text-text-secondary leading-normal">
+              Attendance system with liveness detection to prevent proxy uploads.
+            </p>
           </div>
-
-          <div className="grid grid-cols-3 gap-2 py-4">
-            {[
-              { label: 'Recruiter', value: '34/35', icon: Gauge },
-              { label: 'Depth', value: '27/30', icon: Code },
-              { label: 'Feasible', value: '14/15', icon: CheckCircle2 },
-            ].map((item) => (
-              <div key={item.label} className="rounded-btn border border-border-subtle bg-bg-base p-2.5">
-                <item.icon className="mb-1.5 h-3.5 w-3.5 text-teal" />
-                <p className="text-[9px] font-bold text-text-primary">{item.value}</p>
-                <p className="text-[8px] font-semibold text-text-muted">{item.label}</p>
-              </div>
-            ))}
+          <div className="absolute top-4 w-64 bg-bg-card border border-border-subtle rounded-card p-5 rotate-[2deg] opacity-70 space-y-2">
+            <h5 className="font-serif text-sm text-text-primary">AI Study Group Matcher</h5>
+            <p className="text-[9px] text-text-secondary">ML-powered matching by schedules.</p>
           </div>
-
-          <div className="space-y-2">
-            <div className="rounded-btn bg-gold-light p-3 text-[10px] font-semibold leading-relaxed text-amber-800">
-              <span className="font-bold">Why it stands out:</span> solves a real placement problem, uses resume parsing, scoring logic, and AI-assisted rewrite suggestions.
-            </div>
-            <div className="rounded-btn border border-border-subtle bg-bg-base p-3">
-              <div className="mb-2 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-text-muted">
-                <Lightbulb className="h-3.5 w-3.5 text-gold" />
-                Generated brief
-              </div>
-              {['MVP: upload resume, paste JD, skill gap report', 'Resume bullet: built an AI job-match analyzer', 'Validation: test with 20 student resumes'].map((line) => (
-                <div key={line} className="flex gap-2 py-1 text-[10px] font-medium leading-relaxed text-text-secondary">
-                  <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-teal" />
-                  <span>{line}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <a
-            href="/project-lab"
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-btn bg-teal px-4 py-3 text-xs font-bold text-white shadow-teal-glow transition-all hover:bg-teal-700"
-          >
-            <Sparkles className="h-4 w-4" />
-            Open Project Lab
-            <ArrowRight className="h-4 w-4" />
-          </a>
         </div>
       </FeatureRow>
 
       {/* Row 5: Teams */}
       <FeatureRow
         badgeText="Team Finder"
-        badgeColor="teal"
+        badgeColor="sage"
         heading="Find your perfect team."
-        bodyText="Match with complementary teammates for upcoming hackathons by skills, availability, and domain. No more going solo or scrambling last minute."
+        bodyText="Match with complementary teammates for upcoming hackathons by skills, availability, and domain."
         isLeftText={true}
         pills={['Classmate Directory', 'Invite Manager', 'Availability Dot']}
       >
-        <div className="w-full max-w-sm space-y-2.5 font-sans text-xs">
+        <div className="w-full max-w-sm space-y-2.5 text-xs">
           {[
-            { init: 'PS', bg: 'bg-teal', name: 'Priya Sharma', meta: 'VIT Vellore • Web Dev' },
-            { init: 'AM', bg: 'bg-indigo', name: 'Arjun Mehta', meta: 'BITS Pilani • AI/ML' },
+            { init: 'PS', bg: 'bg-sage', name: 'Priya Sharma', meta: 'VIT Vellore • Web Dev' },
+            { init: 'AM', bg: 'bg-lavender', name: 'Arjun Mehta', meta: 'BITS Pilani • AI/ML' },
           ].map((m, i) => (
-            <div key={i} className="p-3 bg-white border border-border-default rounded-card shadow-soft flex items-center justify-between">
+            <div key={i} className="p-3 bg-bg-card border border-border-default rounded-card flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className={`w-7 h-7 rounded-full ${m.bg} text-white flex items-center justify-center font-display font-bold text-[10px]`}>
+                <div className={`w-7 h-7 rounded-full ${m.bg} text-white flex items-center justify-center font-serif text-[10px]`}>
                   {m.init}
                 </div>
                 <div>
-                  <p className="font-bold text-text-primary flex items-center gap-1.5">
+                  <p className="font-medium text-text-primary flex items-center gap-1.5">
                     <span>{m.name}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-sage" />
                   </p>
-                  <p className="text-[8px] text-text-muted font-medium">{m.meta}</p>
+                  <p className="text-[8px] text-text-muted">{m.meta}</p>
                 </div>
               </div>
-              <button className="px-3.5 py-1.5 bg-teal text-white text-[9px] font-bold rounded-full shadow-soft hover:shadow-medium transition-all">Invite</button>
+              <button className="px-3.5 py-1.5 bg-bg-subtle text-text-primary text-[9px] font-mono rounded-full border border-border-default">Invite</button>
             </div>
           ))}
         </div>
@@ -457,20 +337,20 @@ export default function Features() {
       {/* Row 6: Opportunities */}
       <FeatureRow
         badgeText="Opportunity Tracker"
-        badgeColor="indigo"
+        badgeColor="lavender"
         heading="Never miss a deadline again."
-        bodyText="One unified calendar for internships, hackathons, fellowships, and off-campus opportunities. Smart reminders 7, 3, and 1 day before each deadline."
+        bodyText="One unified calendar for internships, hackathons, fellowships, and off-campus opportunities."
         isLeftText={false}
         pills={['Calendar Grid', 'Reminders Toggle', 'Countdown Badges']}
       >
-        <div className="w-full bg-white rounded-card border border-border-default p-5 shadow-medium max-w-sm space-y-3 font-sans">
-          <div className="flex justify-between items-center text-[10px] font-bold text-text-primary border-b border-border-subtle pb-2">
+        <div className="w-full bg-bg-card rounded-card border border-border-default p-5 max-w-sm space-y-3">
+          <div className="flex justify-between items-center text-[10px] font-medium text-text-primary border-b border-border-subtle pb-2">
             <span>July 2026 Deadlines</span>
-            <span className="text-indigo">6 Deadlines</span>
+            <span className="text-lavender">6 Deadlines</span>
           </div>
           <div className="grid grid-cols-7 gap-1 text-[8px] text-center text-text-secondary">
             {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-              <span key={i} className="font-bold text-text-muted">{d}</span>
+              <span key={i} className="font-medium text-text-muted">{d}</span>
             ))}
             {Array.from({ length: 14 }).map((_, idx) => {
               const day = idx + 20
@@ -480,11 +360,11 @@ export default function Features() {
                   key={idx}
                   className={cn(
                     'h-8 flex flex-col items-center justify-between p-1 rounded border border-transparent',
-                    hasDeadline && 'bg-indigo-light border-indigo/10'
+                    hasDeadline && 'bg-lavender-light border-lavender/15'
                   )}
                 >
-                  <span className={cn('font-bold', hasDeadline && 'text-indigo')}>{day}</span>
-                  {hasDeadline && <span className="w-1.5 h-1.5 rounded-full bg-indigo" />}
+                  <span className={cn(hasDeadline && 'text-lavender font-medium')}>{day}</span>
+                  {hasDeadline && <span className="w-1.5 h-1.5 rounded-full bg-lavender" />}
                 </div>
               )
             })}

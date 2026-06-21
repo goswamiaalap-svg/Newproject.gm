@@ -1,192 +1,181 @@
 'use client'
 
-import { Suspense } from 'react'
-import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Copy, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react'
+import { useState } from 'react'
 
-// Dynamically import heavy Three.js scene — no SSR
-const HeroScene = dynamic(() => import('@/components/three/HeroScene'), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0 z-0 bg-[#06070A]" />,
-})
-
-/* ── Word-by-word animated headline ── */
-function AnimatedHeadline({ text, className, style }: { text: string; className?: string; style?: React.CSSProperties }) {
-  const words = text.split(' ')
+function AnimatedHeadline({ words }: { words: { text: string; className?: string }[] }) {
   return (
-    <span className={className} style={{ display: 'block', ...style }}>
+    <>
       {words.map((word, i) => (
         <motion.span
           key={i}
-          className="inline-block mr-[0.3em]"
-          initial={{ opacity: 0, y: 40, rotateX: -20 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{
-            duration: 0.65,
-            delay: 0.4 + i * 0.1,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          style={{ transformOrigin: 'bottom center' }}
+          className={`inline-block mr-[0.28em] ${word.className ?? ''}`}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.12 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
         >
-          {word}
+          {word.text}
         </motion.span>
       ))}
-    </span>
+    </>
   )
 }
 
+function Sparkline({ color, points }: { color: string; points: string }) {
+  return (
+    <svg viewBox="0 0 100 28" preserveAspectRatio="none" className="w-full h-7">
+      <polyline points={points} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity={0.8} />
+    </svg>
+  )
+}
+
+const metrics = [
+  { label: 'Resumes scored this week', value: '+38%', trend: 'up' as const },
+  { label: 'Avg. interview prep time', value: '-52%', trend: 'down' as const },
+  { label: 'DSA streak completion', value: '+21%', trend: 'up' as const },
+  { label: 'Project match quality', value: '+8%', trend: 'up' as const },
+]
+
 export default function Hero() {
-  const avatars = [
-    { text: 'PS', bg: 'bg-teal' },
-    { text: 'AM', bg: 'bg-indigo' },
-    { text: 'SR', bg: 'bg-gold' },
-    { text: 'RK', bg: 'bg-teal-600' },
-    { text: 'KN', bg: 'bg-indigo-600' },
-  ]
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText('npx launchpad-cli init')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   return (
-    <section
-      id="hero"
-      className="relative w-full flex items-center justify-center overflow-hidden bg-[#06070A]"
-      style={{ minHeight: '100vh' }}
-    >
-      {/* ── 3D WebGL background canvas (z-0) ── */}
-      <Suspense fallback={<div className="absolute inset-0 z-0 bg-[#06070A]" />}>
-        <HeroScene />
-      </Suspense>
+    <section id="hero" className="hero-section relative w-full dot-bg overflow-hidden">
+      {/* very soft pastel wash, barely visible, theme aware via low opacity */}
+      <div className="pointer-events-none absolute -top-32 -left-24 w-[420px] h-[420px] rounded-full bg-lavender/10 blur-[100px]" />
+      <div className="pointer-events-none absolute top-1/3 -right-24 w-[380px] h-[380px] rounded-full bg-sage/10 blur-[100px]" />
 
-      {/* ── Dark radial vignette overlay (z-10) ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          zIndex: 10,
-          background:
-            'radial-gradient(ellipse 75% 65% at 50% 50%, transparent 20%, rgba(6,7,10,0.65) 100%)',
-        }}
-      />
-
-      {/* ── Content (z-20) — everything visible above the canvas ── */}
-      <div
-        className="relative w-full max-w-5xl mx-auto px-6 flex flex-col items-center text-center"
-        style={{ zIndex: 20, paddingTop: '5rem', paddingBottom: '6rem' }}
-      >
-
-        {/* Badge pill */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md text-white/90 text-xs font-bold border border-white/15 shadow-lg mb-8"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
-          AI-Powered Career Platform for Engineers
-        </motion.div>
-
-        {/* Headline */}
-        <h1
-          className="font-display font-extrabold text-5xl md:text-7xl lg:text-[80px] leading-[1.05] tracking-tight mb-6"
-          style={{ perspective: '600px' }}
-        >
-          <AnimatedHeadline text="Your Career Platform." className="text-white" />
-          <AnimatedHeadline
-            text="Built for Every Engineer."
-            className="text-transparent"
-            style={{
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              backgroundImage: 'linear-gradient(135deg, #0D9488 0%, #5EEAD4 50%, #F59E0B 100%)',
-            } as React.CSSProperties}
-          />
-        </h1>
-
-        {/* Subtext */}
+      <div className="relative max-w-7xl mx-auto px-6 md:px-8 pt-32 md:pt-36 pb-20 md:pb-24">
         <motion.p
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.0 }}
-          className="text-white/55 text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed font-sans"
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="hidden lg:block absolute top-0 right-8 font-serif italic text-text-muted text-sm"
         >
-          Resume reviews, DSA roadmaps, mock interviews, team-finding — everything you need from campus to career.
+          quietly, from your dashboard
         </motion.p>
 
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.15 }}
-          className="flex flex-col sm:flex-row items-center gap-4 mb-10"
-        >
-          <Link
-            href="/sign-up"
-            className="group relative inline-flex items-center gap-2 px-10 py-4 rounded-full font-display font-bold text-sm bg-white text-[#06070A] shadow-[0_0_30px_rgba(13,148,136,0.45)] hover:bg-teal hover:text-white hover:shadow-[0_0_50px_rgba(13,148,136,0.75)] transition-all duration-300 overflow-hidden"
-          >
-            <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12 pointer-events-none" />
-            Get Started Free →
-          </Link>
-          <Link
-            href="#features"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-display font-bold text-sm text-white/65 border border-white/15 hover:border-teal/50 hover:text-teal transition-all duration-300"
-          >
-            See Features
-          </Link>
-        </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
+          {/* Left column */}
+          <div className="lg:col-span-7">
+            <h1 className="font-serif font-medium text-[40px] sm:text-5xl md:text-[64px] leading-[1.12] tracking-tight text-text-primary mb-6">
+              <span className="block">
+                <AnimatedHeadline words={[{ text: 'Built' }, { text: 'for' }, { text: 'calm,' }]} />
+              </span>
+              <span className="block">
+                <AnimatedHeadline words={[{ text: 'high' }, { text: 'performing' }]} />
+              </span>
+              <span className="block">
+                <AnimatedHeadline words={[
+                  { text: 'AI', className: 'italic text-lavender' },
+                  { text: 'native', className: 'italic text-lavender' },
+                  { text: 'students.' },
+                ]} />
+              </span>
+            </h1>
 
-        {/* Social proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.3 }}
-          className="flex flex-col sm:flex-row items-center gap-3"
-        >
-          <div className="flex -space-x-2.5">
-            {avatars.map((av, idx) => (
-              <div
-                key={idx}
-                className={`w-8 h-8 rounded-full border-2 border-[#06070A] ${av.bg} text-white flex items-center justify-center font-display font-bold text-[10px]`}
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="text-text-secondary text-base md:text-lg max-w-md leading-relaxed mb-9"
+            >
+              LaunchPad gives engineering students the visibility and tooling to make the most out of their placement prep — without the noise.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.62 }}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+            >
+              <button
+                onClick={handleCopy}
+                className="group flex items-center justify-between gap-4 px-5 py-3 bg-bg-card border border-border-default text-text-primary rounded-btn font-mono text-sm w-full sm:w-auto"
               >
-                {av.text}
-              </div>
-            ))}
+                <span className="flex items-center gap-2">
+                  <span className="text-sage">$</span>
+                  npx launchpad-cli init
+                </span>
+                <span className="flex items-center justify-center w-6 h-6 rounded-md border border-border-default group-hover:bg-bg-subtle transition-colors">
+                  {copied ? <span className="text-[10px]">✓</span> : <Copy className="w-3.5 h-3.5" />}
+                </span>
+              </button>
+
+              <Link
+                href="/sign-up"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-text-primary text-bg-base rounded-btn font-medium text-sm hover:opacity-85 transition-opacity duration-200"
+              >
+                Get started <ArrowRight className="w-4 h-4" />
+              </Link>
+            </motion.div>
           </div>
-          <p className="text-white/45 text-xs font-medium font-sans">
-            <span className="text-white font-bold">4.8 ★</span>&nbsp; Trusted by 200+ students at JKLU and growing
-          </p>
-        </motion.div>
-      </div>
 
-      {/* ── Scroll indicator (z-20) ── */}
-      <motion.div
-        className="absolute left-1/2 -translate-x-1/2 bottom-8 flex flex-col items-center gap-2"
-        style={{ zIndex: 20 }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 0.6 }}
-      >
-        <span className="text-white/25 text-[10px] font-bold uppercase tracking-widest font-sans">Scroll</span>
-        <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5">
+          {/* Right column: minimal pastel dashboard card */}
           <motion.div
-            className="w-1 h-2 rounded-full bg-teal"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-          />
-        </div>
-      </motion.div>
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-5 lg:mt-2"
+          >
+            <div className="rounded-2xl border border-border-default bg-bg-card shadow-soft overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-border-subtle">
+                <div className="flex items-center gap-2 font-mono text-[10.5px] text-text-secondary uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sage" />
+                  Career Progress
+                </div>
+                <span className="font-mono text-[10.5px] text-text-muted uppercase tracking-wider">This Week</span>
+              </div>
 
-      {/* ── Wave divider to white section (z-20) ── */}
-      <div
-        className="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none"
-        style={{ zIndex: 20 }}
-      >
-        <svg
-          viewBox="0 0 1440 80"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          className="w-full translate-y-[2px]"
-          fill="#ffffff"
-        >
-          <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" />
-        </svg>
+              <div className="m-4 rounded-xl bg-lavender-light px-5 py-5">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-mono text-[10.5px] text-text-secondary uppercase tracking-wider">Tasks / Week</span>
+                  <span className="font-mono text-[10.5px] text-sage">+38%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-serif text-4xl text-text-primary">13</span>
+                  <div className="w-28">
+                    <Sparkline color="rgb(var(--c-lavender))" points="0,18 14,16 28,20 42,10 56,14 70,4 84,8 100,2" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-5">
+                {metrics.map((m, idx) => (
+                  <div key={idx} className={`flex items-center justify-between py-3 ${idx !== metrics.length - 1 ? 'border-b border-dashed border-border-subtle' : ''}`}>
+                    <span className="text-sm text-text-secondary">{m.label}</span>
+                    <span className={`flex items-center gap-1 font-mono text-xs font-medium ${m.trend === 'up' ? 'text-sage' : 'text-blush'}`}>
+                      {m.trend === 'up' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                      {m.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 border-t border-border-subtle">
+                {[
+                  { label: 'Prep Freq', value: '4x/wk', bg: 'bg-sage-light', color: 'rgb(var(--c-sage))' },
+                  { label: 'Streak', value: '14 days', bg: 'bg-sky-light', color: 'rgb(var(--c-sky))' },
+                  { label: 'Readiness', value: '94%', bg: 'bg-butter-light', color: 'rgb(var(--c-butter))' },
+                ].map((s, idx) => (
+                  <div key={idx} className={`px-4 py-4 ${idx !== 0 ? 'border-l border-border-subtle' : ''}`}>
+                    <p className="font-mono text-[9.5px] text-text-muted uppercase tracking-wider mb-1.5">{s.label}</p>
+                    <p className="font-serif text-lg text-text-primary mb-2">{s.value}</p>
+                    <Sparkline color={s.color} points="0,20 16,18 32,22 48,12 64,16 80,6 100,10" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )
