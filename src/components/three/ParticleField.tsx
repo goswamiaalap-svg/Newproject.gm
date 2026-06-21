@@ -75,7 +75,7 @@ function Particles({
     }
   }, [mouseParallax, handleMouseMove])
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!pointsRef.current) return
     const positions = pointsRef.current.geometry.attributes.position
       .array as Float32Array
