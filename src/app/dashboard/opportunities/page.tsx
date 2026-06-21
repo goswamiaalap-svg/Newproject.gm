@@ -13,7 +13,7 @@ import {
   List,
   ShieldAlert,
 } from 'lucide-react'
-import { toast } from 'sonner'
+import { Toaster, toast } from 'sonner'
 import { applyToOpportunity, getOpportunities, toggleReminder } from '@/services/opportunityService'
 import { cn } from '@/lib/utils'
 import type { Opportunity, OpportunityType } from '@/types/opportunity'
@@ -206,9 +206,6 @@ export default function OpportunitiesPage() {
     }
   }
 
-  console.log("FILTER TYPE:", filterType)
-  console.log("OPPORTUNITIES:", opportunities.length)
-
   const filteredOpps = opportunities
 
   const renderLoadingState = () => (
@@ -251,6 +248,7 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-right" richColors />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-extrabold text-text-primary">Opportunity Tracker</h1>
@@ -409,6 +407,8 @@ export default function OpportunitiesPage() {
                       <div className="flex items-center gap-1.5">
                         <a
                           href={opp.applyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="px-4 py-2.5 rounded-btn text-xs font-bold border transition-colors flex items-center gap-1 bg-white border-border-default text-text-secondary hover:text-text-primary"
                         >
                           Apply Now
