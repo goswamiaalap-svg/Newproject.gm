@@ -50,13 +50,7 @@ export default function FinalCTA() {
             href="/sign-up"
             className="flex items-center gap-2 px-7 h-11 bg-text-primary text-bg-base font-medium text-sm rounded-full hover:opacity-85 transition-opacity duration-200"
           >
-            Get started — it&apos;s free <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            href="/sign-in"
-            className="text-text-secondary hover:text-text-primary text-sm transition-colors"
-          >
-            Already have an account? Sign in →
+            Get Started Free <ArrowRight className="w-4 h-4" />
           </Link>
         </motion.div>
       </div>
