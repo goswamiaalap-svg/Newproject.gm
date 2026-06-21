@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { FileText, Flame, Code, Calendar, Users, Briefcase, Lock } from 'lucide-react'
+import { FileText, Flame, Code, Calendar, Users, Briefcase, Lock, ArrowRight, CheckCircle2, Gauge, Lightbulb, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface FeatureRowProps {
@@ -361,26 +361,63 @@ export default function Features() {
       <FeatureRow
         badgeText="Project Ideas"
         badgeColor="gold"
-        heading="Build projects that stand out."
-        bodyText="Get high-impact project ideas based on your skills and target companies — with tech stack, complexity level, and exactly why it'll stand out in your resume."
+        heading="Build projects recruiters can evaluate."
+        bodyText="Project Lab turns your skills, year, target role, and deadline into placement-ready project briefs with fit scores, resume bullets, validation plans, and interview defense points."
         isLeftText={false}
-        pills={['Tech Stack Chips', 'Complexity Badges', 'Standout Tips']}
+        pills={['Fit Score', 'Resume Bullets', 'Validation Plan', 'Interview Defense']}
       >
-        <div className="relative w-full max-w-xs h-48 flex items-center justify-center font-sans">
-          <div className="absolute top-0 w-64 bg-white border border-border-default rounded-card p-5 shadow-medium rotate-[-4deg] z-10 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-[8px] font-bold px-2 py-0.5 rounded bg-gold-light text-gold border border-gold/10">ADVANCED</span>
-              <span className="text-[8px] text-text-muted font-semibold">AI / ML</span>
+        <div className="w-full max-w-md rounded-card border border-border-default bg-white p-5 shadow-medium font-sans">
+          <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-wider text-gold">Project Lab Preview</p>
+              <h5 className="font-display text-base font-extrabold text-text-primary">AI Resume-to-Job Match Analyzer</h5>
             </div>
-            <h5 className="font-display font-bold text-xs text-text-primary">Smart Attendance face recognition</h5>
-            <p className="text-[9px] text-text-secondary leading-normal font-medium">
-              Attendance management system with liveness detection to prevent proxy uploads.
-            </p>
+            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl bg-teal-light text-teal">
+              <span className="text-lg font-black leading-none">91</span>
+              <span className="text-[8px] font-bold uppercase">Fit</span>
+            </div>
           </div>
-          <div className="absolute top-4 w-64 bg-white border border-border-subtle rounded-card p-5 shadow-soft rotate-[2deg] opacity-75 space-y-2">
-            <h5 className="font-display font-bold text-xs text-text-primary">AI Study Group Matcher</h5>
-            <p className="text-[9px] text-text-secondary font-medium">ML-powered matching partners based on schedules.</p>
+
+          <div className="grid grid-cols-3 gap-2 py-4">
+            {[
+              { label: 'Recruiter', value: '34/35', icon: Gauge },
+              { label: 'Depth', value: '27/30', icon: Code },
+              { label: 'Feasible', value: '14/15', icon: CheckCircle2 },
+            ].map((item) => (
+              <div key={item.label} className="rounded-btn border border-border-subtle bg-bg-base p-2.5">
+                <item.icon className="mb-1.5 h-3.5 w-3.5 text-teal" />
+                <p className="text-[9px] font-bold text-text-primary">{item.value}</p>
+                <p className="text-[8px] font-semibold text-text-muted">{item.label}</p>
+              </div>
+            ))}
           </div>
+
+          <div className="space-y-2">
+            <div className="rounded-btn bg-gold-light p-3 text-[10px] font-semibold leading-relaxed text-amber-800">
+              <span className="font-bold">Why it stands out:</span> solves a real placement problem, uses resume parsing, scoring logic, and AI-assisted rewrite suggestions.
+            </div>
+            <div className="rounded-btn border border-border-subtle bg-bg-base p-3">
+              <div className="mb-2 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-text-muted">
+                <Lightbulb className="h-3.5 w-3.5 text-gold" />
+                Generated brief
+              </div>
+              {['MVP: upload resume, paste JD, skill gap report', 'Resume bullet: built an AI job-match analyzer', 'Validation: test with 20 student resumes'].map((line) => (
+                <div key={line} className="flex gap-2 py-1 text-[10px] font-medium leading-relaxed text-text-secondary">
+                  <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-teal" />
+                  <span>{line}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <a
+            href="/project-lab"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-btn bg-teal px-4 py-3 text-xs font-bold text-white shadow-teal-glow transition-all hover:bg-teal-700"
+          >
+            <Sparkles className="h-4 w-4" />
+            Open Project Lab
+            <ArrowRight className="h-4 w-4" />
+          </a>
         </div>
       </FeatureRow>
 
