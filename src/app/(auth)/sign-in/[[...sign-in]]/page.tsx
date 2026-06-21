@@ -55,8 +55,6 @@ export default function SignInPage() {
             socialButtonsPlacement: 'bottom',
           },
         }}
-        routing="path"
-        path="/sign-in"
         signUpUrl="/sign-up"
         forceRedirectUrl="/dashboard"
       />
