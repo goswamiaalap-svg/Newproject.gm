@@ -97,7 +97,7 @@ export default function RoadmapPage() {
       setIsGenerating(false)
     }
   }
-
+  
   // Calculate progress
   const totalTasks = roadmapData ? roadmapData.weeks.reduce((acc, week) => acc + week.items.length, 0) : 0
   const completedTasks = roadmapData ? roadmapData.weeks.reduce(
