@@ -109,10 +109,32 @@ export async function POST(req: Request) {
 
   try {
     if (fileExtension === 'pdf') {
-      // Dynamically import pdf-parse (ESM / CJS wrapper)
-      const pdf = (await import('pdf-parse')).default
-      const pdfData = await pdf(fileBuffer)
-      extractedText = pdfData.text
+      // Use pdfjs-dist directly for reliable text extraction on Vercel serverless.
+      // The installed pdf-parse v2 uses pdfjs-dist internally, so it's already available.
+      const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs')
+
+      const uint8Array = new Uint8Array(fileBuffer)
+      const loadingTask = pdfjs.getDocument({
+        data: uint8Array,
+        useSystemFonts: true,
+        verbosity: 0, // Suppress warnings
+      })
+
+      const doc = await loadingTask.promise
+      const textParts: string[] = []
+
+      for (let i = 1; i <= doc.numPages; i++) {
+        const page = await doc.getPage(i)
+        const textContent = await page.getTextContent()
+        const pageText = textContent.items
+          .filter((item: Record<string, unknown>) => 'str' in item)
+          .map((item: Record<string, unknown>) => item.str as string)
+          .join(' ')
+        textParts.push(pageText)
+      }
+
+      extractedText = textParts.join('\n')
+      await doc.destroy()
     } else if (fileExtension === 'docx') {
       // Dynamically import mammoth (CommonJS module)
       const mammoth = await import('mammoth')
