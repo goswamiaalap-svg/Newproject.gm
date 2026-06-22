@@ -21,6 +21,8 @@ export default function SignUpPage() {
       </div>
 
       <SignUp
+        routing="path"
+        path="/sign-up"
         appearance={{
           elements: {
             // Outer card — match existing card style

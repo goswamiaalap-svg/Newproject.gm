@@ -17,6 +17,7 @@ import { auth } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/mongoose'
 import Resume from '@/lib/models/Resume'
 import { getSupabaseAdmin, RESUMES_BUCKET } from '@/lib/supabase'
+import { getPusherServer, getResumeChannel, RESUME_EVENTS } from '@/lib/pusher'
 import { createRequire } from 'module'
 
 export const dynamic = 'force-dynamic'
@@ -96,6 +97,14 @@ export async function POST(req: Request) {
         // Ignore error if bucket already exists
       }
 
+      // Emit upload started event
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.UPLOAD_STARTED, { fileName: file.name })
+      } catch (e) {
+        console.error('[Pusher] Failed to emit UPLOAD_STARTED:', e)
+      }
+
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from(RESUMES_BUCKET)
         .upload(storagePath, fileBuffer, {
@@ -125,6 +134,14 @@ export async function POST(req: Request) {
       }
 
       fileUrl = urlData.publicUrl
+
+      // Emit upload complete event
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.UPLOAD_COMPLETE, { fileUrl })
+      } catch (e) {
+        console.error('[Pusher] Failed to emit UPLOAD_COMPLETE:', e)
+      }
     } catch (supabaseError: any) {
       console.error('[Resume Upload] Supabase operation failed:', supabaseError)
       return NextResponse.json(
@@ -161,6 +178,14 @@ export async function POST(req: Request) {
         { error: 'Your resume appears to be empty or contains only images. Please upload a text-based PDF or DOCX.' },
         { status: 422 }
       )
+    }
+
+    // Emit text extracted event
+    try {
+      const pusher = getPusherServer()
+      await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.TEXT_EXTRACTED, {})
+    } catch (e) {
+      console.error('[Pusher] Failed to emit TEXT_EXTRACTED:', e)
     }
 
     // ---- 7. Save Resume document to MongoDB ----

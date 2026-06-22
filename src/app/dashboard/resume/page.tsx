@@ -23,6 +23,9 @@ import {
   Sparkles,
   AlertCircle,
 } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
+import { getPusherClient } from '@/lib/pusher-client'
+import { getResumeChannel, RESUME_EVENTS } from '@/lib/pusher-shared'
 
 // ---- Types ----
 interface Weakness {
@@ -98,6 +101,50 @@ export default function ResumePage() {
   const [resumeData, setResumeData] = useState<ResumeData | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
   const [isDragOver, setIsDragOver] = useState(false)
+  const { user } = useUser()
+
+  // ---- Pusher Subscription ----
+  useEffect(() => {
+    if (!user) return
+
+    const pusher = getPusherClient()
+    const channelName = getResumeChannel(user.id)
+    const channel = pusher.subscribe(channelName)
+
+    channel.bind(RESUME_EVENTS.UPLOAD_STARTED, (data: any) => {
+      setLoadingMessage(`Uploading ${data.fileName || 'file'}...`)
+      setProgress(10)
+    })
+
+    channel.bind(RESUME_EVENTS.UPLOAD_COMPLETE, () => {
+      setLoadingMessage('Extracting text...')
+      setProgress(30)
+    })
+
+    channel.bind(RESUME_EVENTS.TEXT_EXTRACTED, () => {
+      setLoadingMessage('Initializing AI analysis...')
+      setProgress(40)
+    })
+
+    channel.bind(RESUME_EVENTS.AI_STARTED, () => {
+      setLoadingMessage('AI is reviewing your resume...')
+      setProgress(60)
+    })
+
+    channel.bind(RESUME_EVENTS.AI_COMPLETE, (data: any) => {
+      setProgress(100)
+    })
+
+    channel.bind(RESUME_EVENTS.ERROR, (data: any) => {
+      setErrorMessage(data.message || 'An error occurred during analysis.')
+      setStep('error')
+    })
+
+    return () => {
+      channel.unbind_all()
+      pusher.unsubscribe(channelName)
+    }
+  }, [user])
 
   // ---- On page load: fetch existing resume result ----
   useEffect(() => {
@@ -122,34 +169,7 @@ export default function ResumePage() {
     fetchExistingResume()
   }, [])
 
-  // ---- Cycling progress bar animation during review ----
-  useEffect(() => {
-    if (step !== 'reviewing') return
-
-    setProgress(0)
-    let msgIdx = 0
-
-    // Slowly advance the bar up to ~90% — the final 10% jumps to 100 when Claude responds
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(progressInterval)
-          return 90
-        }
-        return prev + 2
-      })
-    }, 400)
-
-    const messageInterval = setInterval(() => {
-      msgIdx = (msgIdx + 1) % LOADING_MESSAGES.length
-      setLoadingMessage(LOADING_MESSAGES[msgIdx])
-    }, 1200)
-
-    return () => {
-      clearInterval(progressInterval)
-      clearInterval(messageInterval)
-    }
-  }, [step])
+  // ---- Animated progress bar fallback (removed, using real Pusher events) ----
 
   // ---- Upload handler: called for both click-to-select and drag-and-drop ----
   const handleFileUpload = useCallback(async (file: File) => {
@@ -233,8 +253,7 @@ export default function ResumePage() {
         throw new Error(errorMsg || 'AI analysis failed')
       }
 
-      // Complete the progress bar
-      setProgress(100)
+      // Pusher AI_COMPLETE event sets progress to 100, but we can do it here too just in case
 
       // Short delay before showing results for visual polish
       setTimeout(() => {

@@ -21,6 +21,7 @@ import { auth } from '@clerk/nextjs/server'
 // import Anthropic from '@anthropic-ai/sdk'
 import { connectToDatabase } from '@/lib/mongoose'
 import Resume from '@/lib/models/Resume'
+import { getPusherServer, getResumeChannel, RESUME_EVENTS } from '@/lib/pusher'
 
 export const dynamic = 'force-dynamic'
 
@@ -109,6 +110,14 @@ export async function POST(req: Request) {
         throw new Error('Groq API key is not configured. Set GROQ_API_KEY in Vercel settings.')
       }
 
+      // Emit AI started event
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.AI_STARTED, {})
+      } catch (e) {
+        console.error('[Pusher] Failed to emit AI_STARTED:', e)
+      }
+
       console.log(`[Resume Review] Calling Groq API with model: llama-3.3-70b-versatile...`)
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -157,6 +166,11 @@ export async function POST(req: Request) {
         console.error('[Resume Review] MongoDB update error after Groq failure:', dbError)
       }
 
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.ERROR, { message: 'AI analysis failed.' })
+      } catch (e) {}
+
       return NextResponse.json(
         { error: `AI analysis failed: ${groqError.message || 'Groq service exception'}` },
         { status: 502 }
@@ -198,6 +212,11 @@ export async function POST(req: Request) {
         console.error('[Resume Review] MongoDB update error after parse failure:', dbError)
       }
 
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.ERROR, { message: 'Failed to process AI response.' })
+      } catch (e) {}
+
       return NextResponse.json(
         { error: `Failed to process AI response: ${parseError.message || 'Invalid JSON format'}` },
         { status: 500 }
@@ -214,6 +233,13 @@ export async function POST(req: Request) {
         },
         { new: true }
       )
+
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.AI_COMPLETE, { reviewResult })
+      } catch (e) {
+        console.error('[Pusher] Failed to emit AI_COMPLETE:', e)
+      }
 
       return NextResponse.json({
         resumeId,

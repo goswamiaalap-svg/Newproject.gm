@@ -21,6 +21,8 @@ export default function SignInPage() {
       </div>
 
       <SignIn
+        routing="path"
+        path="/sign-in"
         appearance={{
           elements: {
             // Outer card — match the dark bg-base card style
