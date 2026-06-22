@@ -60,7 +60,7 @@ export default function ImportantFeatures() {
   }
 
   return (
-    <section className="py-24 bg-transparent relative overflow-hidden">
+    <section className="py-24 bg-[#FAFAFA] relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-border-default to-transparent" />
       <div className="absolute -top-40 -right-40 w-96 h-96 bg-teal/5 rounded-full blur-[100px] pointer-events-none" />
@@ -72,7 +72,7 @@ export default function ImportantFeatures() {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border bg-surface-card border-border-default shadow-soft text-text-secondary inline-block mb-4"
+            className="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border bg-white border-border-default shadow-soft text-text-secondary inline-block mb-4"
           >
             Why Choose Us
           </motion.span>
@@ -107,7 +107,7 @@ export default function ImportantFeatures() {
               className="group"
             >
               <div className={cn(
-                "relative h-full glass rounded-3xl p-8 border border-border-default shadow-soft transition-all duration-300 hover:shadow-medium overflow-hidden",
+                "relative h-full bg-white rounded-3xl p-8 border border-border-default shadow-soft transition-all duration-300 hover:shadow-medium overflow-hidden",
                 borderClasses[feat.color]
               )}>
                 {/* Hover gradient background */}

@@ -1,78 +1,43 @@
 'use client'
 
-import React, { useEffect, useState, useRef } from 'react'
-import { motion, useInView, useAnimation, useIsPresent } from 'framer-motion'
-
-function Counter({ from, to, duration = 2, suffix = '' }: { from: number, to: number, duration?: number, suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true, margin: "-50px" })
-  const [value, setValue] = useState(from)
-
-  useEffect(() => {
-    if (inView) {
-      let startTime: number
-      let animationFrame: number
-
-      const animate = (time: number) => {
-        if (!startTime) startTime = time
-        const progress = Math.min((time - startTime) / (duration * 1000), 1)
-        
-        // Easing out cubic
-        const easeOut = 1 - Math.pow(1 - progress, 3)
-        const current = from + (to - from) * easeOut
-        
-        // Format based on the to value (e.g. decimals if needed)
-        const formatted = to % 1 !== 0 ? current.toFixed(1) : Math.floor(current)
-        
-        setValue(Number(formatted))
-
-        if (progress < 1) {
-          animationFrame = requestAnimationFrame(animate)
-        }
-      }
-
-      animationFrame = requestAnimationFrame(animate)
-      return () => cancelAnimationFrame(animationFrame)
-    }
-  }, [inView, from, to, duration])
-
-  return (
-    <span ref={ref}>
-      {value}{suffix}
-    </span>
-  )
-}
+import React from 'react'
+import { motion } from 'framer-motion'
 
 export default function Stats() {
-  const stats = [
-    { label: 'Engineering Graduates', value: 1.5, suffix: 'M+' },
-    { label: 'Outside IITs/NITs', value: 85, suffix: '%' },
-    { label: 'AI Features Built', value: 12, suffix: '' },
-    { label: 'Active Students', value: 200, suffix: '+' },
+  const items = [
+    '1.5M+ Engineering Graduates',
+    '85% Outside IITs',
+    '12 AI Features',
+    'MVP by 30 June',
+    '200+ Students',
+    'Zero Guidance for Tier 2/3',
+    'Built by Students, for Students',
   ]
 
+  const marqueeItems = [...items, ...items]
+
   return (
-    <section className="relative bg-bg-subtle py-24 border-y border-border-default overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center divide-x-0 md:divide-x divide-border-default">
-          {stats.map((stat, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
-              className="flex flex-col items-center justify-center space-y-3"
-            >
-              <div className="text-4xl md:text-5xl font-display font-extrabold text-teal">
-                <Counter from={0} to={stat.value} duration={2.5} suffix={stat.suffix} />
-              </div>
-              <p className="text-text-secondary font-medium text-sm md:text-base tracking-wide uppercase">
-                {stat.label}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+    <section className="relative bg-[#06070A] py-8 overflow-hidden border-y border-white/5">
+      {/* Scan-line glow sweep */}
+      <motion.div
+        className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-teal/20 to-transparent pointer-events-none z-10"
+        animate={{ x: ['-20vw', '120vw'] }}
+        transition={{ repeat: Infinity, duration: 5, ease: 'linear', repeatDelay: 3 }}
+      />
+
+      {/* Ambient left/right fade masks */}
+      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#06070A] to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#06070A] to-transparent z-10 pointer-events-none" />
+
+      <div className="flex w-max items-center animate-scroll-right">
+        {marqueeItems.map((item, idx) => (
+          <div key={idx} className="flex items-center gap-6 mx-6 flex-shrink-0">
+            <span className="text-white/80 font-display font-bold text-sm md:text-base tracking-wide uppercase">
+              {item}
+            </span>
+            <span className="text-teal font-display font-bold text-base select-none animate-pulse">✦</span>
+          </div>
+        ))}
       </div>
     </section>
   )

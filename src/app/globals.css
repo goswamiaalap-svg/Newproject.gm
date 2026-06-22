@@ -5,23 +5,23 @@
 /* ─── Design Token Custom Properties ─── */
 :root {
   /* Background */
-  --color-bg-base: #030014;
-  --color-bg-subtle: #090520;
-  --color-hero-bg: #030014;
+  --color-bg-base: #F8F9FF;
+  --color-bg-subtle: #EEF2FF;
+  --color-hero-bg: #0D1321;
 
   /* Surfaces */
-  --color-surface-card: #0B0F19;
-  --color-surface-elevated: #161D30;
-  --color-surface-glass: rgba(11, 15, 25, 0.65);
+  --color-surface-card: #FFFFFF;
+  --color-surface-elevated: #F0F4FF;
+  --color-surface-glass: rgba(255, 255, 255, 0.65);
 
   /* Teal palette */
   --color-teal: #0D9488;
-  --color-teal-light: #115E59;
-  --color-teal-glow: rgba(13, 148, 136, 0.25);
-  --color-teal-50: #0F3D39;
-  --color-teal-100: #115E59;
-  --color-teal-200: #0D9488;
-  --color-teal-300: #14B8A6;
+  --color-teal-light: #CCFBF1;
+  --color-teal-glow: rgba(13, 148, 136, 0.15);
+  --color-teal-50: #F0FDFA;
+  --color-teal-100: #CCFBF1;
+  --color-teal-200: #99F6E4;
+  --color-teal-300: #5EEAD4;
   --color-teal-400: #2DD4BF;
   --color-teal-500: #14B8A6;
   --color-teal-600: #0D9488;
@@ -31,13 +31,13 @@
 
   /* Indigo palette */
   --color-indigo: #6366F1;
-  --color-indigo-light: #3730A3;
-  --color-indigo-glow: rgba(99, 102, 241, 0.2);
-  --color-indigo-50: #1E1B4B;
-  --color-indigo-100: #3730A3;
-  --color-indigo-200: #4338CA;
-  --color-indigo-300: #4F46E5;
-  --color-indigo-400: #6366F1;
+  --color-indigo-light: #EEF2FF;
+  --color-indigo-glow: rgba(99, 102, 241, 0.12);
+  --color-indigo-50: #EEF2FF;
+  --color-indigo-100: #E0E7FF;
+  --color-indigo-200: #C7D2FE;
+  --color-indigo-300: #A5B4FC;
+  --color-indigo-400: #818CF8;
   --color-indigo-500: #6366F1;
   --color-indigo-600: #4F46E5;
   --color-indigo-700: #4338CA;
@@ -46,16 +46,16 @@
 
   /* Gold palette */
   --color-gold: #F59E0B;
-  --color-gold-light: #78350F;
+  --color-gold-light: #FEF3C7;
 
   /* Text */
-  --color-text-primary: #F8FAFC;
-  --color-text-secondary: #94A3B8;
-  --color-text-muted: #64748B;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #334155;
+  --color-text-muted: #94A3B8;
 
   /* Borders */
-  --color-border-default: rgba(255, 255, 255, 0.08);
-  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-border-default: #E2E8F0;
+  --color-border-subtle: #F1F5F9;
 
   /* Radii */
   --radius-card: 16px;
@@ -135,7 +135,7 @@ html.lenis body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-subtle);
+  background: var(--color-hero-bg);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -150,27 +150,27 @@ html.lenis body {
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-teal-600) var(--color-bg-subtle);
+  scrollbar-color: var(--color-teal-600) var(--color-hero-bg);
 }
 
 /* ─── Component Classes ─── */
 @layer components {
-  /* Glass morphism - light (now dark for premium style) */
+  /* Glass morphism - light */
   .glass {
-    background: rgba(11, 15, 25, 0.55);
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.08);
+  }
+
+  /* Glass morphism - dark (for hero/dark sections) */
+  .glass-dark {
+    background: rgba(13, 19, 33, 0.6);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Glass morphism - dark */
-  .glass-dark {
-    background: rgba(11, 15, 25, 0.75);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   /* Skeleton shimmer loading */
@@ -260,11 +260,11 @@ section {
 /* ─── Hero Background Animated Gradient Mesh (FIX 1) ─── */
 .hero-animated-mesh {
   position: relative;
-  background: transparent;
+  background: #06070A;
   background-image: 
-    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(13,148,136,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(99,102,241,0.18) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 50% at 50% 80%, rgba(13,148,136,0.1) 0%, transparent 55%);
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(13,148,136,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(245,158,11,0.1) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 50% 80%, rgba(13,148,136,0.08) 0%, transparent 55%);
   background-size: 200% 200%;
   animation: meshMove 8s ease-in-out infinite alternate;
 }
@@ -279,8 +279,8 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
-  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.04;
   pointer-events: none;
   z-index: 1;
 }

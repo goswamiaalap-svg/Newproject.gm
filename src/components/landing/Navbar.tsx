@@ -27,10 +27,10 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
         scrolled
-          ? 'bg-[#030014]/85 border-white/5 backdrop-blur-2xl shadow-soft'
-          : 'bg-[#030014]/20 border-transparent backdrop-blur-sm'
+          ? 'bg-white/85 backdrop-blur-2xl shadow-soft'
+          : 'bg-transparent'
       )}
     >
       <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
@@ -38,10 +38,10 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-1 group">
           <span className={cn(
             "font-heading font-800 text-xl transition-colors duration-300",
-            scrolled ? "text-white" : "text-white"
+            scrolled ? "text-[#0F172A]" : "text-white"
           )}>
-            Launch<span className="text-teal transition-colors duration-300">Pad</span>
-            <span className="inline-block w-2 h-2 rounded-full bg-teal ml-1 mb-1 animate-pulse" />
+            Launch<span className={cn("transition-colors duration-300", scrolled ? "text-[#0D9488]" : "text-teal-400")}>Pad</span>
+            <span className="inline-block w-2 h-2 rounded-full bg-[#0D9488] ml-1 mb-1 animate-pulse" />
           </span>
         </Link>
 
@@ -53,14 +53,14 @@ export default function Navbar() {
               href={link.href}
               className={cn(
                 "text-sm font-medium transition-colors duration-300 relative py-1 group/item",
-                scrolled ? "text-text-primary hover:text-teal" : "text-text-secondary hover:text-text-primary"
+                scrolled ? "text-text-primary hover:text-teal" : "text-white/80 hover:text-white"
               )}
             >
               <span>{link.label}</span>
               {/* Animated underline */}
               <span className={cn(
                 "absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-hover/item:scale-x-100 transition-transform duration-300 origin-left",
-                "bg-teal"
+                scrolled ? "bg-teal" : "bg-white"
               )} />
             </Link>
           ))}
@@ -72,7 +72,7 @@ export default function Navbar() {
             href="/sign-in"
             className={cn(
               "text-sm font-semibold transition-colors duration-300",
-              "text-text-secondary hover:text-text-primary"
+              scrolled ? "text-text-secondary hover:text-text-primary" : "text-white/80 hover:text-white"
             )}
           >
             Login
@@ -119,7 +119,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#030014]/95 border-t border-white/10 shadow-soft"
+            className="md:hidden bg-white border-t border-border-default shadow-soft"
           >
             <div className="px-8 py-6 flex flex-col gap-4">
               {navLinks.map((link, i) => (
@@ -132,7 +132,7 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
+              <div className="flex flex-col gap-3 pt-4 border-t border-border-default">
                 <Link
                   href="/sign-in"
                   onClick={() => setMobileOpen(false)}

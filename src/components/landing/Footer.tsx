@@ -32,29 +32,29 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-bg-subtle text-text-primary pt-20 pb-10 relative overflow-hidden">
+    <footer className="bg-[#0D1321] text-white pt-20 pb-10 relative overflow-hidden">
       {/* Thin top border with teal-to-indigo gradient */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-teal-500 via-indigo-500 to-teal-500" />
+      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-teal via-indigo-500 to-teal" />
 
-      <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 pb-16 border-b border-border-default relative z-10">
+      <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 pb-16 border-b border-white/5 relative z-10">
         {/* Branding & Tagline */}
         <div className="lg:col-span-1 space-y-4">
           <Link href="/" className="flex items-center gap-1 group">
-            <span className="font-display font-bold text-2xl text-text-primary">
+            <span className="font-display font-bold text-2xl text-white">
               Launch
             </span>
             <span className="text-teal font-display font-bold text-2xl">Pad</span>
             <span className="text-teal text-xl font-bold font-display ml-0.5 group-hover:scale-150 transition-transform duration-300">●</span>
           </Link>
-          <p className="text-text-secondary text-xs leading-relaxed max-w-xs font-sans font-medium">
+          <p className="text-white/60 text-xs leading-relaxed max-w-xs font-sans font-medium">
             Because every engineering student deserves a fair shot.
           </p>
         </div>
 
         {/* Links Columns */}
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-text-muted mb-4">Product</h5>
-          <ul className="space-y-2.5 text-xs text-text-secondary">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Product</h5>
+          <ul className="space-y-2.5 text-xs text-white/70">
             {productLinks.map((link, idx) => (
               <li key={idx}><Link href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</Link></li>
             ))}
@@ -62,8 +62,8 @@ export default function Footer() {
         </div>
 
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-text-muted mb-4">Company</h5>
-          <ul className="space-y-2.5 text-xs text-text-secondary">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Company</h5>
+          <ul className="space-y-2.5 text-xs text-white/70">
             {companyLinks.map((link, idx) => (
               <li key={idx}><a href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</a></li>
             ))}
@@ -71,8 +71,8 @@ export default function Footer() {
         </div>
 
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-text-muted mb-4">Community</h5>
-          <ul className="space-y-2.5 text-xs text-text-secondary">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Community</h5>
+          <ul className="space-y-2.5 text-xs text-white/70">
             {communityLinks.map((link, idx) => (
               <li key={idx}><a href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</a></li>
             ))}
@@ -80,8 +80,8 @@ export default function Footer() {
         </div>
 
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-text-muted mb-4">Legal</h5>
-          <ul className="space-y-2.5 text-xs text-text-secondary">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Legal</h5>
+          <ul className="space-y-2.5 text-xs text-white/70">
             {legalLinks.map((link, idx) => (
               <li key={idx}><a href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</a></li>
             ))}
@@ -90,7 +90,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="max-w-7xl mx-auto px-8 mt-10 flex flex-col sm:flex-row justify-between items-center gap-6 relative z-10 text-xs text-text-muted font-medium">
+      <div className="max-w-7xl mx-auto px-8 mt-10 flex flex-col sm:flex-row justify-between items-center gap-6 relative z-10 text-xs text-white/40 font-medium">
         <p>© Alpha Node 2026</p>
         <div className="flex gap-4">
           {/* GitHub SVG */}

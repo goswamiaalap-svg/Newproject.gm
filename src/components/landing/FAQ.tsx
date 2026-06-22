@@ -32,7 +32,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="py-24 bg-transparent">
+    <section className="py-24 bg-white">
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <motion.span
@@ -66,7 +66,7 @@ export default function FAQ() {
                 transition={{ delay: idx * 0.1 }}
                 className={cn(
                   "border rounded-2xl overflow-hidden transition-colors duration-300",
-                  isOpen ? "glass border-teal shadow-medium" : "bg-surface-card/50 border-border-default shadow-soft hover:border-border-subtle"
+                  isOpen ? "bg-white border-teal shadow-medium" : "bg-bg-subtle border-border-default shadow-soft hover:border-border-subtle"
                 )}
               >
                 <button
@@ -76,7 +76,7 @@ export default function FAQ() {
                   <span className="font-display font-bold text-text-primary pr-4">{faq.question}</span>
                   <div className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 shrink-0",
-                    isOpen ? "bg-teal text-white rotate-180" : "bg-surface-elevated border border-border-default text-text-secondary"
+                    isOpen ? "bg-teal text-white rotate-180" : "bg-white border border-border-default text-text-secondary"
                   )}>
                     <ChevronDown className="w-4 h-4" />
                   </div>
