@@ -54,7 +54,7 @@ export default function Hero() {
         style={{
           zIndex: 10,
           background:
-            'radial-gradient(ellipse 75% 65% at 50% 50%, transparent 20%, rgba(248,249,255,0.8) 100%)',
+            'radial-gradient(ellipse 75% 65% at 50% 50%, transparent 20%, rgba(3,0,20,0.8) 100%)',
         }}
       />
 

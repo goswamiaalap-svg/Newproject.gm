@@ -13,9 +13,9 @@ import FAQ from '@/components/landing/FAQ'
 import FinalCTA from '@/components/landing/FinalCTA'
 import Footer from '@/components/landing/Footer'
 import LoadingScreen from '@/components/shared/LoadingScreen'
-import dynamic from 'next/dynamic'
-
-// Removed AmbientCanvas for clean light aesthetic
+const AmbientCanvas = dynamic(() => import('@/components/three/AmbientCanvas'), {
+  ssr: false,
+})
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -32,8 +32,8 @@ export default function Home() {
     <>
       <LoadingScreen isLoading={isLoading} />
       
-      <main className="relative min-h-screen overflow-x-hidden bg-white" style={{ position: 'relative', zIndex: 1 }}>
-        {/* Ambient Canvas Removed */}
+      <main className="relative min-h-screen overflow-x-hidden bg-transparent" style={{ position: 'relative', zIndex: 1 }}>
+        <AmbientCanvas />
         {/* Navigation */}
         <Navbar />
 

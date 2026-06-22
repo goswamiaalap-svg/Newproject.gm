@@ -32,7 +32,7 @@ function TestimonialCard({ t }: { t: typeof row1Testimonials[0] }) {
     <motion.div
       whileHover={{ y: -4, boxShadow: '0 12px 40px rgba(13,148,136,0.15)' }}
       transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-      className="flex-shrink-0 w-80 bg-white rounded-card p-5 shadow-soft border border-border-default flex flex-col justify-between h-48 select-none cursor-default"
+      className="flex-shrink-0 w-80 glass rounded-card p-5 shadow-soft border border-border-default flex flex-col justify-between h-48 select-none cursor-default"
     >
       <div className="space-y-2.5">
         <div className="flex justify-between items-center">
@@ -54,7 +54,7 @@ function TestimonialCard({ t }: { t: typeof row1Testimonials[0] }) {
 
 export default function Testimonials() {
   return (
-    <section className="py-32 bg-bg-subtle flex flex-col items-center overflow-hidden">
+    <section className="py-32 bg-transparent flex flex-col items-center overflow-hidden">
       {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}

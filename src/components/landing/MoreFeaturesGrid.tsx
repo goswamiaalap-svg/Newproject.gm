@@ -60,7 +60,7 @@ export default function MoreFeaturesGrid() {
   }
 
   return (
-    <section className="py-32 bg-white flex flex-col items-center">
+    <section className="py-32 bg-transparent flex flex-col items-center">
       {/* Title */}
       <div className="text-center px-6 max-w-2xl mx-auto mb-16">
         <h2 className="font-display font-extrabold text-4xl md:text-5xl text-text-primary tracking-tight leading-tight">
@@ -85,7 +85,7 @@ export default function MoreFeaturesGrid() {
               key={idx}
               variants={cardVariants}
               whileHover={{ y: -6 }}
-              className="bg-white rounded-card p-6 border border-border-default shadow-soft hover:shadow-medium transition-all duration-300 relative group overflow-hidden"
+              className="glass rounded-card p-6 border border-border-default shadow-soft hover:shadow-medium transition-all duration-300 relative group overflow-hidden"
             >
               {/* Top hover border (3px) */}
               <span className="absolute top-0 left-0 w-full h-[3px] bg-teal scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />

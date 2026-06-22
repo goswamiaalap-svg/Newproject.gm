@@ -152,7 +152,7 @@ function FeatureRow({
 
 export default function Features() {
   return (
-    <div className="bg-white">
+    <div className="bg-transparent">
       {/* Row 1: Resume */}
       <FeatureRow
         badgeText="Resume Reviewer"
@@ -162,7 +162,7 @@ export default function Features() {
         isLeftText={true}
         pills={['ATS Score', 'Impact Language', 'Keyword Gaps']}
       >
-        <div className="w-full bg-white rounded-card border border-border-default p-6 shadow-medium space-y-4 max-w-sm">
+        <div className="w-full glass rounded-card border border-border-default p-6 shadow-medium space-y-4 max-w-sm">
           <div className="flex items-center gap-4 border-b border-border-subtle pb-3">
             <div className="relative w-12 h-12 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90">
@@ -230,10 +230,10 @@ export default function Features() {
         customPadding="py-20"
         noMockupWrapper={true}
       >
-        <div className="w-full h-full min-h-[480px] bg-[#F8F9FF] rounded-3xl p-8 relative overflow-hidden border border-border-default shadow-soft flex flex-col justify-between">
+        <div className="w-full h-full min-h-[480px] glass rounded-3xl p-8 relative overflow-hidden border border-border-default shadow-soft flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-6">
-              <span className="font-heading font-700 text-lg text-[#0F172A] tracking-tight">DSA Roadmap</span>
+              <span className="font-heading font-700 text-lg text-text-primary tracking-tight">DSA Roadmap</span>
               <span className="text-[#0D9488] font-semibold text-sm">14 / 20 Complete</span>
             </div>
             <div className="w-full h-2 bg-[#E2E8F0] rounded-full mb-8">
@@ -256,11 +256,11 @@ export default function Features() {
               {/* Nodes */}
               {[
                 { left: '5%',  top: '10%',   bg: 'bg-[#0D9488]',   text: '✓',  label: 'Arrays', opacity: '' },
-                { left: '22%', bottom: '10%', bg: 'bg-white',        text: '🔥', label: 'Linked Lists', opacity: '', pulse: true, border: 'border-[#F59E0B]' },
-                { left: '40%', top: '15%',   bg: 'bg-white',        lock: true, label: 'Stacks', opacity: 'opacity-60' },
-                { left: '58%', bottom: '15%', bg: 'bg-white',        lock: true, label: 'Trees',  opacity: 'opacity-60' },
-                { left: '75%', top: '10%',   bg: 'bg-white',        lock: true, label: 'Graphs', opacity: 'opacity-60' },
-                { right: '5%', top: '40%',   bg: 'bg-white',        lock: true, label: 'DP',     opacity: 'opacity-60' },
+                { left: '22%', bottom: '10%', bg: 'bg-[#0B0F19]',        text: '🔥', label: 'Linked Lists', opacity: '', pulse: true, border: 'border-[#F59E0B]' },
+                { left: '40%', top: '15%',   bg: 'bg-[#0B0F19]',        lock: true, label: 'Stacks', opacity: 'opacity-60' },
+                { left: '58%', bottom: '15%', bg: 'bg-[#0B0F19]',        lock: true, label: 'Trees',  opacity: 'opacity-60' },
+                { left: '75%', top: '10%',   bg: 'bg-[#0B0F19]',        lock: true, label: 'Graphs', opacity: 'opacity-60' },
+                { right: '5%', top: '40%',   bg: 'bg-[#0B0F19]',        lock: true, label: 'DP',     opacity: 'opacity-60' },
               ].map((node, i) => (
                 <div
                   key={i}
@@ -296,7 +296,7 @@ export default function Features() {
       >
         <div className="relative w-full max-w-md h-[280px] flex items-center justify-center">
           {/* Main Mockup Card */}
-          <div className="w-full max-w-sm bg-white text-text-primary rounded-card p-6 border border-border-default shadow-medium space-y-4 font-mono text-[10px] relative z-10">
+          <div className="w-full max-w-sm glass text-text-primary rounded-card p-6 border border-border-default shadow-medium space-y-4 font-mono text-[10px] relative z-10">
             <div className="flex justify-between items-center border-b border-border-subtle pb-2 text-[8px] text-text-muted">
               <span>LIVE RECORDING SESSION • SDE Round</span>
               <span className="px-2 py-0.5 rounded bg-red-50 text-red-600 animate-pulse font-bold border border-red-100">LIVE</span>
@@ -331,18 +331,18 @@ export default function Features() {
           </div>
 
           {/* Floating AI Analytics Elements */}
-          <div className="absolute -left-4 top-4 bg-white border border-border-default rounded-card p-3 shadow-medium flex flex-col items-center z-20 space-y-1">
+          <div className="absolute -left-4 top-4 glass border border-border-default rounded-card p-3 shadow-medium flex flex-col items-center z-20 space-y-1">
              <span className="text-[7px] font-bold text-text-muted uppercase tracking-wider">Confidence Score</span>
              <div className="relative w-10 h-10 flex items-center justify-center">
                 <svg className="w-full h-full -rotate-90">
-                  <circle cx="20" cy="20" r="16" stroke="#F1F5F9" strokeWidth="4" fill="none" />
+                  <circle cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.1)" strokeWidth="4" fill="none" />
                   <circle cx="20" cy="20" r="16" stroke="#6366F1" strokeWidth="4" fill="none" strokeDasharray={2*Math.PI*16} strokeDashoffset={2*Math.PI*16*0.08} />
                 </svg>
                 <span className="absolute text-[10px] font-extrabold text-indigo">92%</span>
              </div>
           </div>
 
-          <div className="absolute -right-6 bottom-8 bg-white border border-border-default rounded-lg p-2 shadow-medium flex items-center gap-2 z-20">
+          <div className="absolute -right-6 bottom-8 glass border border-border-default rounded-lg p-2 shadow-medium flex items-center gap-2 z-20">
              <span className="w-5 h-5 rounded bg-green-100 text-green-600 flex items-center justify-center text-[10px]">👁️</span>
              <div>
                 <p className="text-[9px] font-bold text-text-primary">Eye Contact</p>
@@ -367,7 +367,7 @@ export default function Features() {
         pills={['Tech Stack Chips', 'Complexity Badges', 'Standout Tips']}
       >
         <div className="relative w-full max-w-xs h-48 flex items-center justify-center font-sans">
-          <div className="absolute top-0 w-64 bg-white border border-border-default rounded-card p-5 shadow-medium rotate-[-4deg] z-10 space-y-2">
+          <div className="absolute top-0 w-64 glass border border-border-default rounded-card p-5 shadow-medium rotate-[-4deg] z-10 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-[8px] font-bold px-2 py-0.5 rounded bg-gold-light text-gold border border-gold/10">ADVANCED</span>
               <span className="text-[8px] text-text-muted font-semibold">AI / ML</span>
@@ -377,7 +377,7 @@ export default function Features() {
               Attendance management system with liveness detection to prevent proxy uploads.
             </p>
           </div>
-          <div className="absolute top-4 w-64 bg-white border border-border-subtle rounded-card p-5 shadow-soft rotate-[2deg] opacity-75 space-y-2">
+          <div className="absolute top-4 w-64 glass border border-border-subtle rounded-card p-5 shadow-soft rotate-[2deg] opacity-75 space-y-2">
             <h5 className="font-display font-bold text-xs text-text-primary">AI Study Group Matcher</h5>
             <p className="text-[9px] text-text-secondary font-medium">ML-powered matching partners based on schedules.</p>
           </div>
@@ -398,7 +398,7 @@ export default function Features() {
             { init: 'PS', bg: 'bg-teal', name: 'Priya Sharma', meta: 'VIT Vellore • Web Dev' },
             { init: 'AM', bg: 'bg-indigo', name: 'Arjun Mehta', meta: 'BITS Pilani • AI/ML' },
           ].map((m, i) => (
-            <div key={i} className="p-3 bg-white border border-border-default rounded-card shadow-soft flex items-center justify-between">
+            <div key={i} className="p-3 glass border border-border-default rounded-card shadow-soft flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className={`w-7 h-7 rounded-full ${m.bg} text-white flex items-center justify-center font-display font-bold text-[10px]`}>
                   {m.init}
@@ -426,7 +426,7 @@ export default function Features() {
         isLeftText={false}
         pills={['Calendar Grid', 'Reminders Toggle', 'Countdown Badges']}
       >
-        <div className="w-full bg-white rounded-card border border-border-default p-5 shadow-medium max-w-sm space-y-3 font-sans">
+        <div className="w-full glass rounded-card border border-border-default p-5 shadow-medium max-w-sm space-y-3 font-sans">
           <div className="flex justify-between items-center text-[10px] font-bold text-text-primary border-b border-border-subtle pb-2">
             <span>July 2026 Deadlines</span>
             <span className="text-indigo">6 Deadlines</span>

@@ -30,7 +30,7 @@ function FloatingCard({
     <animated.div
       style={{ transform: floatSpring.y.to((y) => `translateY(${y}px)`) }}
       className={cn(
-        'absolute bg-white rounded-card p-4 shadow-medium border border-border-default z-20 max-w-[200px]',
+        'absolute glass rounded-card p-4 shadow-medium border border-border-default z-20 max-w-[200px]',
         className
       )}
     >
@@ -68,7 +68,7 @@ export default function PhoneMockup() {
   return (
     <section
       ref={containerRef}
-      className="relative py-32 bg-white flex flex-col items-center overflow-hidden"
+      className="relative py-32 bg-transparent flex flex-col items-center overflow-hidden"
     >
       {/* Title Header */}
       <div className="text-center px-6 max-w-2xl mx-auto mb-16 relative z-10">
@@ -126,14 +126,14 @@ export default function PhoneMockup() {
         </FloatingCard>
 
         {/* CSS iPhone Frame Mockup */}
-        <div className="relative w-[280px] h-[560px] bg-white rounded-[44px] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-4 border-slate-200 z-10 flex flex-col overflow-hidden">
+        <div className="relative w-[280px] h-[560px] bg-slate-900 rounded-[44px] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.4)] border-4 border-slate-800 z-10 flex flex-col overflow-hidden">
           {/* Speaker / Camera Notch */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-6 bg-white border-x border-b border-slate-200 rounded-b-2xl z-30 flex items-center justify-center shadow-sm">
-            <div className="w-12 h-1 bg-slate-200 rounded-full" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-6 bg-slate-900 border-x border-b border-slate-800 rounded-b-2xl z-30 flex items-center justify-center shadow-sm">
+            <div className="w-12 h-1 bg-slate-800 rounded-full" />
           </div>
 
           {/* Screen Content Wrapper */}
-          <div className="relative flex-1 bg-[#F8F9FF] rounded-[36px] overflow-hidden flex flex-col text-left px-4 pt-7 pb-14">
+          <div className="relative flex-1 bg-[#090520] rounded-[36px] overflow-hidden flex flex-col text-left px-4 pt-7 pb-14">
             <AnimatePresence mode="wait">
               {activeState === 0 && (
                 <motion.div

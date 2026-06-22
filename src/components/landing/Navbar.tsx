@@ -27,10 +27,10 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b',
         scrolled
-          ? 'bg-white/85 backdrop-blur-2xl shadow-soft'
-          : 'bg-white/50 backdrop-blur-sm'
+          ? 'bg-[#030014]/85 border-white/5 backdrop-blur-2xl shadow-soft'
+          : 'bg-[#030014]/20 border-transparent backdrop-blur-sm'
       )}
     >
       <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
@@ -38,7 +38,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-1 group">
           <span className={cn(
             "font-heading font-800 text-xl transition-colors duration-300",
-            scrolled ? "text-[#0F172A]" : "text-[#0F172A]"
+            scrolled ? "text-white" : "text-white"
           )}>
             Launch<span className="text-teal transition-colors duration-300">Pad</span>
             <span className="inline-block w-2 h-2 rounded-full bg-teal ml-1 mb-1 animate-pulse" />
@@ -119,7 +119,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-border-default shadow-soft"
+            className="md:hidden bg-[#030014]/95 border-t border-white/10 shadow-soft"
           >
             <div className="px-8 py-6 flex flex-col gap-4">
               {navLinks.map((link, i) => (
@@ -132,7 +132,7 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex flex-col gap-3 pt-4 border-t border-border-default">
+              <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
                 <Link
                   href="/sign-in"
                   onClick={() => setMobileOpen(false)}
