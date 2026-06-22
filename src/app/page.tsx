@@ -13,6 +13,8 @@ import FAQ from '@/components/landing/FAQ'
 import FinalCTA from '@/components/landing/FinalCTA'
 import Footer from '@/components/landing/Footer'
 import LoadingScreen from '@/components/shared/LoadingScreen'
+import dynamic from 'next/dynamic'
+
 const AmbientCanvas = dynamic(() => import('@/components/three/AmbientCanvas'), {
   ssr: false,
 })
