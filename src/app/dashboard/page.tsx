@@ -52,20 +52,19 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Card */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-hero bg-gradient-hero p-8 text-white flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg"
+        className="relative overflow-hidden rounded-hero bg-gradient-hero p-8 text-[#0F172A] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm border border-border-default"
       >
         <div className="relative z-10 max-w-xl">
           <span className="text-teal text-[10px] font-bold uppercase tracking-widest block mb-2 opacity-80">
             ✦ Welcome to LaunchPad
           </span>
-          <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">
+          <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight !text-[#0F172A]">
             {greeting}, {userName}!
           </h1>
-          <p className="text-white/80 text-sm mt-3 leading-relaxed max-w-lg">
+          <p className="text-[#475569] text-sm mt-3 leading-relaxed max-w-lg">
             {dashboardData?.resumeScore > 0 
               ? `Your ATS resume compatibility score is at ${dashboardData.resumeScore}%. Keep pushing your limits to hit 90%+ for top FAANG tier roles!`
               : "You haven't uploaded a resume yet. Kickstart your career journey by running your first AI resume scan to get your baseline score."}
