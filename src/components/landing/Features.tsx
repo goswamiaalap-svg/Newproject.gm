@@ -35,7 +35,7 @@ interface SubPointProps {
 function SubPoint({ index, title, description, isActive, setActiveIndex, visual }: SubPointProps) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, {
-    amount: 0.4, // Trigger active state when 40% of the element is in view
+    margin: "-30% 0px -30% 0px", // Trigger when element hits middle of screen
   })
 
   useEffect(() => {
@@ -45,19 +45,15 @@ function SubPoint({ index, title, description, isActive, setActiveIndex, visual 
   }, [inView, index, setActiveIndex])
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ y: 0 }}
-      viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
-      animate={{ opacity: isActive ? 1 : 0.7 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
       className={cn(
-        "py-10 border-l-2 transition-all duration-300 pl-6 space-y-2",
+        "py-10 border-l-2 transition-all duration-500 pl-6 space-y-2 cursor-pointer",
         isActive 
-          ? "border-teal" 
-          : "border-zinc-200 hover:border-zinc-300"
+          ? "border-teal opacity-100" 
+          : "border-zinc-200 hover:border-zinc-300 opacity-40"
       )}
+      onClick={() => setActiveIndex(index)}
     >
       <h4 className="font-display font-bold text-lg sm:text-xl text-zinc-900">
         {title}
@@ -68,11 +64,14 @@ function SubPoint({ index, title, description, isActive, setActiveIndex, visual 
 
       {/* Stacked mobile visual, hidden on desktop */}
       <div className="block lg:hidden pt-6">
-        <div className="bg-zinc-50/50 rounded-2xl border border-zinc-100 p-6 flex items-center justify-center min-h-[300px]">
+        <div className={cn(
+          "bg-zinc-50/50 rounded-2xl border border-zinc-100 p-6 flex items-center justify-center min-h-[300px] transition-opacity duration-500",
+          isActive ? "opacity-100" : "opacity-40"
+        )}>
           {visual}
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 

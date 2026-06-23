@@ -137,13 +137,13 @@ export default function RoadmapPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Area Wrapper */}
+      <div className="!bg-[#FAFAFA] p-6 rounded-2xl border border-[#E2E8F0] shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-3xl font-extrabold text-text-primary">
+          <h1 className="font-display text-3xl font-extrabold !text-[#0F172A]">
             Placement Prep Learning Path
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="!text-[#475569] text-sm mt-1">
             Personalized week-by-week preparation plan from our live Database.
           </p>
         </div>
@@ -151,7 +151,7 @@ export default function RoadmapPage() {
         {hasRoadmap && (
           <button
             onClick={() => setHasRoadmap(false)}
-            className="px-4 py-2 bg-white border border-border-default hover:bg-bg-base text-text-secondary hover:text-text-primary text-xs font-bold rounded-btn transition-colors flex items-center gap-1.5 self-start sm:self-center shadow-sm"
+            className="px-4 py-2 !bg-white border !border-[#E2E8F0] hover:!bg-[#F1F5F9] !text-[#475569] hover:!text-[#0F172A] text-xs font-bold rounded-md transition-colors flex items-center gap-1.5 self-start sm:self-center shadow-sm"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Regenerate Roadmap</span>

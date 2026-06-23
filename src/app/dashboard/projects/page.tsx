@@ -80,11 +80,11 @@ export default function ProjectsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="font-display text-3xl font-extrabold text-text-primary">
+      <div className="!bg-[#FAFAFA] p-6 rounded-2xl border border-[#E2E8F0] shadow-sm mb-6">
+        <h1 className="font-display text-3xl font-extrabold !text-[#0F172A]">
           Project Idea Generator
         </h1>
-        <p className="text-text-secondary text-sm mt-1">
+        <p className="!text-[#475569] text-sm mt-1">
           Generate unique capstones and resume projects tailored to your target domains and skills.
         </p>
       </div>
