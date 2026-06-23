@@ -32,69 +32,84 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-[#0D1321] text-white pt-20 pb-10 relative overflow-hidden">
-      {/* Thin top border with teal-to-indigo gradient */}
-      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-teal via-indigo-500 to-teal" />
-
-      <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 pb-16 border-b border-white/5 relative z-10">
+    <footer className="bg-zinc-50 text-zinc-900 pt-20 pb-10 relative overflow-hidden border-t border-zinc-200">
+      <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 pb-16 border-b border-zinc-200 relative z-10">
+        
         {/* Branding & Tagline */}
         <div className="lg:col-span-1 space-y-4">
           <Link href="/" className="flex items-center gap-1 group">
-            <span className="font-display font-bold text-2xl text-white">
+            <span className="font-display font-bold text-2xl text-zinc-950">
               Launch
             </span>
             <span className="text-teal font-display font-bold text-2xl">Pad</span>
             <span className="text-teal text-xl font-bold font-display ml-0.5 group-hover:scale-150 transition-transform duration-300">●</span>
           </Link>
-          <p className="text-white/60 text-xs leading-relaxed max-w-xs font-sans font-medium">
+          <p className="text-zinc-500 text-xs leading-relaxed max-w-xs font-sans font-medium">
             Because every engineering student deserves a fair shot.
           </p>
         </div>
 
         {/* Links Columns */}
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Product</h5>
-          <ul className="space-y-2.5 text-xs text-white/70">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-zinc-400 mb-4">Product</h5>
+          <ul className="space-y-2.5 text-xs text-zinc-600 font-medium">
             {productLinks.map((link, idx) => (
-              <li key={idx}><Link href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</Link></li>
+              <li key={idx}>
+                <Link href={link.href} className="hover:text-teal transition-colors duration-200">
+                  {link.label}
+                </Link>
+              </li>
             ))}
           </ul>
         </div>
 
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Company</h5>
-          <ul className="space-y-2.5 text-xs text-white/70">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-zinc-400 mb-4">Company</h5>
+          <ul className="space-y-2.5 text-xs text-zinc-600 font-medium">
             {companyLinks.map((link, idx) => (
-              <li key={idx}><a href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</a></li>
+              <li key={idx}>
+                <a href={link.href} className="hover:text-teal transition-colors duration-200">
+                  {link.label}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
 
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Community</h5>
-          <ul className="space-y-2.5 text-xs text-white/70">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-zinc-400 mb-4">Community</h5>
+          <ul className="space-y-2.5 text-xs text-zinc-600 font-medium">
             {communityLinks.map((link, idx) => (
-              <li key={idx}><a href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</a></li>
+              <li key={idx}>
+                <a href={link.href} className="hover:text-teal transition-colors duration-200">
+                  {link.label}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
 
         <div>
-          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-white/40 mb-4">Legal</h5>
-          <ul className="space-y-2.5 text-xs text-white/70">
+          <h5 className="font-display font-bold text-xs uppercase tracking-wider text-zinc-400 mb-4">Legal</h5>
+          <ul className="space-y-2.5 text-xs text-zinc-600 font-medium">
             {legalLinks.map((link, idx) => (
-              <li key={idx}><a href={link.href} className="hover:text-teal transition-colors duration-200">{link.label}</a></li>
+              <li key={idx}>
+                <a href={link.href} className="hover:text-teal transition-colors duration-200">
+                  {link.label}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="max-w-7xl mx-auto px-8 mt-10 flex flex-col sm:flex-row justify-between items-center gap-6 relative z-10 text-xs text-white/40 font-medium">
+      <div className="max-w-7xl mx-auto px-8 mt-10 flex flex-col sm:flex-row justify-between items-center gap-6 relative z-10 text-xs text-zinc-400 font-semibold">
         <p>© Alpha Node 2026</p>
         <div className="flex gap-4">
+          
           {/* GitHub SVG */}
-          <a href="#" className="hover:text-teal transition-colors" title="GitHub">
+          <a href="#" className="hover:text-teal text-zinc-400 hover:text-zinc-600 transition-colors" title="GitHub">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
               <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
               <path d="M9 18c-4.51 2-5-2-7-2" />
@@ -102,7 +117,7 @@ export default function Footer() {
           </a>
 
           {/* LinkedIn SVG */}
-          <a href="#" className="hover:text-teal transition-colors" title="LinkedIn">
+          <a href="#" className="hover:text-teal text-zinc-400 hover:text-zinc-600 transition-colors" title="LinkedIn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
               <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
               <rect x="2" y="9" width="4" height="12" />
@@ -111,14 +126,14 @@ export default function Footer() {
           </a>
 
           {/* Twitter SVG */}
-          <a href="#" className="hover:text-teal transition-colors" title="Twitter / X">
+          <a href="#" className="hover:text-teal text-zinc-400 hover:text-zinc-600 transition-colors" title="Twitter / X">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
               <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
             </svg>
           </a>
 
           {/* Instagram SVG */}
-          <a href="#" className="hover:text-teal transition-colors" title="Instagram">
+          <a href="#" className="hover:text-teal text-zinc-400 hover:text-zinc-600 transition-colors" title="Instagram">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
               <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
               <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
