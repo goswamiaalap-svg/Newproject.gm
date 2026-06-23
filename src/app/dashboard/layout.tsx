@@ -41,7 +41,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-bg-base flex font-sans">
+    <div className="dashboard-theme min-h-screen bg-bg-base flex font-sans">
       {/* Sidebar Navigation */}
       <Sidebar />
 

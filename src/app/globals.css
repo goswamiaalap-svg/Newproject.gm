@@ -328,3 +328,178 @@ section.hero-section {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+
+/* ─── Dashboard Dark Theme Native Implementation ─── */
+.dashboard-theme {
+  --color-bg-base: #06070A;
+  --color-bg-subtle: #0D1321;
+  background-color: #06070A !important;
+  color: #F3F4F6 !important;
+}
+
+/* Sidebar and Navbar backgrounds */
+.dashboard-theme aside, 
+.dashboard-theme header,
+.dashboard-theme .bg-white {
+  background-color: #0B0F19 !important; /* Deep dark slate surface */
+}
+
+/* Borders */
+.dashboard-theme *, 
+.dashboard-theme .border-border-default, 
+.dashboard-theme .border-border-subtle,
+.dashboard-theme border-r,
+.dashboard-theme border-b {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Text Colors */
+.dashboard-theme .text-text-primary {
+  color: #F3F4F6 !important;
+}
+.dashboard-theme .text-text-secondary {
+  color: #9CA3AF !important;
+}
+.dashboard-theme .text-text-muted {
+  color: #6B7280 !important;
+}
+.dashboard-theme h1,
+.dashboard-theme h2,
+.dashboard-theme h3,
+.dashboard-theme h4,
+.dashboard-theme h5,
+.dashboard-theme h6 {
+  color: #FFFFFF !important;
+}
+
+/* Sidebar Active states and Hovers */
+.dashboard-theme nav a {
+  color: #9CA3AF !important;
+}
+.dashboard-theme nav a:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #FFFFFF !important;
+}
+.dashboard-theme nav a.bg-teal\/5 {
+  background-color: rgba(13, 148, 136, 0.15) !important;
+  color: #2DD4BF !important;
+}
+.dashboard-theme nav a.bg-teal\/5 svg {
+  color: #2DD4BF !important;
+}
+
+/* Inputs and interactive elements */
+.dashboard-theme input {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+}
+.dashboard-theme input::placeholder {
+  color: #4B5563 !important;
+}
+.dashboard-theme input:focus {
+  border-color: #0D9488 !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Quick Actions Cards */
+.dashboard-theme .bg-white.text-text-primary {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  color: #F3F4F6 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.dashboard-theme .bg-white.text-text-primary svg {
+  color: #9CA3AF !important;
+}
+.dashboard-theme .bg-white.text-text-primary:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Activity Feed Timeline Dot bg */
+.dashboard-theme .relative.group .absolute.-left-\[38px\] {
+  background-color: #0B0F19 !important;
+}
+
+/* Deadlines list item bg */
+.dashboard-theme .bg-bg-base\/50 {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Muted or custom tags */
+.dashboard-theme .bg-gold-light {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+  color: #F59E0B !important;
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+.dashboard-theme .bg-teal-light,
+.dashboard-theme .bg-teal\/5 {
+  background-color: rgba(13, 148, 136, 0.1) !important;
+  color: #2DD4BF !important;
+}
+.dashboard-theme .bg-indigo-light,
+.dashboard-theme .bg-indigo\/5 {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  color: #818CF8 !important;
+}
+
+/* Resume upload drag-and-drop zone */
+.dashboard-theme .border-dashed {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.dashboard-theme .border-dashed.border-teal {
+  background-color: rgba(13, 148, 136, 0.05) !important;
+  border-color: #0D9488 !important;
+}
+
+/* Weaknesses and suggestions panels in resume reviewer */
+.dashboard-theme .bg-red-50\/50 {
+  background-color: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.15) !important;
+  color: #FCA5A5 !important;
+}
+.dashboard-theme .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  color: #EF4444 !important;
+}
+.dashboard-theme .bg-amber-50\/50 {
+  background-color: rgba(245, 158, 11, 0.08) !important;
+  border-color: rgba(245, 158, 11, 0.15) !important;
+  color: #FDE047 !important;
+}
+.dashboard-theme .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  color: #F59E0B !important;
+}
+.dashboard-theme .bg-green-50\/50 {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.15) !important;
+  color: #A7F3D0 !important;
+}
+.dashboard-theme .bg-green-100 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  color: #10B981 !important;
+}
+.dashboard-theme .border-black\/5 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.dashboard-theme .bg-bg-subtle {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* User Card bottom in Sidebar */
+.dashboard-theme .bg-bg-base\/30 {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+.dashboard-theme button.text-red-600:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Mobile Navigation Bottom bar */
+.dashboard-theme nav.md\:hidden {
+  background-color: #0B0F19 !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
