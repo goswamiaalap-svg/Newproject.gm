@@ -51,7 +51,7 @@ export default function StatCard({
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'bg-white border border-border-default border-t-4 rounded-card p-5 shadow-card hover:shadow-card-hover transition-all',
+        'dashboard-stat-card bg-white border border-border-default border-t-4 rounded-card p-5 shadow-card hover:shadow-card-hover transition-all',
         accentClasses[accentColor]
       )}
     >

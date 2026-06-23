@@ -35,7 +35,7 @@ interface SubPointProps {
 function SubPoint({ index, title, description, isActive, setActiveIndex, visual }: SubPointProps) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, {
-    amount: 0.6, // Trigger when 60% of the element is in view
+    amount: 0.4, // Trigger active state when 40% of the element is in view
   })
 
   useEffect(() => {
@@ -45,13 +45,18 @@ function SubPoint({ index, title, description, isActive, setActiveIndex, visual 
   }, [inView, index, setActiveIndex])
 
   return (
-    <div
+    <motion.div
       ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ y: 0 }}
+      viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+      animate={{ opacity: isActive ? 1 : 0.7 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className={cn(
         "py-10 border-l-2 transition-all duration-300 pl-6 space-y-2",
         isActive 
-          ? "border-teal opacity-100" 
-          : "border-zinc-200 opacity-30 hover:opacity-60"
+          ? "border-teal" 
+          : "border-zinc-200 hover:border-zinc-300"
       )}
     >
       <h4 className="font-display font-bold text-lg sm:text-xl text-zinc-900">
@@ -67,7 +72,7 @@ function SubPoint({ index, title, description, isActive, setActiveIndex, visual 
           {visual}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
