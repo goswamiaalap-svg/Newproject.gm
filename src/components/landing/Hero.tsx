@@ -8,7 +8,7 @@ import Link from 'next/link'
 // Dynamically import heavy Three.js scene — no SSR
 const HeroScene = dynamic(() => import('@/components/three/HeroScene'), {
   ssr: false,
-  loading: () => <div className="absolute inset-0 z-0 bg-[#06070A]" />,
+  loading: () => <div className="absolute inset-0 z-0 bg-[#0A0A0A]" />,
 })
 
 /* ── Word-by-word animated headline ── */
@@ -48,11 +48,11 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative w-full flex items-center justify-center overflow-hidden bg-[#06070A]"
+      className="relative w-full flex items-center justify-center overflow-hidden bg-[#0A0A0A]"
       style={{ minHeight: '100vh' }}
     >
       {/* ── 3D WebGL background canvas (z-0) ── */}
-      <Suspense fallback={<div className="absolute inset-0 z-0 bg-[#06070A]" />}>
+      <Suspense fallback={<div className="absolute inset-0 z-0 bg-[#0A0A0A]" />}>
         <HeroScene />
       </Suspense>
 
@@ -62,7 +62,7 @@ export default function Hero() {
         style={{
           zIndex: 10,
           background:
-            'radial-gradient(ellipse 75% 65% at 50% 50%, transparent 20%, rgba(6,7,10,0.65) 100%)',
+            'radial-gradient(ellipse 75% 65% at 50% 50%, transparent 20%, rgba(10,10,10,0.8) 100%)',
         }}
       />
 
@@ -95,7 +95,7 @@ export default function Hero() {
             style={{
               WebkitBackgroundClip: 'text',
               backgroundClip: 'text',
-              backgroundImage: 'linear-gradient(135deg, #0D9488 0%, #5EEAD4 50%, #F59E0B 100%)',
+              backgroundImage: 'linear-gradient(135deg, #22D3EE 0%, #818CF8 100%)',
             } as React.CSSProperties}
           />
         </h1>
@@ -119,14 +119,14 @@ export default function Hero() {
         >
           <Link
             href="/sign-up"
-            className="group relative inline-flex items-center gap-2 px-10 py-4 rounded-full font-display font-bold text-sm bg-white text-[#06070A] shadow-[0_0_30px_rgba(13,148,136,0.45)] hover:bg-teal hover:text-white hover:shadow-[0_0_50px_rgba(13,148,136,0.75)] transition-all duration-300 overflow-hidden"
+            className="group relative inline-flex items-center gap-2 px-10 py-4 rounded-full font-display font-bold text-sm bg-gradient-to-r from-cyan-400 to-indigo-500 text-white shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)] transition-all duration-300 overflow-hidden"
           >
             <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12 pointer-events-none" />
             Get Started Free →
           </Link>
           <Link
             href="#features"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-display font-bold text-sm text-white/65 border border-white/15 hover:border-teal/50 hover:text-teal transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-display font-bold text-sm text-white/65 border border-white/15 hover:border-cyan-400/50 hover:text-cyan-400 transition-all duration-300"
           >
             See Features
           </Link>
@@ -166,7 +166,7 @@ export default function Hero() {
         <span className="text-white/25 text-[10px] font-bold uppercase tracking-widest font-sans">Scroll</span>
         <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5">
           <motion.div
-            className="w-1 h-2 rounded-full bg-teal"
+            className="w-1 h-2 rounded-full bg-cyan-400"
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           />
@@ -183,7 +183,7 @@ export default function Hero() {
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
           className="w-full translate-y-[2px]"
-          fill="#ffffff"
+          fill="#111111"
         >
           <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" />
         </svg>

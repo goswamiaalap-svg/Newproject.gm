@@ -32,14 +32,13 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-[#111111]">
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border bg-bg-subtle border-border-default shadow-soft text-text-secondary inline-block mb-4"
+            className="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border bg-[#1A1A1A] border-[#222222] shadow-soft text-[#A0A0A0] inline-block mb-4"
           >
             Got Questions?
           </motion.span>
@@ -48,7 +47,7 @@ export default function FAQ() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="font-display font-extrabold text-3xl md:text-5xl text-text-primary tracking-tight"
+            className="font-display font-extrabold text-3xl md:text-5xl text-white tracking-tight"
           >
             Frequently Asked Questions
           </motion.h2>
@@ -66,17 +65,17 @@ export default function FAQ() {
                 transition={{ delay: idx * 0.1 }}
                 className={cn(
                   "border rounded-2xl overflow-hidden transition-colors duration-300",
-                  isOpen ? "bg-white border-teal shadow-medium" : "bg-bg-subtle border-border-default shadow-soft hover:border-border-subtle"
+                  isOpen ? "bg-[#1A1A1A] border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.1)]" : "bg-[#1A1A1A] border-[#222222] shadow-soft hover:border-[#333333]"
                 )}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
                   className="w-full text-left px-6 py-5 flex items-center justify-between focus:outline-none"
                 >
-                  <span className="font-display font-bold text-text-primary pr-4">{faq.question}</span>
+                  <span className="font-display font-bold text-white pr-4">{faq.question}</span>
                   <div className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 shrink-0",
-                    isOpen ? "bg-teal text-white rotate-180" : "bg-white border border-border-default text-text-secondary"
+                    isOpen ? "bg-cyan-400 text-white rotate-180" : "bg-[#111111] border border-[#333333] text-[#A0A0A0]"
                   )}>
                     <ChevronDown className="w-4 h-4" />
                   </div>
@@ -89,7 +88,7 @@ export default function FAQ() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                     >
-                      <div className="px-6 pb-6 pt-2 text-text-secondary font-sans text-sm leading-relaxed border-t border-border-subtle mx-6 mt-2">
+                      <div className="px-6 pb-6 pt-2 text-[#A0A0A0] font-sans text-sm leading-relaxed border-t border-[#333333] mx-6 mt-2">
                         {faq.answer}
                       </div>
                     </motion.div>
