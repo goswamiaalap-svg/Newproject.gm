@@ -35,51 +35,136 @@ export default function Hero() {
         </div>
 
         {/* Right Card: Visuals */}
-        <div className="bg-gradient-to-br from-[#3b82f6] via-[#818cf8] to-[#fdba74] rounded-[32px] p-8 md:p-12 flex items-center justify-center relative overflow-hidden min-h-[500px]">
-          {/* Abstract dark card mimicking the Parker card */}
+        <div className="bg-gradient-to-br from-[#3b82f6] via-[#818cf8] to-[#fdba74] rounded-[32px] p-6 md:p-8 flex items-center justify-center relative overflow-hidden min-h-[500px]">
+          {/* Floating UI Elements representing the LaunchPad Prep Workspace */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full max-w-[440px] aspect-[1.58/1] bg-[#1F2023] rounded-3xl shadow-2xl relative p-6 md:p-8 flex flex-col justify-between border border-white/5 z-10"
+            className="w-full max-w-[440px] bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/50 z-10 flex flex-col gap-4 text-[#1E293B]"
           >
-            {/* Background elements in the card */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-500/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-500/10 to-transparent rounded-full blur-2xl translate-y-1/3 -translate-x-1/3" />
-            
-            {/* Decorative colored stacked cards behind main card */}
-            <div className="absolute -right-12 top-2 w-[80%] h-full bg-gradient-to-tr from-orange-300 to-pink-300 rounded-3xl transform rotate-[15deg] -z-20 shadow-lg opacity-90" />
-            <div className="absolute -right-6 top-6 w-[80%] h-full bg-gradient-to-tr from-blue-300 to-cyan-200 rounded-3xl transform rotate-[30deg] -z-10 shadow-lg opacity-90" />
-            
-            {/* Card Header */}
-            <div className="flex justify-between items-start z-10">
-              <span className="font-heading font-800 text-3xl text-white tracking-tight">Launch<span className="text-white">Pad</span></span>
+            {/* Mockup Header */}
+            <div className="flex items-center justify-between border-b border-slate-200/50 pb-3">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
+              </div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Workspace • Aalap</span>
+              <div className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] font-bold">Active</div>
             </div>
 
-            {/* Card Chip */}
-            <div className="w-12 h-9 rounded-md bg-gradient-to-br from-gray-300 to-gray-400 shadow-inner z-10 flex flex-col justify-evenly px-1.5 opacity-90">
-              <div className="h-[1px] w-full bg-gray-500/50"></div>
-              <div className="h-[1px] w-full bg-gray-500/50"></div>
-              <div className="h-[1px] w-full bg-gray-500/50"></div>
-            </div>
-
-            {/* Card Details */}
-            <div className="z-10 mt-6 flex items-end justify-between">
-              <div>
-                <div className="font-mono text-white/90 text-lg md:text-xl tracking-[0.2em] mb-2">3701 9286 6099 3643</div>
-                <div className="flex items-center gap-4 text-white/70 font-mono uppercase">
-                  <div className="flex items-center gap-1.5">
-                    <span className="block text-[6px] leading-[1.2] text-right tracking-widest font-sans">VALID<br/>THRU</span>
-                    <span className="text-sm tracking-widest">08/28</span>
-                  </div>
+            {/* Grid of study components */}
+            <div className="grid grid-cols-2 gap-3">
+              
+              {/* ATS Resume Scan Widget */}
+              <div className="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 flex flex-col justify-between h-[115px]">
+                <div className="flex justify-between items-start">
+                  <span className="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">ATS Resume</span>
+                  <span className="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1 py-0.5 rounded">Good</span>
+                </div>
+                <div className="flex items-baseline gap-0.5 mt-1">
+                  <span className="text-3xl font-extrabold text-slate-800">78</span>
+                  <span className="text-slate-400 text-[10px]">/100</span>
+                </div>
+                <div className="text-[8px] text-slate-500 mt-1 leading-tight">
+                  ✓ Structure is standard <br/>
+                  ⚠ Add quantified metrics
                 </div>
               </div>
-              {/* Mastercard-like overlapping circles */}
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-[#EB001B] mix-blend-screen opacity-90"></div>
-                <div className="w-10 h-10 rounded-full bg-[#F79E1B] mix-blend-screen -ml-4 opacity-90"></div>
+
+              {/* Mock Interview Evaluator */}
+              <div className="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 flex flex-col justify-between h-[115px]">
+                <div className="flex justify-between items-start">
+                  <span className="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">AI Speech Eval</span>
+                  <span className="text-[8px] px-1 py-0.5 bg-blue-100 text-blue-700 rounded font-bold">Done</span>
+                </div>
+                <div className="flex items-center gap-1 my-1">
+                  <div className="h-6 flex items-end gap-[1.5px] w-full">
+                    <span className="h-2 w-[3px] bg-blue-400 rounded-full"></span>
+                    <span className="h-4 w-[3px] bg-indigo-500 rounded-full"></span>
+                    <span className="h-5 w-[3px] bg-indigo-650 rounded-full"></span>
+                    <span className="h-3 w-[3px] bg-indigo-400 rounded-full"></span>
+                    <span className="h-6 w-[3px] bg-blue-500 rounded-full"></span>
+                    <span className="h-4 w-[3px] bg-indigo-500 rounded-full"></span>
+                    <span className="h-2 w-[3px] bg-blue-400 rounded-full"></span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold text-slate-800">Clarity: 85%</div>
+                  <div className="text-[8px] text-slate-500 truncate">Pace: 140 WPM (Optimal)</div>
+                </div>
+              </div>
+
+              {/* DSA Progress & Roadmap Nodes */}
+              <div className="col-span-2 bg-slate-50/80 rounded-2xl p-3.5 border border-slate-100 flex flex-col justify-between">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">DSA Roadmap Nodes</span>
+                  <span className="text-[8px] text-slate-500 font-bold">Progress: 6 / 12 Unlocked</span>
+                </div>
+                
+                {/* Node visualization */}
+                <div className="flex items-center justify-between px-3 py-1.5 bg-white rounded-xl border border-slate-100 relative">
+                  
+                  {/* Dotted connecting line */}
+                  <div className="absolute left-[30px] right-[30px] top-1/2 -translate-y-1/2 border-t-2 border-dashed border-slate-200 z-0"></div>
+                  
+                  {/* Node 1 */}
+                  <div className="flex flex-col items-center gap-1 z-10">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[9px] font-bold shadow-md shadow-emerald-500/20">
+                      ✓
+                    </div>
+                    <span className="text-[8px] font-extrabold text-slate-500">Arrays</span>
+                  </div>
+
+                  {/* Node 2 */}
+                  <div className="flex flex-col items-center gap-1 z-10">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[9px] font-bold shadow-md shadow-emerald-500/20">
+                      ✓
+                    </div>
+                    <span className="text-[8px] font-extrabold text-slate-500">Lists</span>
+                  </div>
+
+                  {/* Node 3 */}
+                  <div className="flex flex-col items-center gap-1 z-10">
+                    <div className="w-6 h-6 rounded-full bg-[#FEF3C7] border-2 border-amber-500 flex items-center justify-center text-amber-600 text-[8px] font-bold shadow-md shadow-amber-500/10 relative">
+                      <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                      ▶
+                    </div>
+                    <span className="text-[8px] font-extrabold text-slate-800">Trees</span>
+                  </div>
+
+                  {/* Node 4 */}
+                  <div className="flex flex-col items-center gap-1 z-10 opacity-40">
+                    <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-[9px] font-bold">
+                      🔒
+                    </div>
+                    <span className="text-[8px] font-extrabold text-slate-500">Graphs</span>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Section: Streak & Target */}
+            <div className="flex justify-between items-center border-t border-slate-200/50 pt-3 text-left">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🔥</span>
+                <div>
+                  <div className="text-[11px] font-extrabold text-slate-800">14 Days Streak</div>
+                  <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Keep it up!</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🎯</span>
+                <div>
+                  <div className="text-[11px] font-extrabold text-slate-800">SDE Target</div>
+                  <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Amazon / Flipkart</div>
+                </div>
               </div>
             </div>
+
           </motion.div>
         </div>
 

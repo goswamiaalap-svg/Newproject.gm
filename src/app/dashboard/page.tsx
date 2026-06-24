@@ -27,6 +27,8 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
   const [dashboardData, setDashboardData] = useState<any>(null)
   const [activeTarget, setActiveTarget] = useState<any | null>(null)
+  const [solvedCount, setSolvedCount] = useState(0)
+  const [streakCount, setStreakCount] = useState(0)
   const greeting = getGreeting()
 
   useEffect(() => {
@@ -48,6 +50,26 @@ export default function DashboardPage() {
         }
       })
       .catch(console.error)
+
+    // Load dynamic client-side DSA tracking from localStorage
+    const saved = localStorage.getItem('launchpad_dsa_solved')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        setSolvedCount(parsed.length)
+        if (parsed.length > 0) {
+          const streak = localStorage.getItem('launchpad_dsa_streak')
+          setStreakCount(streak ? parseInt(streak) : 1)
+        } else {
+          setStreakCount(0)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    } else {
+      setSolvedCount(0)
+      setStreakCount(0)
+    }
   }, [])
 
   // Sequential Quick Action Buttons
@@ -158,9 +180,9 @@ export default function DashboardPage() {
         />
         <StatCard
           title="DSA Streak"
-          value={dashboardData ? dashboardData.dsaStreak : 0}
-          suffix={dashboardData ? " Days" : "-"}
-          subtext={dashboardData?.dsaStreak > 0 ? "🔥 Keep it up!" : "Start solving today"}
+          value={streakCount}
+          suffix=" Days"
+          subtext={streakCount > 0 ? "🔥 Keep it up!" : "Start solving today"}
           icon={<Flame className="w-5 h-5" />}
           accentColor="indigo"
         />
@@ -173,12 +195,12 @@ export default function DashboardPage() {
         />
         <StatCard
           title="DSA Solved"
-          value={dashboardData ? dashboardData.problemsSolved : 0}
-          subtext={`Out of ${dashboardData?.totalProblems || 200} target`}
+          value={solvedCount}
+          subtext={`Out of 200 target`}
           icon={<CheckCircle2 className="w-5 h-5" />}
           accentColor="teal"
           type="progress"
-          progressValue={dashboardData ? Math.round((dashboardData.problemsSolved / dashboardData.totalProblems) * 100) : 0}
+          progressValue={Math.min(100, Math.round((solvedCount / 200) * 100))}
         />
       </div>
 

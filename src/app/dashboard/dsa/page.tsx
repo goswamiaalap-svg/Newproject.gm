@@ -49,47 +49,139 @@ const topicProblems: Record<string, Problem[]> = {
 
 export default function DSATrackerPage() {
   const [filter, setFilter] = useState<'all' | 'completed' | 'in-progress' | 'locked'>('all')
-  const [selectedTopic, setSelectedTopic] = useState<typeof mockDSATopics[0] | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState<any | null>(null)
   const [problems, setProblems] = useState<Problem[]>([])
-  const [solvedCount, setSolvedCount] = useState(120)
+  const [solvedProblems, setSolvedProblems] = useState<string[]>([])
+  const [solvedCount, setSolvedCount] = useState(0)
+  const [streakCount, setStreakCount] = useState(0)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('launchpad_dsa_solved')
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          setSolvedProblems(parsed)
+          setSolvedCount(parsed.length)
+          if (parsed.length > 0) {
+            const streak = localStorage.getItem('launchpad_dsa_streak')
+            setStreakCount(streak ? parseInt(streak) : 1)
+          } else {
+            setStreakCount(0)
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      } else {
+        setSolvedCount(0)
+        setStreakCount(0)
+      }
+    }
+  }, [])
+
+  // Sync problems list with solvedProblems when selectedTopic changes
+  useEffect(() => {
+    if (selectedTopic) {
+      const list = topicProblems[selectedTopic.id] || [
+        { id: `${selectedTopic.id}p1`, name: `Sample Problem for ${selectedTopic.name} I`, difficulty: 'Medium', solved: false, url: '#' },
+        { id: `${selectedTopic.id}p2`, name: `Sample Problem for ${selectedTopic.name} II`, difficulty: 'Hard', solved: false, url: '#' },
+      ]
+      const mapped = list.map(prob => ({
+        ...prob,
+        solved: solvedProblems.includes(prob.id)
+      }))
+      setProblems(mapped)
+    }
+  }, [solvedProblems, selectedTopic?.id])
 
   // Load problems when topic is clicked
-  const handleTopicClick = (topic: typeof mockDSATopics[0]) => {
+  const handleTopicClick = (topic: any) => {
     if (topic.status === 'locked') return
     setSelectedTopic(topic)
     const list = topicProblems[topic.id] || [
       { id: `${topic.id}p1`, name: `Sample Problem for ${topic.name} I`, difficulty: 'Medium', solved: false, url: '#' },
       { id: `${topic.id}p2`, name: `Sample Problem for ${topic.name} II`, difficulty: 'Hard', solved: false, url: '#' },
     ]
-    setProblems(list)
+    const mapped = list.map(prob => ({
+      ...prob,
+      solved: solvedProblems.includes(prob.id)
+    }))
+    setProblems(mapped)
   }
 
   const handleToggleProblem = (id: string) => {
-    setProblems((prev) =>
-      prev.map((prob) => {
-        if (prob.id === id) {
-          const newSolved = !prob.solved
-          if (newSolved) {
-            setSolvedCount((prevCount) => prevCount + 1)
-            // Trigger confetti
-            confetti({
-              particleCount: 80,
-              spread: 60,
-              origin: { y: 0.8 },
-              colors: ['#0D9488', '#6366F1', '#F59E0B'],
-            })
-          } else {
-            setSolvedCount((prevCount) => Math.max(0, prevCount - 1))
-          }
-          return { ...prob, solved: newSolved }
-        }
-        return prob
+    let nextSolvedProblems = [...solvedProblems]
+    const isAdding = !solvedProblems.includes(id)
+    
+    if (isAdding) {
+      nextSolvedProblems.push(id)
+      // Trigger confetti
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.8 },
+        colors: ['#0D9488', '#6366F1', '#F59E0B'],
       })
-    )
+    } else {
+      nextSolvedProblems = nextSolvedProblems.filter(pid => pid !== id)
+    }
+    
+    setSolvedProblems(nextSolvedProblems)
+    setSolvedCount(nextSolvedProblems.length)
+    localStorage.setItem('launchpad_dsa_solved', JSON.stringify(nextSolvedProblems))
+    
+    if (nextSolvedProblems.length > 0) {
+      const currentStreak = localStorage.getItem('launchpad_dsa_streak')
+      if (!currentStreak || currentStreak === '0') {
+        localStorage.setItem('launchpad_dsa_streak', '1')
+        setStreakCount(1)
+      } else {
+        setStreakCount(parseInt(currentStreak))
+      }
+    } else {
+      localStorage.setItem('launchpad_dsa_streak', '0')
+      setStreakCount(0)
+    }
+  }
+
+  // Calculate dynamic status and solved count for each topic
+  const dynamicTopics = mockDSATopics.map((topic) => {
+    const problemsList = topicProblems[topic.id] || [
+      { id: `${topic.id}p1`, name: `Sample Problem for ${topic.name} I`, difficulty: 'Medium', solved: false, url: '#' },
+      { id: `${topic.id}p2`, name: `Sample Problem for ${topic.name} II`, difficulty: 'Hard', solved: false, url: '#' },
+    ]
+    const totalCount = problemsList.length
+    const solvedInTopic = problemsList.filter(p => solvedProblems.includes(p.id)).length
+    
+    return {
+      ...topic,
+      problems: totalCount,
+      solved: solvedInTopic,
+    }
+  })
+
+  // Set status dynamically: a node is unlocked (in-progress or completed) only if all previous nodes are completed.
+  const topicsWithStatus: any[] = []
+  for (let i = 0; i < dynamicTopics.length; i++) {
+    const topic = dynamicTopics[i]
+    const isAllSolved = topic.solved === topic.problems && topic.problems > 0
+    let status: 'completed' | 'in-progress' | 'locked' = 'locked'
+    
+    if (i === 0) {
+      status = isAllSolved ? 'completed' : 'in-progress'
+    } else {
+      const prev = topicsWithStatus[i - 1]
+      if (prev.status === 'completed') {
+        status = isAllSolved ? 'completed' : 'in-progress'
+      } else {
+        status = 'locked'
+      }
+    }
+    topicsWithStatus.push({ ...topic, status })
   }
 
   // Define graph node coordinates for vertical zigzag roadmap
-  const nodesWithCoords = mockDSATopics.map((topic, index) => {
+  const nodesWithCoords = topicsWithStatus.map((topic, index) => {
     // Left-to-right alternating snake pattern coordinates
     const row = Math.floor(index / 2)
     const isLeft = index % 2 === 0
@@ -154,7 +246,7 @@ export default function DSATrackerPage() {
           </div>
           <div>
             <p className="text-text-muted text-[10px] font-semibold uppercase tracking-wider">Active Streak</p>
-            <p className="font-display text-xl font-bold text-text-primary mt-0.5">14 Days</p>
+            <p className="font-display text-xl font-bold text-text-primary mt-0.5">{streakCount} Days</p>
           </div>
         </div>
 
@@ -165,7 +257,7 @@ export default function DSATrackerPage() {
           <div>
             <p className="text-text-muted text-[10px] font-semibold uppercase tracking-wider">Completion Rate</p>
             <p className="font-display text-xl font-bold text-text-primary mt-0.5">
-              {Math.round((solvedCount / 200) * 100)}%
+              {Math.min(100, Math.round((solvedCount / 200) * 100))}%
             </p>
           </div>
         </div>
