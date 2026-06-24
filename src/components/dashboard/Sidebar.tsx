@@ -24,7 +24,7 @@ const sidebarItems = [
   { label: 'Project Ideas', icon: Code2, href: '/dashboard/projects' },
   { label: 'Team Finder', icon: Users2, href: '/dashboard/teams' },
   { label: 'Opportunities', icon: BellRing, href: '/dashboard/opportunities' },
-  { label: 'Learning Path', icon: Route, href: '/dashboard/roadmap' },
+  { label: 'Learning Path', icon: Route, href: '/dashboard/learningpath' },
 ]
 
 export default function Sidebar() {
