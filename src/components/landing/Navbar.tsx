@@ -21,6 +21,8 @@ export default function Navbar() {
     { label: 'Team', href: '#testimonials' },
   ]
 
+  const [showAnnouncement, setShowAnnouncement] = useState(true)
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -33,6 +35,23 @@ export default function Navbar() {
           : 'bg-transparent'
       )}
     >
+      {showAnnouncement && (
+        <div className="bg-[#F0FDFA] border-b border-teal-100/50 py-2.5 px-4 text-center relative flex items-center justify-center z-50">
+          <p className="text-xs text-[#0D9488] font-semibold select-none pr-8">
+            LaunchPad MVP is live — Join 200+ students already using it{' '}
+            <Link href="/sign-up" className="underline font-bold hover:text-teal-900 transition-colors">
+              Get started free →
+            </Link>
+          </p>
+          <button
+            onClick={() => setShowAnnouncement(false)}
+            className="absolute right-4 text-teal-600 hover:text-teal-900 transition-colors text-xs font-bold leading-none p-1 focus:outline-none"
+            aria-label="Dismiss announcement"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1 group">

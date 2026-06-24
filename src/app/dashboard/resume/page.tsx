@@ -22,8 +22,12 @@ import {
   ArrowLeft,
   Sparkles,
   AlertCircle,
+  Target,
+  RefreshCw,
+  Compass,
 } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
+import Link from 'next/link'
 import { getPusherClient } from '@/lib/pusher-client'
 import { getResumeChannel, RESUME_EVENTS } from '@/lib/pusher-shared'
 
@@ -101,6 +105,8 @@ export default function ResumePage() {
   const [resumeData, setResumeData] = useState<ResumeData | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
   const [isDragOver, setIsDragOver] = useState(false)
+  const [activeTarget, setActiveTarget] = useState<any | null>(null)
+  const [loadingCompare, setLoadingCompare] = useState(false)
   const { user } = useUser()
 
   // ---- Pusher Subscription ----
@@ -146,7 +152,7 @@ export default function ResumePage() {
     }
   }, [user])
 
-  // ---- On page load: fetch existing resume result ----
+  // ---- On page load: fetch existing resume result & active target ----
   useEffect(() => {
     async function fetchExistingResume() {
       try {
@@ -166,7 +172,21 @@ export default function ResumePage() {
         console.error('Failed to fetch existing resume')
       }
     }
+    async function fetchActiveTarget() {
+      try {
+        const res = await fetch('/api/career-target')
+        if (res.ok) {
+          const data = await res.json()
+          if (data) {
+            setActiveTarget(data)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch active career target:', err)
+      }
+    }
     fetchExistingResume()
+    fetchActiveTarget()
   }, [])
 
   // ---- Animated progress bar fallback (removed, using real Pusher events) ----
@@ -265,6 +285,15 @@ export default function ResumePage() {
           status: 'complete',
           reviewResult: reviewData.reviewResult,
         })
+        if (reviewData.careerTargetAlignment) {
+          setActiveTarget(reviewData.careerTargetAlignment)
+        } else {
+          // fetch latest target from DB to see if target was updated in background
+          fetch('/api/career-target')
+            .then(res => res.json())
+            .then(data => { if (data) setActiveTarget(data) })
+            .catch(() => {})
+        }
         setStep('results')
       }, 600)
     } catch (err: unknown) {
@@ -520,6 +549,156 @@ export default function ResumePage() {
                   </p>
                 </div>
               </div>
+
+              {/* Target Career Readiness Card */}
+              {activeTarget ? (
+                <div className="bg-white border border-border-default rounded-card p-6 shadow-card space-y-4">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-5 h-5 text-teal" />
+                      <h4 className="font-display text-sm font-bold text-text-primary">
+                        Target: {activeTarget.targetTitle}
+                      </h4>
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal/5 text-teal border border-teal/10 uppercase">
+                      {activeTarget.targetType}
+                    </span>
+                  </div>
+
+                  {!activeTarget.gapAnalysis ? (
+                    <div className="text-center py-4 space-y-3">
+                      <p className="text-xs text-text-secondary">
+                        Analyze how well your resume matches the ideal profile for this target.
+                      </p>
+                      <button
+                        onClick={async () => {
+                          if (!resumeData?.resumeId) return
+                          setLoadingCompare(true)
+                          try {
+                            const res = await fetch('/api/career-target/compare', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ resumeId: resumeData.resumeId })
+                            })
+                            if (res.ok) {
+                              const updated = await res.json()
+                              setActiveTarget(updated)
+                            }
+                          } catch (err) {
+                            console.error('Failed to run comparison:', err)
+                          } finally {
+                            setLoadingCompare(false)
+                          }
+                        }}
+                        disabled={loadingCompare}
+                        className="w-full py-2 bg-teal hover:bg-teal-600 text-white text-xs font-bold rounded-btn transition-all flex items-center justify-center gap-1.5"
+                      >
+                        {loadingCompare ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>Analyzing gaps...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Run Target Gap Analysis</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Readiness score gauge */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-text-secondary">Path Readiness Score</span>
+                        <span className="text-sm font-extrabold text-teal">
+                          {activeTarget.readinessScore}% Ready
+                        </span>
+                      </div>
+                      <div className="w-full bg-bg-subtle h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-teal h-full rounded-full transition-all duration-1000"
+                          style={{ width: `${activeTarget.readinessScore}%` }}
+                        />
+                      </div>
+
+                      {/* Matching vs Missing Skills */}
+                      <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                          <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider block mb-1">
+                            Matching Skills ({activeTarget.gapAnalysis.matchingSkills?.length || 0})
+                          </span>
+                          <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-0.5">
+                            {activeTarget.gapAnalysis.matchingSkills?.map((s: string, idx: number) => (
+                              <span
+                                key={idx}
+                                className="text-[9px] font-medium px-2 py-0.5 bg-green-50 text-green-700 rounded border border-green-100"
+                              >
+                                ✓ {s}
+                              </span>
+                            ))}
+                            {(activeTarget.gapAnalysis.matchingSkills?.length || 0) === 0 && (
+                              <span className="text-[9px] text-text-muted italic">None matching yet</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wider block mb-1">
+                            Missing Gaps ({activeTarget.gapAnalysis.missingSkills?.length || 0})
+                          </span>
+                          <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-0.5">
+                            {activeTarget.gapAnalysis.missingSkills?.map((s: string, idx: number) => (
+                              <span
+                                key={idx}
+                                className="text-[9px] font-medium px-2 py-0.5 bg-amber-50 text-amber-700 rounded border border-amber-100"
+                              >
+                                ✗ {s}
+                              </span>
+                            ))}
+                            {(activeTarget.gapAnalysis.missingSkills?.length || 0) === 0 && (
+                              <span className="text-[9px] text-green-700 italic">All skills matched!</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Target Action Steps */}
+                      {activeTarget.gapAnalysis.actionSteps && activeTarget.gapAnalysis.actionSteps.length > 0 && (
+                        <div className="pt-2 border-t border-border-subtle space-y-1.5">
+                          <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">
+                            Action Plan to Bridge Gaps
+                          </span>
+                          <div className="space-y-1">
+                            {activeTarget.gapAnalysis.actionSteps.map((stepStr: string, idx: number) => (
+                              <div key={idx} className="flex items-start gap-1.5 text-[10px] text-text-secondary leading-tight">
+                                <span className="text-teal font-bold">{idx + 1}.</span>
+                                <span>{stepStr}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-bg-subtle/30 border border-dashed border-border-default rounded-card p-5 shadow-card text-center space-y-3">
+                  <Compass className="w-6 h-6 text-text-muted mx-auto" />
+                  <div>
+                    <h4 className="text-xs font-bold text-text-primary">Want to target a specific career?</h4>
+                    <p className="text-[10px] text-text-muted mt-1 font-medium leading-relaxed">
+                      Define a SDE, Data Analyst, Gig, or Research outcome to measure your alignment gaps.
+                    </p>
+                  </div>
+                  <Link
+                    href="/dashboard/path"
+                    className="w-full py-2 bg-white border border-border-default text-text-primary hover:border-teal hover:text-teal text-xs font-bold rounded-btn transition-colors flex items-center justify-center gap-1"
+                  >
+                    <span>Define Your Path ✦</span>
+                  </Link>
+                </div>
+              )}
 
               {/* Breakdown Bars Card */}
               <div className="bg-white border border-border-default rounded-card p-6 shadow-card space-y-5">

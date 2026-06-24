@@ -29,49 +29,50 @@ export default function Testimonials() {
   ]
 
   return (
-    <section className="bg-white py-24 sm:py-32 border-b border-zinc-100 relative overflow-hidden">
+    <section className="bg-slate-50/40 py-24 md:py-32 border-b border-zinc-100 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
-          
-          {/* Left Column: Heading & Label */}
-          <div className="lg:col-span-5 space-y-4">
-            <span className="text-xs font-bold uppercase tracking-widest text-teal">
-              Trusted by students
-            </span>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-zinc-950 tracking-tight leading-none">
-              Real success from campuses across India.
-            </h2>
-            <p className="text-zinc-500 font-sans text-base leading-relaxed max-w-sm pt-2">
-              See how engineering students are leveraging AI screening, mock interviews, and peer matching to land competitive roles.
-            </p>
-          </div>
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
+          <span className="text-[#0D9488] text-[10px] font-extrabold uppercase tracking-widest block mb-3">
+            Student Testimonials
+          </span>
+          <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-950">
+            Real success from <br className="hidden sm:inline" />
+            campuses across India.
+          </h2>
+          <p className="text-zinc-500 text-sm mt-4 leading-relaxed">
+            See how engineering students are leveraging AI screening, mock interviews, and peer matching to land competitive roles.
+          </p>
+        </div>
 
-          {/* Right Column: Spacious Testimonial Quotes Stack */}
-          <div className="lg:col-span-7 space-y-16">
-            {testimonials.map((t, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="space-y-4 border-l-2 border-teal pl-6"
-              >
-                <p className="font-sans font-medium text-lg sm:text-xl md:text-2xl text-zinc-900 leading-relaxed italic">
-                  &ldquo;{t.quote}&rdquo;
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+          {testimonials.map((t, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-85px' }}
+              transition={{ duration: 0.5, delay: idx * 0.12 }}
+              className="bg-white border border-zinc-100 p-8 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all flex flex-col justify-between"
+            >
+              <div className="space-y-2">
+                {/* Large quote icon */}
+                <span className="text-teal font-serif text-5xl leading-none block select-none -mb-2">“</span>
+                <p className="font-sans font-medium text-xs sm:text-sm text-zinc-700 leading-relaxed italic">
+                  {t.quote}
                 </p>
-                <div className="pt-2">
-                  <span className="font-display font-bold text-sm sm:text-base text-zinc-950 block">
-                    {t.name}
-                  </span>
-                  <span className="text-zinc-500 text-xs sm:text-sm font-sans font-medium">
-                    {t.role}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
+              </div>
+              <div className="pt-6 mt-6 border-t border-zinc-100">
+                <span className="font-display font-bold text-xs sm:text-sm text-zinc-950 block">
+                  {t.name}
+                </span>
+                <span className="text-zinc-500 text-[10px] sm:text-xs font-sans font-medium mt-0.5 block">
+                  {t.role}
+                </span>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

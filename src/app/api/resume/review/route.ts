@@ -21,6 +21,7 @@ import { auth } from '@clerk/nextjs/server'
 // import Anthropic from '@anthropic-ai/sdk'
 import { connectToDatabase } from '@/lib/mongoose'
 import Resume from '@/lib/models/Resume'
+import CareerTarget from '@/lib/models/CareerTarget'
 import { getPusherServer, getResumeChannel, RESUME_EVENTS } from '@/lib/pusher'
 
 export const dynamic = 'force-dynamic'
@@ -234,9 +235,93 @@ export async function POST(req: Request) {
         { new: true }
       )
 
+      // Automatically run active career target gap analysis if one exists
+      let targetCompareResult = null
+      try {
+        const activeTarget = await CareerTarget.findOne({ userId, isActive: true })
+        if (activeTarget && activeTarget.idealProfile) {
+          console.log(`[Resume Review] Active Career Target found: ${activeTarget.targetTitle}. Running gap analysis...`)
+          const groqApiKey = process.env.GROQ_API_KEY
+          const compareResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${groqApiKey}`,
+            },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are a Senior Technical Recruiter and Career Mentor.
+Compare the user's resume text against the Ideal Target Profile (which lists target technical skills, soft skills, projects, and milestones).
+Assess the alignment:
+1. Identify "matchingSkills" (skills from the ideal profile that are present in the resume).
+2. Identify "missingSkills" (important skills from the ideal profile that are missing from the resume).
+3. Compute a "readinessScore" (an integer from 0 to 100) representing how ready the candidate is for this specific target.
+4. Recommend 2 tailored, high-impact "recommendedProjects" specifically designed to bridge the missing skill gaps. Each project must list the "skillsAddressed".
+5. Define 3-5 concrete, sequential "actionSteps" they should take to reach readiness.
+
+You must return ONLY valid JSON in this exact shape:
+{
+  "readinessScore": number,
+  "gapAnalysis": {
+    "missingSkills": ["string"],
+    "matchingSkills": ["string"],
+    "recommendedProjects": [
+      {
+        "title": "string",
+        "description": "string",
+        "skillsAddressed": ["string"]
+      }
+    ],
+    "actionSteps": ["string"]
+  }
+}`,
+                },
+                {
+                  role: 'user',
+                  content: `Resume Text:\n${resume.extractedText}\n\nIdeal Profile:\n${JSON.stringify(activeTarget.idealProfile, null, 2)}`,
+                },
+              ],
+              temperature: 0.2,
+              max_tokens: 1200,
+              response_format: { type: 'json_object' },
+            }),
+          })
+
+          if (compareResponse.ok) {
+            const compareData = await compareResponse.json()
+            const compareContent = compareData?.choices?.[0]?.message?.content
+            if (compareContent) {
+              const cleanCompareJson = compareContent
+                .replace(/^```json\s*/i, '')
+                .replace(/^```\s*/i, '')
+                .replace(/```\s*$/i, '')
+                .trim()
+              const parsedCompare = JSON.parse(cleanCompareJson)
+              
+              activeTarget.readinessScore = parsedCompare.readinessScore
+              activeTarget.gapAnalysis = parsedCompare.gapAnalysis
+              await activeTarget.save()
+              targetCompareResult = {
+                targetTitle: activeTarget.targetTitle,
+                readinessScore: parsedCompare.readinessScore,
+                gapAnalysis: parsedCompare.gapAnalysis
+              }
+            }
+          }
+        }
+      } catch (compareErr) {
+        console.error('[Resume Review] Failed to run inline target comparison:', compareErr)
+      }
+
       try {
         const pusher = getPusherServer()
-        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.AI_COMPLETE, { reviewResult })
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.AI_COMPLETE, { 
+          reviewResult,
+          careerTargetAlignment: targetCompareResult 
+        })
       } catch (e) {
         console.error('[Pusher] Failed to emit AI_COMPLETE:', e)
       }
@@ -247,6 +332,7 @@ export async function POST(req: Request) {
         fileUrl: updatedResume?.fileUrl,
         status: 'complete',
         reviewResult,
+        careerTargetAlignment: targetCompareResult,
       })
     } catch (dbError: any) {
       console.error('[Resume Review] MongoDB update error:', dbError)

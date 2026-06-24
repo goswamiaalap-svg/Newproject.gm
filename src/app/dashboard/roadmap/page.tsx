@@ -36,17 +36,50 @@ export default function RoadmapPage() {
   const [targetCompany, setTargetCompany] = useState('Tier-1 Product')
   const [durationWeeks, setDurationWeeks] = useState(4)
   const [skillsSelected, setSkillsSelected] = useState<string[]>(['React & Frontend', 'Data Structures (DSA)'])
+  const [activeTarget, setActiveTarget] = useState<any | null>(null)
   
   const [roadmapData, setRoadmapData] = useState<Roadmap | null>(null)
 
-  // Fetch initial roadmap from DB
+  // Fetch initial roadmap & active target from DB
   useEffect(() => {
-    fetch('/api/roadmap')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.id) {
-          setRoadmapData(data)
+    setIsLoading(true)
+    Promise.all([
+      fetch('/api/roadmap').then(res => res.json()).catch(() => null),
+      fetch('/api/career-target').then(res => res.json()).catch(() => null)
+    ])
+      .then(([roadmap, target]) => {
+        if (roadmap && roadmap.id) {
+          setRoadmapData(roadmap)
           setHasRoadmap(true)
+        }
+        if (target) {
+          setActiveTarget(target)
+          // Map gap-analysis missing skills to pre-selected wizard checkboxes
+          const missing = target.gapAnalysis?.missingSkills || []
+          if (missing.length > 0) {
+            const mappedSkills: string[] = []
+            const lowerMissing = missing.map((s: string) => s.toLowerCase())
+            
+            if (lowerMissing.some((s: string) => s.includes('react') || s.includes('frontend') || s.includes('css') || s.includes('next.js') || s.includes('html'))) {
+              mappedSkills.push('React & Frontend')
+            }
+            if (lowerMissing.some((s: string) => s.includes('node') || s.includes('backend') || s.includes('express') || s.includes('database') || s.includes('mongodb') || s.includes('sql'))) {
+              mappedSkills.push('Node & Backend')
+            }
+            if (lowerMissing.some((s: string) => s.includes('dsa') || s.includes('algorithm') || s.includes('data structures') || s.includes('leetcode') || s.includes('tree') || s.includes('graph'))) {
+              mappedSkills.push('Data Structures (DSA)')
+            }
+            if (lowerMissing.some((s: string) => s.includes('os') || s.includes('dbms') || s.includes('operating system') || s.includes('networking'))) {
+              mappedSkills.push('OS/DBMS Fundamentals')
+            }
+            if (lowerMissing.some((s: string) => s.includes('system design') || s.includes('architecture') || s.includes('scaling'))) {
+              mappedSkills.push('System Design Basics')
+            }
+
+            if (mappedSkills.length > 0) {
+              setSkillsSelected(mappedSkills)
+            }
+          }
         }
       })
       .catch(console.error)
@@ -141,10 +174,10 @@ export default function RoadmapPage() {
       <div className="!bg-[#FAFAFA] p-6 rounded-2xl border border-[#E2E8F0] shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-extrabold !text-[#0F172A]">
-            Placement Prep Learning Path
+            {activeTarget ? `Path to becoming ready for: ${activeTarget.targetTitle}` : 'Placement Prep Learning Path'}
           </h1>
           <p className="!text-[#475569] text-sm mt-1">
-            Personalized week-by-week preparation plan from our live Database.
+            {activeTarget ? `Bridging your computed skill gaps for your active target career.` : 'Personalized week-by-week preparation plan from our live Database.'}
           </p>
         </div>
 
