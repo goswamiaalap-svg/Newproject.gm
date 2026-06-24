@@ -1,192 +1,88 @@
 'use client'
 
-import { Suspense } from 'react'
-import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
-
-// Dynamically import heavy Three.js scene — no SSR
-const HeroScene = dynamic(() => import('@/components/three/HeroScene'), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0 z-0 bg-[#0A0A0A]" />,
-})
-
-/* ── Word-by-word animated headline ── */
-function AnimatedHeadline({ text, className, style }: { text: string; className?: string; style?: React.CSSProperties }) {
-  const words = text.split(' ')
-  return (
-    <span className={className} style={{ display: 'block', ...style }}>
-      {words.map((word, i) => (
-        <motion.span
-          key={i}
-          className="inline-block mr-[0.3em]"
-          initial={{ opacity: 0, y: 40, rotateX: -20 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{
-            duration: 0.65,
-            delay: 0.4 + i * 0.1,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          style={{ transformOrigin: 'bottom center' }}
-        >
-          {word}
-        </motion.span>
-      ))}
-    </span>
-  )
-}
 
 export default function Hero() {
-  const avatars = [
-    { text: 'PS', bg: 'bg-teal' },
-    { text: 'AM', bg: 'bg-indigo' },
-    { text: 'SR', bg: 'bg-gold' },
-    { text: 'RK', bg: 'bg-teal-600' },
-    { text: 'KN', bg: 'bg-indigo-600' },
-  ]
-
   return (
-    <section
-      id="hero"
-      className="relative w-full flex items-center justify-center overflow-hidden bg-[#0A0A0A]"
-      style={{ minHeight: '100vh' }}
-    >
-      {/* ── 3D WebGL background canvas (z-0) ── */}
-      <Suspense fallback={<div className="absolute inset-0 z-0 bg-[#0A0A0A]" />}>
-        <HeroScene />
-      </Suspense>
-
-      {/* ── Dark radial vignette overlay (z-10) ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          zIndex: 10,
-          background:
-            'radial-gradient(ellipse 75% 65% at 50% 50%, transparent 20%, rgba(10,10,10,0.8) 100%)',
-        }}
-      />
-
-      {/* ── Content (z-20) — everything visible above the canvas ── */}
-      <div
-        className="relative w-full max-w-5xl mx-auto px-6 flex flex-col items-center text-center"
-        style={{ zIndex: 20, paddingTop: '5rem', paddingBottom: '6rem' }}
-      >
-
-        {/* Badge pill */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md text-white/90 text-xs font-bold border border-white/15 shadow-lg mb-8"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
-          AI-Powered Career Platform for Engineers
-        </motion.div>
-
-        {/* Headline */}
-        <h1
-          className="font-display font-extrabold text-5xl md:text-7xl lg:text-[80px] leading-[1.05] tracking-tight mb-6"
-          style={{ perspective: '600px' }}
-        >
-          <AnimatedHeadline text="Your Career Platform." className="text-white" />
-          <AnimatedHeadline
-            text="Built for Every Engineer."
-            className="text-transparent"
-            style={{
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              backgroundImage: 'linear-gradient(135deg, #22D3EE 0%, #818CF8 100%)',
-            } as React.CSSProperties}
-          />
-        </h1>
-
-        {/* Subtext */}
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.0 }}
-          className="text-white/55 text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed font-sans"
-        >
-          Resume reviews, DSA roadmaps, mock interviews, team-finding — everything you need from campus to career.
-        </motion.p>
-
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.15 }}
-          className="flex flex-col sm:flex-row items-center gap-4 mb-10"
-        >
-          <Link
-            href="/sign-up"
-            className="group relative inline-flex items-center gap-2 px-10 py-4 rounded-full font-display font-bold text-sm bg-gradient-to-r from-cyan-400 to-indigo-500 text-white shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)] transition-all duration-300 overflow-hidden"
-          >
-            <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12 pointer-events-none" />
-            Get Started Free →
-          </Link>
-          <Link
-            href="#features"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-display font-bold text-sm text-white/65 border border-white/15 hover:border-cyan-400/50 hover:text-cyan-400 transition-all duration-300"
-          >
-            See Features
-          </Link>
-        </motion.div>
-
-        {/* Social proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.3 }}
-          className="flex flex-col sm:flex-row items-center gap-3"
-        >
-          <div className="flex -space-x-2.5">
-            {avatars.map((av, idx) => (
-              <div
-                key={idx}
-                className={`w-8 h-8 rounded-full border-2 border-[#06070A] ${av.bg} text-white flex items-center justify-center font-display font-bold text-[10px]`}
-              >
-                {av.text}
-              </div>
-            ))}
+    <section id="hero" className="relative w-full px-4 md:px-8 pt-36 pb-16 flex justify-center bg-[#F5F5F3] min-h-screen">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        
+        {/* Left Card: Content */}
+        <div className="bg-white rounded-[32px] p-8 md:p-12 lg:p-16 flex flex-col justify-center shadow-sm border border-gray-100">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111111] text-white text-xs font-bold w-max mb-8">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+            Join +1000 scaling engineers
           </div>
-          <p className="text-white/45 text-xs font-medium font-sans">
-            <span className="text-white font-bold">4.8 ★</span>&nbsp; Trusted by 200+ students at JKLU and growing
+          
+          <h1 className="font-display font-extrabold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-[#111111] mb-6">
+            Finally A Platform That Powers <i className="font-serif italic font-normal tracking-normal text-[#444444]">Your Career</i>
+          </h1>
+          
+          <p className="text-[#444444] text-lg md:text-xl font-medium mb-10 max-w-md">
+            LaunchPad powers your growth with <span className="text-[#3B82F6]">Intelligence</span>.
           </p>
-        </motion.div>
-      </div>
 
-      {/* ── Scroll indicator (z-20) ── */}
-      <motion.div
-        className="absolute left-1/2 -translate-x-1/2 bottom-8 flex flex-col items-center gap-2"
-        style={{ zIndex: 20 }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8, duration: 0.6 }}
-      >
-        <span className="text-white/25 text-[10px] font-bold uppercase tracking-widest font-sans">Scroll</span>
-        <div className="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center pt-1.5">
-          <motion.div
-            className="w-1 h-2 rounded-full bg-cyan-400"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-          />
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
+            <input 
+              type="email" 
+              placeholder="What's your email?" 
+              className="w-full px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition-all text-[#111111] placeholder-gray-400"
+            />
+            <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#3B82F6] hover:bg-blue-600 text-white font-bold whitespace-nowrap transition-colors shadow-lg shadow-blue-500/30">
+              Get Started &rarr;
+            </button>
+          </div>
         </div>
-      </motion.div>
 
-      {/* ── Wave divider to white section (z-20) ── */}
-      <div
-        className="absolute bottom-0 left-0 w-full overflow-hidden leading-none pointer-events-none"
-        style={{ zIndex: 20 }}
-      >
-        <svg
-          viewBox="0 0 1440 80"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          className="w-full translate-y-[2px]"
-          fill="#111111"
-        >
-          <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" />
-        </svg>
+        {/* Right Card: Visuals */}
+        <div className="bg-gradient-to-br from-[#3b82f6] via-[#818cf8] to-[#fdba74] rounded-[32px] p-8 md:p-12 flex items-center justify-center relative overflow-hidden min-h-[500px]">
+          {/* Abstract dark card mimicking the Parker card */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="w-full max-w-[440px] aspect-[1.58/1] bg-[#1F2023] rounded-3xl shadow-2xl relative p-6 md:p-8 flex flex-col justify-between border border-white/5 z-10"
+          >
+            {/* Background elements in the card */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-500/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-orange-500/10 to-transparent rounded-full blur-2xl translate-y-1/3 -translate-x-1/3" />
+            
+            {/* Decorative colored stacked cards behind main card */}
+            <div className="absolute -right-12 top-2 w-[80%] h-full bg-gradient-to-tr from-orange-300 to-pink-300 rounded-3xl transform rotate-[15deg] -z-20 shadow-lg opacity-90" />
+            <div className="absolute -right-6 top-6 w-[80%] h-full bg-gradient-to-tr from-blue-300 to-cyan-200 rounded-3xl transform rotate-[30deg] -z-10 shadow-lg opacity-90" />
+            
+            {/* Card Header */}
+            <div className="flex justify-between items-start z-10">
+              <span className="font-heading font-800 text-3xl text-white tracking-tight">Launch<span className="text-white">Pad</span></span>
+            </div>
+
+            {/* Card Chip */}
+            <div className="w-12 h-9 rounded-md bg-gradient-to-br from-gray-300 to-gray-400 shadow-inner z-10 flex flex-col justify-evenly px-1.5 opacity-90">
+              <div className="h-[1px] w-full bg-gray-500/50"></div>
+              <div className="h-[1px] w-full bg-gray-500/50"></div>
+              <div className="h-[1px] w-full bg-gray-500/50"></div>
+            </div>
+
+            {/* Card Details */}
+            <div className="z-10 mt-6 flex items-end justify-between">
+              <div>
+                <div className="font-mono text-white/90 text-lg md:text-xl tracking-[0.2em] mb-2">3701 9286 6099 3643</div>
+                <div className="flex items-center gap-4 text-white/70 font-mono uppercase">
+                  <div className="flex items-center gap-1.5">
+                    <span className="block text-[6px] leading-[1.2] text-right tracking-widest font-sans">VALID<br/>THRU</span>
+                    <span className="text-sm tracking-widest">08/28</span>
+                  </div>
+                </div>
+              </div>
+              {/* Mastercard-like overlapping circles */}
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-[#EB001B] mix-blend-screen opacity-90"></div>
+                <div className="w-10 h-10 rounded-full bg-[#F79E1B] mix-blend-screen -ml-4 opacity-90"></div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
       </div>
     </section>
   )

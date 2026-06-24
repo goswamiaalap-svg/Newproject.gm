@@ -35,8 +35,7 @@ export default function Home() {
     <>
       <LoadingScreen isLoading={isLoading} />
       
-      <main className="relative min-h-screen overflow-x-hidden bg-[#0A0A0A]" style={{ position: 'relative', zIndex: 1 }}>
-        <AmbientCanvas />
+      <main className="relative min-h-screen overflow-x-hidden bg-[#F5F5F3]" style={{ position: 'relative', zIndex: 1 }}>
         {/* Navigation */}
         <Navbar />
 

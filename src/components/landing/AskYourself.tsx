@@ -40,14 +40,14 @@ export default function AskYourself() {
   }
 
   return (
-    <section className="bg-[#111111] py-24 md:py-32 relative overflow-hidden border-b border-[#222222]">
+    <section className="bg-white py-24 md:py-32 relative overflow-hidden border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-20">
           <span className="text-cyan-400 text-[10px] font-extrabold uppercase tracking-widest block mb-3">
             Ask Yourself
           </span>
-          <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-white">
+          <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight text-[#111111]">
             Three questions for <br className="hidden sm:inline" />
             your engineering career.
           </h2>
@@ -73,12 +73,12 @@ export default function AskYourself() {
               </span>
               
               {/* Question Text */}
-              <h3 className="font-display font-extrabold text-base md:text-lg text-white leading-snug">
+              <h3 className="font-display font-extrabold text-base md:text-lg text-[#111111] leading-snug">
                 {q.text}
               </h3>
 
               {/* Description */}
-              <p className="text-[#A0A0A0] font-sans font-medium text-xs sm:text-sm leading-relaxed">
+              <p className="text-[#666666] font-sans font-medium text-xs sm:text-sm leading-relaxed">
                 {q.desc}
               </p>
             </motion.div>
