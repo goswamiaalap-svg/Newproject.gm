@@ -54,8 +54,8 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-85px' }}
               transition={{ duration: 0.5, delay: idx * 0.12 }}
-              <div className="bg-white border border-gray-200 p-8 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all flex flex-col justify-between"
-              >
+              className="bg-white border border-gray-200 p-8 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all flex flex-col justify-between"
+            >
               <div className="space-y-2">
                 {/* Large quote icon */}
                 <span className="text-[#3B82F6] font-serif text-5xl leading-none block select-none -mb-2">“</span>
