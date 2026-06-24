@@ -1,496 +1,592 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { FileText, Flame, Code, Calendar, Users, Briefcase, Lock, ArrowRight, CheckCircle2, Gauge, Lightbulb, Sparkles } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { FileText, Flame, Code, Calendar, Users, Briefcase, Lock, Sparkles, ArrowRight, ShieldCheck, TrendingUp, CheckCircle, Video, Clock, AlertTriangle, AlertCircle, Award } from 'lucide-react'
+import Link from 'next/link'
 
-interface FeatureRowProps {
-  badgeText: string
-  badgeColor: 'teal' | 'indigo' | 'purple' | 'gold'
-  heading: string
-  bodyText: string
-  isLeftText: boolean
-  pills?: string[]
-  children: React.ReactNode
-  customPadding?: string
-  noMockupWrapper?: boolean
+/* ── Types ── */
+interface SubPoint {
+  title: string
+  description: string
+  visual: React.ReactNode
 }
 
-/* ── Tilt card wrapper ──────────────────────────────────── */
-function TiltCard({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+interface FeatureSectionProps {
+  label: string
+  headline: string
+  description: string
+  exploreHref: string
+  subPoints: SubPoint[]
+  imageSide: 'left' | 'right'
+}
+
+/* ── SubPoint component that reports when it is in view ── */
+interface SubPointProps {
+  index: number
+  title: string
+  description: string
+  isActive: boolean
+  setActiveIndex: (index: number) => void
+  visual: React.ReactNode
+}
+
+function SubPoint({ index, title, description, isActive, setActiveIndex, visual }: SubPointProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, {
+    margin: "-30% 0px -30% 0px", // Trigger when element hits middle of screen
+  })
+
+  useEffect(() => {
+    if (inView) {
+      setActiveIndex(index)
+    }
+  }, [inView, index, setActiveIndex])
+
   return (
-    <motion.div
-      className={cn('relative overflow-hidden', className)}
-      style={style}
-      whileHover="hover"
-      initial="rest"
-      animate="rest"
+    <div
+      ref={ref}
+      className={cn(
+        "py-10 border-l-2 transition-all duration-500 pl-6 space-y-2 cursor-pointer",
+        isActive 
+          ? "border-teal opacity-100" 
+          : "border-zinc-200 hover:border-zinc-300 opacity-40"
+      )}
+      onClick={() => setActiveIndex(index)}
     >
-      {/* Main tilt */}
-      <motion.div
-        variants={{
-          rest:  { rotateY: 0,   rotateX: 0,   scale: 1,    z: 0 },
-          hover: { rotateY: 6,   rotateX: -4,  scale: 1.025, z: 30 },
-        }}
-        transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-        style={{ transformStyle: 'preserve-3d', transformOrigin: 'center center' }}
-      >
-        {children}
-      </motion.div>
-
-      {/* Shine sweep on hover */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none rounded-[24px]"
-        style={{
-          background: 'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%)',
-          backgroundSize: '200% 100%',
-        }}
-        variants={{
-          rest:  { backgroundPosition: '-100% 0', opacity: 0 },
-          hover: { backgroundPosition:  '200% 0', opacity: 1 },
-        }}
-        transition={{ duration: 0.55, ease: 'easeInOut' }}
-      />
-    </motion.div>
-  )
-}
-
-function FeatureRow({
-  badgeText,
-  badgeColor,
-  heading,
-  bodyText,
-  isLeftText,
-  pills = [],
-  children,
-  customPadding,
-  noMockupWrapper = false,
-}: FeatureRowProps) {
-  const badgeClasses = {
-    teal:   'bg-teal-light text-teal border-teal/10',
-    indigo: 'bg-indigo-light text-indigo border-indigo/10',
-    purple: 'bg-purple-50 text-purple-600 border-purple-100',
-    gold:   'bg-gold-light text-gold border-gold/10',
-  }
-
-  const textPanel = (
-    <motion.div
-      initial={{ opacity: 0, x: isLeftText ? -50 : 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col justify-center space-y-5"
-    >
-      <div>
-        <span className={cn(
-          'text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border',
-          badgeClasses[badgeColor]
-        )}>
-          {badgeText}
-        </span>
-      </div>
-      <h3 className="font-display font-extrabold text-3xl md:text-4xl text-text-primary tracking-tight leading-tight">
-        {heading}
-      </h3>
-      <p className="text-text-secondary text-sm md:text-base leading-relaxed font-sans font-medium">
-        {bodyText}
+      <h4 className="font-display font-bold text-lg sm:text-xl text-zinc-900">
+        {title}
+      </h4>
+      <p className="text-zinc-500 font-sans text-sm sm:text-base leading-relaxed">
+        {description}
       </p>
 
-      {pills.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-2">
-          {pills.map((pill, idx) => (
-            <motion.span
-              key={idx}
-              initial={{ opacity: 0, scale: 0.85 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 * idx, duration: 0.4 }}
-              className="text-[10px] font-bold px-3 py-1.5 bg-bg-subtle text-text-secondary rounded-full border border-border-default shadow-soft"
-            >
-              {pill}
-            </motion.span>
-          ))}
+      {/* Stacked mobile visual, hidden on desktop */}
+      <div className="block lg:hidden pt-6">
+        <div className={cn(
+          "bg-zinc-50/50 rounded-2xl border border-zinc-100 p-6 flex items-center justify-center min-h-[300px] transition-opacity duration-500",
+          isActive ? "opacity-100" : "opacity-40"
+        )}>
+          {visual}
         </div>
-      )}
-    </motion.div>
-  )
-
-  const mockupPanel = (
-    <motion.div
-      initial={{ opacity: 0, x: isLeftText ? 50 : -50, y: 20 }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      className="flex items-stretch justify-center w-full h-full"
-    >
-      {noMockupWrapper ? (
-        <TiltCard className="w-full h-full">
-          <div className="shadow-medium rounded-[24px]">{children}</div>
-        </TiltCard>
-      ) : (
-        <TiltCard className="w-full bg-bg-subtle rounded-[24px] border border-border-default shadow-soft relative overflow-hidden flex items-center justify-center p-6 md:p-8 min-h-[360px] md:min-h-[420px]">
-          {children}
-        </TiltCard>
-      )}
-    </motion.div>
-  )
-
-  return (
-    <div className={cn(
-      'max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 feature-row items-center',
-      customPadding ? customPadding : 'py-[60px]'
-    )}>
-      {isLeftText ? (
-        <>{textPanel}{mockupPanel}</>
-      ) : (
-        <>{mockupPanel}{textPanel}</>
-      )}
+      </div>
     </div>
   )
 }
 
-export default function Features() {
+/* ── FeatureSection: Handles the sticky layout side-by-side ── */
+function FeatureSection({
+  label,
+  headline,
+  description,
+  exploreHref,
+  subPoints,
+  imageSide,
+}: FeatureSectionProps) {
+  const [activeIndex, setActiveIndex] = useState(0)
+
   return (
-    <div className="bg-white">
-      {/* Row 1: Resume */}
-      <FeatureRow
-        badgeText="Resume Reviewer"
-        badgeColor="teal"
-        heading="Get feedback that actually helps."
-        bodyText="Upload your resume and get structured, actionable feedback aligned with Indian startup and product company hiring standards. Know exactly what to fix and why."
-        isLeftText={true}
-        pills={['ATS Score', 'Impact Language', 'Keyword Gaps']}
-      >
-        <div className="w-full bg-white rounded-card border border-border-default p-6 shadow-medium space-y-4 max-w-sm">
-          <div className="flex items-center gap-4 border-b border-border-subtle pb-3">
+    <section className="bg-white py-24 lg:py-36 border-b border-zinc-100 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className={cn(
+          "grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start",
+          imageSide === 'left' ? "dir-rtl" : "" // Handle text/image side swapping
+        )}>
+          
+          {/* Left Column: Text (always reads left-to-right inside, even if layout is swapped) */}
+          <div className={cn(
+            "lg:col-span-6 flex flex-col space-y-8",
+            imageSide === 'left' ? "dir-ltr" : ""
+          )}>
+            <div className="space-y-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-teal">
+                {label}
+              </span>
+              <h2 className="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-zinc-950 tracking-tight leading-none">
+                {headline}
+              </h2>
+              <p className="text-zinc-600 font-sans text-base sm:text-lg leading-relaxed max-w-xl">
+                {description}
+              </p>
+              <div>
+                <Link
+                  href={exploreHref}
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-teal hover:text-teal-700 transition-colors group"
+                >
+                  <span>Explore {label}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Scrollable Points */}
+            <div className="space-y-6 pt-8">
+              {subPoints.map((pt, idx) => (
+                <SubPoint
+                  key={idx}
+                  index={idx}
+                  title={pt.title}
+                  description={pt.description}
+                  isActive={activeIndex === idx}
+                  setActiveIndex={setActiveIndex}
+                  visual={pt.visual}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column: Sticky Visual container (hidden on mobile, stacked inside SubPoint) */}
+          <div className={cn(
+            "hidden lg:block lg:col-span-6 sticky top-32 h-[500px]",
+            imageSide === 'left' ? "dir-ltr" : ""
+          )}>
+            <div className="w-full h-full bg-zinc-50/50 rounded-3xl border border-zinc-100 flex items-center justify-center p-8 relative overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, scale: 0.96, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: -10 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  className="w-full h-full flex items-center justify-center"
+                >
+                  {subPoints[activeIndex].visual}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ── Main Features Component ── */
+export default function Features() {
+  
+  // Section 1: Resume subpoints and visual components
+  const resumePoints: SubPoint[] = [
+    {
+      title: "ATS Score Check",
+      description: "Get a comprehensive compatibility check on headers, document structure, and keywords immediately upon upload.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-6 shadow-soft max-w-sm space-y-4 font-sans text-xs">
+          <div className="flex items-center gap-4 border-b border-zinc-50 pb-3">
             <div className="relative w-12 h-12 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90">
                 <circle cx="24" cy="24" r="20" stroke="#F1F5F9" strokeWidth="4" fill="none" />
                 <circle cx="24" cy="24" r="20" stroke="#0D9488" strokeWidth="4" fill="none" strokeDasharray={2*Math.PI*20} strokeDashoffset={2*Math.PI*20*0.22} />
               </svg>
-              <span className="absolute text-[11px] font-bold text-text-primary">78</span>
+              <span className="absolute text-[11px] font-bold text-zinc-900">78</span>
             </div>
             <div>
-              <p className="text-xs font-bold text-text-primary">Resume Score Report</p>
-              <p className="text-[10px] text-text-muted font-sans font-medium">ATS Readability Check</p>
+              <p className="text-xs font-bold text-zinc-900">Resume Score Report</p>
+              <p className="text-[10px] text-zinc-400 font-medium">ATS Readability Check</p>
             </div>
           </div>
-
-          <div className="space-y-2 text-[10px] font-sans font-semibold text-text-secondary">
+          <div className="space-y-2 text-[10px] font-semibold text-zinc-600">
             <div className="flex justify-between">
               <span>ATS Compatibility</span>
               <span className="text-teal">82%</span>
             </div>
-            <div className="w-full h-1.5 bg-bg-subtle rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-teal"
-                initial={{ width: 0 }}
-                whileInView={{ width: '82%' }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.3 }}
-              />
+            <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+              <div className="h-full bg-teal w-[82%]" />
             </div>
             <div className="flex justify-between">
               <span>Quantified Achievements</span>
-              <span className="text-gold">65%</span>
+              <span className="text-amber-550">65%</span>
             </div>
-            <div className="w-full h-1.5 bg-bg-subtle rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gold"
-                initial={{ width: 0 }}
-                whileInView={{ width: '65%' }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.5 }}
-              />
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-border-subtle space-y-1.5 font-sans">
-            <div className="p-2.5 bg-red-50 text-red-700 rounded text-[9px] flex gap-1.5 items-start leading-relaxed font-semibold">
-              <span>🔴</span>
-              <span>Missing metrics: add project percentages and margins.</span>
-            </div>
-            <div className="p-2.5 bg-amber-50 text-amber-700 rounded text-[9px] flex gap-1.5 items-start leading-relaxed font-semibold">
-              <span>🟡</span>
-              <span>Weak verbs: replace &quot;worked on&quot; with &quot;architected&quot;.</span>
+            <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+              <div className="h-full bg-amber-500 w-[65%]" />
             </div>
           </div>
         </div>
-      </FeatureRow>
-
-      {/* Row 2: DSA Roadmap */}
-      <FeatureRow
-        badgeText="DSA Roadmap"
-        badgeColor="indigo"
-        heading="Stop grinding. Start progressing."
-        bodyText="A structured, topic-by-topic DSA learning path with daily streaks, progress tracking, and weak-area identification. Know exactly where you are and what to do next."
-        isLeftText={false}
-        pills={['🔥 14 Days Streak', '234 problems solved']}
-        customPadding="py-20"
-        noMockupWrapper={true}
-      >
-        <div className="w-full h-full min-h-[480px] bg-[#F8F9FF] rounded-3xl p-8 relative overflow-hidden border border-border-default shadow-soft flex flex-col justify-between">
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <span className="font-heading font-700 text-lg text-[#0F172A] tracking-tight">DSA Roadmap</span>
-              <span className="text-[#0D9488] font-semibold text-sm">14 / 20 Complete</span>
-            </div>
-            <div className="w-full h-2 bg-[#E2E8F0] rounded-full mb-8">
-              <motion.div
-                className="h-2 bg-gradient-to-r from-[#0D9488] to-[#0EA5E9] rounded-full"
-                initial={{ width: 0 }}
-                whileInView={{ width: '70%' }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: 'easeOut' }}
-              />
-            </div>
-
-            <div className="relative h-48 w-full mt-4 flex items-center justify-center">
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                <path d="M 40 50 Q 80 120, 110 130 T 180 60 T 250 140 T 320 50 T 380 90" fill="none" stroke="#E2E8F0" strokeWidth="4" />
-                <path d="M 40 50 Q 80 120, 110 130" fill="none" stroke="#0D9488" strokeWidth="4" />
-                <path d="M 110 130 Q 145 140, 180 60" fill="none" stroke="#F59E0B" strokeWidth="4" strokeDasharray="6,6" />
-              </svg>
-
-              {/* Nodes */}
-              {[
-                { left: '5%',  top: '10%',   bg: 'bg-[#0D9488]',   text: '✓',  label: 'Arrays', opacity: '' },
-                { left: '22%', bottom: '10%', bg: 'bg-white',        text: '🔥', label: 'Linked Lists', opacity: '', pulse: true, border: 'border-[#F59E0B]' },
-                { left: '40%', top: '15%',   bg: 'bg-white',        lock: true, label: 'Stacks', opacity: 'opacity-60' },
-                { left: '58%', bottom: '15%', bg: 'bg-white',        lock: true, label: 'Trees',  opacity: 'opacity-60' },
-                { left: '75%', top: '10%',   bg: 'bg-white',        lock: true, label: 'Graphs', opacity: 'opacity-60' },
-                { right: '5%', top: '40%',   bg: 'bg-white',        lock: true, label: 'DP',     opacity: 'opacity-60' },
-              ].map((node, i) => (
-                <div
-                  key={i}
-                  className={`absolute flex flex-col items-center ${node.opacity}`}
-                  style={{ left: node.left, right: (node as any).right, top: node.top, bottom: (node as any).bottom }}
-                >
-                  <div className={`relative w-8 h-8 rounded-full ${node.bg} flex items-center justify-center font-display font-extrabold ${node.lock ? 'border border-border-default text-text-muted shadow-soft' : `border-2 ${(node as any).border || 'border-white'} text-white shadow-soft`}`}>
-                    {(node as any).pulse && <span className="absolute inset-0 w-full h-full rounded-full bg-[#F59E0B]/20 animate-ping" />}
-                    {node.lock ? <Lock className="w-3.5 h-3.5" /> : node.text}
-                  </div>
-                  <span className="text-[9px] font-bold text-text-secondary mt-1">{node.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2.5 mt-8 font-sans">
-            <span className="bg-[#E6FAF8] text-[#0D9488] text-xs font-semibold px-4 py-2 rounded-full border border-[#0D9488]/10 shadow-soft">🔥 14 Days Streak</span>
-            <span className="bg-[#EEF2FF] text-[#6366F1] text-xs font-semibold px-4 py-2 rounded-full border border-[#6366F1]/10 shadow-soft">234 Problems Solved</span>
-            <span className="bg-[#FEF3C7] text-[#D97706] text-xs font-semibold px-4 py-2 rounded-full border border-[#FBBF24]/10 shadow-soft">⚡ 3 Topics In Progress</span>
-          </div>
-        </div>
-      </FeatureRow>
-
-      {/* Row 3: Mock Interview */}
-      <FeatureRow
-        badgeText="Mock Interview"
-        badgeColor="purple"
-        heading="Practice like it's the real thing."
-        bodyText="AI-driven technical and HR interview rounds with detailed performance feedback. Personalised by your target company — startup, mid-size, or FAANG."
-        isLeftText={true}
-        pills={['Simulated Webcam', 'Live Timer', 'Score Accordion']}
-      >
-        <div className="relative w-full max-w-md h-[280px] flex items-center justify-center">
-          {/* Main Mockup Card */}
-          <div className="w-full max-w-sm bg-[#0D1321] text-white rounded-card p-6 border border-white/10 shadow-medium space-y-4 font-mono text-[10px] relative z-10">
-            <div className="flex justify-between items-center border-b border-white/5 pb-2 text-[8px] text-white/40">
-              <span>LIVE RECORDING SESSION • SDE Round</span>
-              <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-500 animate-pulse font-bold">LIVE</span>
-            </div>
-            
-            <div className="flex gap-4">
-              {/* Fake Webcam frame */}
-              <div className="w-20 h-24 bg-white/5 rounded border border-white/10 flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="w-8 h-8 rounded-full bg-teal/20 flex items-center justify-center animate-pulse text-teal">
-                  <span className="text-xl">🧑‍💻</span>
-                </div>
-                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-0.5">
-                   {[1,2,3,4,3,2].map((v,i) => <div key={i} className="w-0.5 bg-teal rounded-full animate-pulse" style={{height: `${v*4}px`}} />)}
-                </div>
-              </div>
-
-              <div className="flex-1 bg-white/5 p-4 rounded border border-white/10 space-y-1.5 flex flex-col justify-between">
-                <div>
-                  <span className="text-teal font-bold uppercase text-[7px]">Question 1 of 3</span>
-                  <p className="text-white/90 text-xs font-semibold leading-relaxed font-sans mt-1">
-                    Explain the difference between a process and a thread. When would you use one over the other?
-                  </p>
-                </div>
-                <div className="flex justify-end items-center mt-2">
-                  <span className="text-[10px] font-bold text-white/60 font-mono flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" />
-                    Timer: 12:45
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Floating AI Analytics Elements */}
-          <div className="absolute -left-4 top-4 bg-white border border-border-default rounded-card p-3 shadow-medium flex flex-col items-center z-20 space-y-1">
-             <span className="text-[7px] font-bold text-text-muted uppercase tracking-wider">Confidence Score</span>
-             <div className="relative w-10 h-10 flex items-center justify-center">
-                <svg className="w-full h-full -rotate-90">
-                  <circle cx="20" cy="20" r="16" stroke="#F1F5F9" strokeWidth="4" fill="none" />
-                  <circle cx="20" cy="20" r="16" stroke="#6366F1" strokeWidth="4" fill="none" strokeDasharray={2*Math.PI*16} strokeDashoffset={2*Math.PI*16*0.08} />
-                </svg>
-                <span className="absolute text-[10px] font-extrabold text-indigo">92%</span>
-             </div>
-          </div>
-
-          <div className="absolute -right-6 bottom-8 bg-white border border-border-default rounded-lg p-2 shadow-medium flex items-center gap-2 z-20">
-             <span className="w-5 h-5 rounded bg-green-100 text-green-600 flex items-center justify-center text-[10px]">👁️</span>
-             <div>
-                <p className="text-[9px] font-bold text-text-primary">Eye Contact</p>
-                <p className="text-[7px] text-text-muted font-semibold">Perfect alignment</p>
-             </div>
-          </div>
-
-          <div className="absolute left-6 -bottom-4 bg-[#0D9488] text-white rounded-lg p-2.5 shadow-medium flex items-center gap-2 z-20 border border-teal-600">
-             <span className="text-[10px] font-mono">Pace:</span>
-             <span className="text-[10px] font-bold">140 WPM (Good)</span>
-          </div>
-        </div>
-      </FeatureRow>
-
-      {/* Row 4: Projects */}
-      <FeatureRow
-        badgeText="Project Ideas"
-        badgeColor="gold"
-        heading="Build projects recruiters can evaluate."
-        bodyText="Project Lab turns your skills, year, target role, and deadline into placement-ready project briefs with fit scores, resume bullets, validation plans, and interview defense points."
-        isLeftText={false}
-        pills={['Fit Score', 'Resume Bullets', 'Validation Plan', 'Interview Defense']}
-      >
-        <div className="w-full max-w-md rounded-card border border-border-default bg-white p-5 shadow-medium font-sans">
-          <div className="flex items-center justify-between border-b border-border-subtle pb-3">
-            <div>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-gold">Project Lab Preview</p>
-              <h5 className="font-display text-base font-extrabold text-text-primary">AI Resume-to-Job Match Analyzer</h5>
-            </div>
-            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl bg-teal-light text-teal">
-              <span className="text-lg font-black leading-none">91</span>
-              <span className="text-[8px] font-bold uppercase">Fit</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 py-4">
+      )
+    },
+    {
+      title: "Keyword Matching",
+      description: "Compare your resume against your target job descriptions to identify missing skills and industry keywords.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-6 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <h5 className="font-bold text-zinc-900 border-b border-zinc-55 pb-2">Target Skills Gap Analysis</h5>
+          <div className="space-y-2.5">
             {[
-              { label: 'Recruiter', value: '34/35', icon: Gauge },
-              { label: 'Depth', value: '27/30', icon: Code },
-              { label: 'Feasible', value: '14/15', icon: CheckCircle2 },
-            ].map((item) => (
-              <div key={item.label} className="rounded-btn border border-border-subtle bg-bg-base p-2.5">
-                <item.icon className="mb-1.5 h-3.5 w-3.5 text-teal" />
-                <p className="text-[9px] font-bold text-text-primary">{item.value}</p>
-                <p className="text-[8px] font-semibold text-text-muted">{item.label}</p>
+              { skill: "React / Next.js", match: true },
+              { skill: "TypeScript", match: true },
+              { skill: "Node.js & Express", match: true },
+              { skill: "System Design (scalable APIs)", match: false },
+              { skill: "MongoDB & Mongoose", match: true },
+            ].map((s, idx) => (
+              <div key={idx} className="flex justify-between items-center text-[10px]">
+                <span className="font-medium text-zinc-700">{s.skill}</span>
+                <span className={cn(
+                  "px-2 py-0.5 rounded text-[8px] font-bold",
+                  s.match ? "bg-teal-light text-teal border border-teal/10" : "bg-red-50 text-red-600 border border-red-100"
+                )}>
+                  {s.match ? "Matched ✓" : "Missing ❌"}
+                </span>
               </div>
             ))}
           </div>
-
+        </div>
+      )
+    },
+    {
+      title: "Impact Analysis",
+      description: "Audits your description bullet points to replace weak verbs and prompt you for missing percentage metrics.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <h5 className="font-bold text-zinc-900 flex items-center gap-1.5">
+            <TrendingUp className="w-4 h-4 text-teal" />
+            Impact Verb Audit
+          </h5>
+          <div className="space-y-2 pt-1">
+            <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg space-y-1">
+              <div className="flex items-center gap-2 text-[9px] font-bold text-zinc-400">
+                <span className="line-through">Worked on</span>
+                <span className="text-zinc-600">➔</span>
+                <span className="text-teal font-extrabold">Architected</span>
+              </div>
+              <p className="text-[10px] text-zinc-600 leading-normal">
+                &quot;<span className="text-teal font-bold">Architected</span> the student matching system...&quot;
+              </p>
+            </div>
+            <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg space-y-1">
+              <div className="flex items-center gap-2 text-[9px] font-bold text-zinc-400">
+                <span className="line-through">Responsible for</span>
+                <span className="text-zinc-600">➔</span>
+                <span className="text-teal font-extrabold">Spearheaded</span>
+              </div>
+              <p className="text-[10px] text-zinc-600 leading-normal">
+                &quot;<span className="text-teal font-bold">Spearheaded</span> the migration of database queries...&quot;
+              </p>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Actionable Feedback",
+      description: "Receive priority checklists (high, medium, low severity) detailing exactly what line to edit and why.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <h5 className="font-bold text-zinc-900 flex items-center gap-1.5">
+            <AlertTriangle className="w-4 h-4 text-amber-500" />
+            Actionable Suggestions
+          </h5>
           <div className="space-y-2">
-            <div className="rounded-btn bg-gold-light p-3 text-[10px] font-semibold leading-relaxed text-amber-800">
-              <span className="font-bold">Why it stands out:</span> solves a real placement problem, uses resume parsing, scoring logic, and AI-assisted rewrite suggestions.
-            </div>
-            <div className="rounded-btn border border-border-subtle bg-bg-base p-3">
-              <div className="mb-2 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-wider text-text-muted">
-                <Lightbulb className="h-3.5 w-3.5 text-gold" />
-                Generated brief
+            <div className="p-3 bg-red-50/50 border border-red-150 rounded-lg text-red-950 text-[10px] leading-relaxed">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-bold">🔴 High Priority</span>
+                <span className="text-[8px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-extrabold">Missing Metric</span>
               </div>
-              {['MVP: upload resume, paste JD, skill gap report', 'Resume bullet: built an AI job-match analyzer', 'Validation: test with 20 student resumes'].map((line) => (
-                <div key={line} className="flex gap-2 py-1 text-[10px] font-medium leading-relaxed text-text-secondary">
-                  <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-teal" />
-                  <span>{line}</span>
-                </div>
-              ))}
+              Add percentage results and metrics under your internship projects to quantify your impact.
+            </div>
+            <div className="p-3 bg-amber-50/50 border border-amber-150 rounded-lg text-amber-950 text-[10px] leading-relaxed">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-bold">🟡 Medium Priority</span>
+                <span className="text-[8px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-extrabold">Weak Verbs</span>
+              </div>
+              Replace passive words like &quot;helped with&quot; with action verbs like &quot;optimized&quot;.
             </div>
           </div>
-
-          <a
-            href="/project-lab"
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-btn bg-teal px-4 py-3 text-xs font-bold text-white shadow-teal-glow transition-all hover:bg-teal-700"
-          >
-            <Sparkles className="h-4 w-4" />
-            Open Project Lab
-            <ArrowRight className="h-4 w-4" />
-          </a>
         </div>
-      </FeatureRow>
+      )
+    }
+  ]
 
-      {/* Row 5: Teams */}
-      <FeatureRow
-        badgeText="Team Finder"
-        badgeColor="teal"
-        heading="Find your perfect team."
-        bodyText="Match with complementary teammates for upcoming hackathons by skills, availability, and domain. No more going solo or scrambling last minute."
-        isLeftText={true}
-        pills={['Classmate Directory', 'Invite Manager', 'Availability Dot']}
-      >
-        <div className="w-full max-w-sm space-y-2.5 font-sans text-xs">
-          {[
-            { init: 'PS', bg: 'bg-teal', name: 'Priya Sharma', meta: 'VIT Vellore • Web Dev' },
-            { init: 'AM', bg: 'bg-indigo', name: 'Arjun Mehta', meta: 'BITS Pilani • AI/ML' },
-          ].map((m, i) => (
-            <div key={i} className="p-3 bg-white border border-border-default rounded-card shadow-soft flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className={`w-7 h-7 rounded-full ${m.bg} text-white flex items-center justify-center font-display font-bold text-[10px]`}>
-                  {m.init}
-                </div>
-                <div>
-                  <p className="font-bold text-text-primary flex items-center gap-1.5">
-                    <span>{m.name}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  </p>
-                  <p className="text-[8px] text-text-muted font-medium">{m.meta}</p>
-                </div>
-              </div>
-              <button className="px-3.5 py-1.5 bg-teal text-white text-[9px] font-bold rounded-full shadow-soft hover:shadow-medium transition-all">Invite</button>
-            </div>
-          ))}
-        </div>
-      </FeatureRow>
-
-      {/* Row 6: Opportunities */}
-      <FeatureRow
-        badgeText="Opportunity Tracker"
-        badgeColor="indigo"
-        heading="Never miss a deadline again."
-        bodyText="One unified calendar for internships, hackathons, fellowships, and off-campus opportunities. Smart reminders 7, 3, and 1 day before each deadline."
-        isLeftText={false}
-        pills={['Calendar Grid', 'Reminders Toggle', 'Countdown Badges']}
-      >
-        <div className="w-full bg-white rounded-card border border-border-default p-5 shadow-medium max-w-sm space-y-3 font-sans">
-          <div className="flex justify-between items-center text-[10px] font-bold text-text-primary border-b border-border-subtle pb-2">
-            <span>July 2026 Deadlines</span>
-            <span className="text-indigo">6 Deadlines</span>
+  // Section 2: Practice subpoints and visual components
+  const practicePoints: SubPoint[] = [
+    {
+      title: "Tailored Roadmaps",
+      description: "Get a week-by-week personalized DSA roadmap that structures topics from basic arrays to dynamic programming.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-6 shadow-soft max-w-sm space-y-4 font-sans text-xs">
+          <div className="flex justify-between items-center border-b border-zinc-50 pb-2">
+            <span className="font-bold text-zinc-900">Personalized DSA Roadmap</span>
+            <span className="text-teal font-extrabold">14 / 20 Complete</span>
           </div>
-          <div className="grid grid-cols-7 gap-1 text-[8px] text-center text-text-secondary">
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-              <span key={i} className="font-bold text-text-muted">{d}</span>
-            ))}
+          <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-teal to-[#0EA5E9] w-[70%]" />
+          </div>
+          <div className="relative h-28 w-full mt-2 flex items-center justify-center">
+            <svg className="absolute inset-0 w-full h-full pointer-events-none">
+              <path d="M 30 40 Q 70 90, 100 100 T 170 50 T 240 100 T 310 40" fill="none" stroke="#E2E8F0" strokeWidth="3" />
+              <path d="M 30 40 Q 70 90, 100 100" fill="none" stroke="#0D9488" strokeWidth="3" />
+            </svg>
+            <div className="absolute left-[5%] top-[15%] flex flex-col items-center">
+              <div className="w-6 h-6 rounded-full bg-teal text-white flex items-center justify-center font-bold text-[9px] shadow-sm">✓</div>
+              <span className="text-[8px] font-bold text-zinc-500 mt-1">Arrays</span>
+            </div>
+            <div className="absolute left-[26%] bottom-[5%] flex flex-col items-center">
+              <div className="w-6 h-6 rounded-full bg-white border border-teal text-teal flex items-center justify-center font-bold text-[9px] shadow-sm relative">
+                <span className="absolute inset-0 rounded-full bg-teal/10 animate-ping" />
+                🔥
+              </div>
+              <span className="text-[8px] font-bold text-zinc-800 mt-1">Stacks</span>
+            </div>
+            <div className="absolute left-[50%] top-[20%] flex flex-col items-center opacity-60">
+              <div className="w-6 h-6 rounded-full bg-white border border-zinc-200 text-zinc-400 flex items-center justify-center font-bold text-[9px] shadow-sm">
+                <Lock className="w-2.5 h-2.5" />
+              </div>
+              <span className="text-[8px] font-bold text-zinc-400 mt-1">Trees</span>
+            </div>
+            <div className="absolute right-[10%] bottom-[5%] flex flex-col items-center opacity-60">
+              <div className="w-6 h-6 rounded-full bg-white border border-zinc-200 text-zinc-400 flex items-center justify-center font-bold text-[9px] shadow-sm">
+                <Lock className="w-2.5 h-2.5" />
+              </div>
+              <span className="text-[8px] font-bold text-zinc-400 mt-1">DP</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Streak Tracking",
+      description: "Stay motivated with gamified daily challenge streaks and progress trackers that build long-term coding habits.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-4 font-sans text-xs">
+          <div className="flex justify-between items-center">
+            <h5 className="font-bold text-zinc-900">Consistency Tracker</h5>
+            <span className="text-teal font-extrabold">🔥 14 Days Streak</span>
+          </div>
+          <div className="grid grid-cols-7 gap-1.5 text-center text-[8px] font-bold text-zinc-400">
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <span key={i}>{d}</span>)}
             {Array.from({ length: 14 }).map((_, idx) => {
-              const day = idx + 20
-              const hasDeadline = day === 22 || day === 25 || day === 28
+              const day = idx + 1
+              const completed = day < 13
+              const active = day === 13
               return (
                 <div
                   key={idx}
                   className={cn(
-                    'h-8 flex flex-col items-center justify-between p-1 rounded border border-transparent',
-                    hasDeadline && 'bg-indigo-light border-indigo/10'
+                    "h-6 rounded flex items-center justify-center font-mono font-bold border",
+                    completed && "bg-teal-light border-teal/10 text-teal",
+                    active && "bg-amber-50 border-amber-300 text-amber-700 animate-pulse",
+                    !completed && !active && "bg-zinc-50 border-zinc-100 text-zinc-300"
                   )}
                 >
-                  <span className={cn('font-bold', hasDeadline && 'text-indigo')}>{day}</span>
-                  {hasDeadline && <span className="w-1.5 h-1.5 rounded-full bg-indigo" />}
+                  {day}
                 </div>
               )
             })}
           </div>
         </div>
-      </FeatureRow>
+      )
+    },
+    {
+      title: "Simulated Interviews",
+      description: "Practice real technical and HR questions under realistic, live recording session conditions.",
+      visual: (
+        <div className="w-full bg-[#0D1321] text-white rounded-2xl p-5 shadow-soft border border-white/5 max-w-sm space-y-3 font-mono text-[9px]">
+          <div className="flex justify-between items-center border-b border-white/5 pb-2 text-[7px] text-white/40">
+            <span>LIVE INTERVIEW RUNTIME • AI Proctor</span>
+            <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-500 animate-pulse font-bold">LIVE</span>
+          </div>
+          <div className="flex gap-3">
+            <div className="w-16 h-20 bg-white/5 rounded border border-white/10 flex flex-col items-center justify-center relative overflow-hidden flex-shrink-0">
+              <span className="text-lg">🧑‍💻</span>
+              <div className="absolute bottom-1.5 left-0 right-0 flex justify-center gap-0.5">
+                {[1,2,3,2,1].map((v,i) => <div key={i} className="w-0.5 bg-teal rounded-full animate-pulse" style={{height: `${v*3}px`}} />)}
+              </div>
+            </div>
+            <div className="flex-1 bg-white/5 p-3 rounded border border-white/10 flex flex-col justify-between">
+              <div>
+                <span className="text-teal font-bold uppercase text-[6px]">Question 1 of 3</span>
+                <p className="text-white/90 text-[10px] font-sans font-semibold mt-1 leading-normal">
+                  Explain how dynamic programming optimization differs from typical recursion.
+                </p>
+              </div>
+              <div className="flex justify-end mt-1 text-[8px] text-white/50">
+                <span>Timer: 08:34</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Pace & Eye Contact Analysis",
+      description: "AI assesses non-verbal metrics such as your speaking pace (WPM), confidence, and camera eye alignment.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <h5 className="font-bold text-zinc-900">AI Speech & Video Analysis</h5>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between p-3 bg-zinc-50 border border-zinc-100 rounded-lg">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-teal" />
+                <div>
+                  <p className="text-[10px] font-bold text-zinc-900">Speaking Pace</p>
+                  <p className="text-[8px] text-zinc-400">Target: 130-150 words/min</p>
+                </div>
+              </div>
+              <span className="font-mono text-[10px] font-bold text-teal">140 WPM (Good)</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-zinc-50 border border-zinc-100 rounded-lg">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                <div>
+                  <p className="text-[10px] font-bold text-zinc-900">Eye Alignment</p>
+                  <p className="text-[8px] text-zinc-400">Eye contact with proctor</p>
+                </div>
+              </div>
+              <span className="font-mono text-[10px] font-bold text-indigo-600">92% Match</span>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  ]
+
+  // Section 3: Connect subpoints and visual components
+  const connectPoints: SubPoint[] = [
+    {
+      title: "Teammate Matching",
+      description: "Browse peers matched to your hackathon teams by complementary skills, domains, and timeline availability.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <h5 className="font-bold text-zinc-900">Recommended Hackathon Partners</h5>
+          <div className="space-y-2">
+            <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg flex justify-between items-center">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-teal text-white flex items-center justify-center font-bold text-[9px]">PS</div>
+                <div>
+                  <p className="font-bold text-zinc-900">Priya Sharma</p>
+                  <p className="text-[8px] text-zinc-400">VIT Vellore • Frontend & React</p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded bg-teal-light text-teal text-[8px] font-bold border border-teal/10">96% Match</span>
+            </div>
+            <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg flex justify-between items-center">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-indigo text-white flex items-center justify-center font-bold text-[9px]">AM</div>
+                <div>
+                  <p className="font-bold text-zinc-900">Arjun Mehta</p>
+                  <p className="text-[8px] text-zinc-400">BITS Pilani • Python & AI/ML</p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded bg-indigo-light text-indigo text-[8px] font-bold border border-indigo/10">91% Match</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Unified Calendar",
+      description: "One dashboard calendar tracking internship applications, hackathon registry dates, and off-campus deadlines.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <div className="flex justify-between items-center text-[10px] font-bold text-zinc-900 border-b border-zinc-50 pb-2">
+            <span>July 2026 Deadlines</span>
+            <span className="text-teal font-extrabold">6 Deadlines Active</span>
+          </div>
+          <div className="grid grid-cols-7 gap-1.5 text-center text-[8px] text-zinc-400">
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <span key={i} className="font-bold">{d}</span>)}
+            {Array.from({ length: 14 }).map((_, idx) => {
+              const day = idx + 20
+              const isDeadline = day === 22 || day === 25 || day === 28
+              return (
+                <div
+                  key={idx}
+                  className={cn(
+                    "h-7 rounded flex flex-col items-center justify-center border font-mono font-bold",
+                    isDeadline ? "bg-indigo-light border-indigo/10 text-indigo" : "bg-zinc-50 border-zinc-100 text-zinc-300"
+                  )}
+                >
+                  {day}
+                  {isDeadline && <span className="w-1 h-1 rounded-full bg-indigo mt-0.5" />}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Smart Reminders",
+      description: "Receive timely push and dashboard notifications 7 days, 3 days, and 24 hours before any deadlines expire.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <h5 className="font-bold text-zinc-900 flex items-center gap-1.5">
+            <Clock className="w-4 h-4 text-teal" />
+            Deadline Alert Center
+          </h5>
+          <div className="space-y-2">
+            <div className="p-3 bg-amber-50/50 border border-amber-100 text-amber-900 rounded-lg flex items-start gap-2.5 text-[10px]">
+              <span className="text-amber-600 font-extrabold">⚠️</span>
+              <div>
+                <p className="font-bold text-zinc-900">Flipkart GRiD 6.0 Registration</p>
+                <p className="text-[8px] text-zinc-500 mt-0.5">Closes in 24 hours • Priority Action Required</p>
+              </div>
+            </div>
+            <div className="p-3 bg-zinc-50 border border-zinc-150 text-zinc-600 rounded-lg flex items-start gap-2.5 text-[10px]">
+              <span className="text-teal font-extrabold">🔔</span>
+              <div>
+                <p className="font-bold text-zinc-900">Google STEP Internship</p>
+                <p className="text-[8px] text-zinc-500 mt-0.5">Closes in 3 days • Ensure resume is updated</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Direct Invites & Collaboration",
+      description: "Coordinate with other team leaders directly. Send invites and receive invitations to form your dream squad.",
+      visual: (
+        <div className="w-full bg-white rounded-2xl border border-zinc-100 p-5 shadow-soft max-w-sm space-y-3 font-sans text-xs">
+          <h5 className="font-bold text-zinc-900">Incoming Team Requests</h5>
+          <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-indigo text-white flex items-center justify-center font-bold text-[9px]">SI</div>
+              <div>
+                <p className="font-bold text-zinc-900">Smart India Hackathon</p>
+                <p className="text-[8px] text-zinc-400">From Priya Sharma (Leader)</p>
+              </div>
+            </div>
+            <div className="flex gap-1">
+              <button className="px-2 py-1 bg-teal text-white rounded text-[8px] font-bold shadow-soft">Accept</button>
+              <button className="px-2 py-1 bg-white border border-zinc-200 text-zinc-500 rounded text-[8px] font-bold">Decline</button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  ]
+
+  return (
+    <div className="bg-white">
+      {/* Section 1: Resume */}
+      <FeatureSection
+        label="Resume"
+        headline="Get feedback that actually helps."
+        description="Upload your resume and get structured, actionable feedback aligned with Indian startup and product company hiring standards. Know exactly what to fix and why."
+        exploreHref="/dashboard/resume"
+        subPoints={resumePoints}
+        imageSide="right"
+      />
+
+      {/* Section 2: Practice */}
+      <FeatureSection
+        label="Practice"
+        headline="Stop grinding. Start progressing."
+        description="Follow a personalized week-by-week DSA roadmap and run AI mock interview simulations tailored to your target companies."
+        exploreHref="/dashboard/dsa"
+        subPoints={practicePoints}
+        imageSide="left"
+      />
+
+      {/* Section 3: Connect */}
+      <FeatureSection
+        label="Connect"
+        headline="Find your team and track opportunities."
+        description="Assemble complementary teams for hackathons and manage all upcoming off-campus opportunities in a unified countdown calendar."
+        exploreHref="/dashboard/teams"
+        subPoints={connectPoints}
+        imageSide="right"
+      />
     </div>
   )
 }

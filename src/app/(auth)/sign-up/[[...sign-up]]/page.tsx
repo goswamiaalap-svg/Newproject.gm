@@ -21,6 +21,8 @@ export default function SignUpPage() {
       </div>
 
       <SignUp
+        routing="path"
+        path="/sign-up"
         appearance={{
           elements: {
             // Outer card — match existing card style
@@ -53,8 +55,6 @@ export default function SignUpPage() {
             socialButtonsPlacement: 'bottom',
           },
         }}
-        routing="path"
-        path="/sign-up"
         signInUrl="/sign-in"
         forceRedirectUrl="/dashboard"
       />

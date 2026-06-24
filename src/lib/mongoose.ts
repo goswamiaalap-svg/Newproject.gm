@@ -32,6 +32,16 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
     throw new Error('Please define the MONGODB_URI environment variable inside .env')
   }
 
+  // Configure custom DNS servers to prevent querySrv ECONNREFUSED issues on local ISP resolvers
+  try {
+    const dns = require('dns')
+    if (dns && typeof dns.setServers === 'function') {
+      dns.setServers(['8.8.8.8', '1.1.1.1'])
+    }
+  } catch (dnsErr) {
+    // Ignore and fallback to system DNS if dns module is not available (e.g. edge runtimes)
+  }
+
   // If we already have a connection, reuse it
   if (cached.conn) {
     return cached.conn

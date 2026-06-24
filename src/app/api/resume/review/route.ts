@@ -18,157 +18,333 @@
 
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import Anthropic from '@anthropic-ai/sdk'
+// import Anthropic from '@anthropic-ai/sdk'
 import { connectToDatabase } from '@/lib/mongoose'
 import Resume from '@/lib/models/Resume'
+import CareerTarget from '@/lib/models/CareerTarget'
+import { getPusherServer, getResumeChannel, RESUME_EVENTS } from '@/lib/pusher'
 
-// Initialize Anthropic client
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+export const dynamic = 'force-dynamic'
 
-// System prompt that instructs Claude to return strict JSON only
+/*
+let _anthropic: Anthropic | null = null
+
+function getAnthropicClient(): Anthropic {
+  if (_anthropic) return _anthropic
+
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) {
+    throw new Error('Anthropic API key is not configured. Set ANTHROPIC_API_KEY in Vercel settings.')
+  }
+
+  _anthropic = new Anthropic({ apiKey })
+  return _anthropic
+}
+*/
+
+// System prompt that instructs Groq to return strict JSON only
 const RESUME_REVIEW_SYSTEM_PROMPT = `You are an expert technical resume reviewer for Indian startup and product company hiring standards. Analyze the resume text and return ONLY valid JSON (no markdown, no extra text) with this exact shape: { "overallScore": number (0-100), "atsScore": number (0-100), "quantifiedAchievements": number (0-100), "strengths": string[], "weaknesses": [{ "issue": string, "severity": "high"|"medium"|"low", "suggestion": string }] }`
 
 export async function POST(req: Request) {
-  // ---- 1. Auth check ----
-  const { userId } = await auth()
-  if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  // ---- 2. Parse request body ----
-  let resumeId: string
   try {
-    const body = await req.json()
-    resumeId = body.resumeId
-    if (!resumeId) {
-      return NextResponse.json({ error: 'resumeId is required' }, { status: 400 })
+    // ---- 1. Auth check ----
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-  } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
-  }
 
-  // ---- 3. Fetch resume from MongoDB ----
-  await connectToDatabase()
+    // ---- 2. Parse request body ----
+    let resumeId: string
+    try {
+      const body = await req.json()
+      resumeId = body.resumeId
+      if (!resumeId) {
+        return NextResponse.json({ error: 'resumeId is required' }, { status: 400 })
+      }
+    } catch (jsonErr: any) {
+      console.error('[Resume Review] Request body parse error:', jsonErr)
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    }
 
-  const resume = await Resume.findById(resumeId)
+    // ---- 3. Fetch resume from MongoDB ----
+    let resume
+    try {
+      await connectToDatabase()
+      resume = await Resume.findById(resumeId)
+    } catch (dbError: any) {
+      console.error('[Resume Review] MongoDB read error:', dbError)
+      return NextResponse.json(
+        { error: `Database connection failed: ${dbError.message || 'Unknown database error'}` },
+        { status: 500 }
+      )
+    }
 
-  if (!resume) {
-    return NextResponse.json({ error: 'Resume not found' }, { status: 404 })
-  }
+    if (!resume) {
+      return NextResponse.json({ error: 'Resume not found' }, { status: 404 })
+    }
 
-  // Security: ensure this resume belongs to the authenticated user
-  if (resume.userId !== userId) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-  }
+    // Security: ensure this resume belongs to the authenticated user
+    if (resume.userId !== userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
-  if (!resume.extractedText || resume.extractedText.trim().length < 50) {
-    await Resume.findByIdAndUpdate(resumeId, {
-      status: 'error',
-      errorMessage: 'Resume text is too short to analyze.',
-    })
-    return NextResponse.json(
-      { error: 'Resume text is too short to generate a meaningful review.' },
-      { status: 422 }
-    )
-  }
+    if (!resume.extractedText || resume.extractedText.trim().length < 50) {
+      try {
+        await Resume.findByIdAndUpdate(resumeId, {
+          status: 'error',
+          errorMessage: 'Resume text is too short to analyze.',
+        })
+      } catch (dbError) {
+        console.error('[Resume Review] MongoDB update error for short text:', dbError)
+      }
+      return NextResponse.json(
+        { error: 'Resume text is too short to generate a meaningful review.' },
+        { status: 422 }
+      )
+    }
 
-  // ---- 4. Call Claude API ----
-  let claudeResponse: string
-  try {
-    const message = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-latest',
-      max_tokens: 1024,
-      system: RESUME_REVIEW_SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: `Please review this resume:\n\n${resume.extractedText}`,
+    // ---- 4. Call Groq API ----
+    let rawReviewResponse: string
+    try {
+      const groqApiKey = process.env.GROQ_API_KEY
+      if (!groqApiKey) {
+        throw new Error('Groq API key is not configured. Set GROQ_API_KEY in Vercel settings.')
+      }
+
+      // Emit AI started event
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.AI_STARTED, {})
+      } catch (e) {
+        console.error('[Pusher] Failed to emit AI_STARTED:', e)
+      }
+
+      console.log(`[Resume Review] Calling Groq API with model: llama-3.3-70b-versatile...`)
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${groqApiKey}`,
         },
-      ],
-    })
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: RESUME_REVIEW_SYSTEM_PROMPT,
+            },
+            {
+              role: 'user',
+              content: `Please review this resume:\n\n${resume.extractedText}`,
+            },
+          ],
+          temperature: 0.2,
+          max_tokens: 1024,
+          response_format: { type: 'json_object' }, // strict JSON mode
+        }),
+      })
 
-    // Extract the text content from Claude's response
-    const textBlock = message.content.find((block) => block.type === 'text')
-    if (!textBlock || textBlock.type !== 'text') {
-      throw new Error('No text content in Claude response')
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Groq API returned status ${response.status}: ${errorText}`)
+      }
+
+      const data = await response.json()
+      rawReviewResponse = data?.choices?.[0]?.message?.content
+      if (!rawReviewResponse) {
+        throw new Error('Groq completions response is missing choices message content')
+      }
+    } catch (groqError: any) {
+      console.error('[Resume Review] Groq API error:', groqError)
+
+      // Update resume status to error
+      try {
+        await Resume.findByIdAndUpdate(resumeId, {
+          status: 'error',
+          errorMessage: `AI analysis failed: ${groqError.message || 'Unknown error'}. Please try again.`,
+        })
+      } catch (dbError) {
+        console.error('[Resume Review] MongoDB update error after Groq failure:', dbError)
+      }
+
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.ERROR, { message: 'AI analysis failed.' })
+      } catch (e) {}
+
+      return NextResponse.json(
+        { error: `AI analysis failed: ${groqError.message || 'Groq service exception'}` },
+        { status: 502 }
+      )
     }
-    claudeResponse = textBlock.text
-  } catch (claudeError) {
-    console.error('[Resume Review] Claude API error:', claudeError)
 
-    // Update resume status to error
-    await Resume.findByIdAndUpdate(resumeId, {
-      status: 'error',
-      errorMessage: 'AI analysis failed. Please try again.',
-    })
+    // ---- 5. Parse Groq's JSON response ----
+    let reviewResult
+    try {
+      // Groq JSON mode guarantees it's a valid JSON block, but let's strip markdown code blocks just in case
+      const cleanJson = rawReviewResponse
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/```\s*$/i, '')
+        .trim()
 
-    return NextResponse.json(
-      { error: 'AI analysis failed. Please try uploading your resume again.' },
-      { status: 502 }
-    )
-  }
+      reviewResult = JSON.parse(cleanJson)
 
-  // ---- 5. Parse Claude's JSON response ----
-  let reviewResult
-  try {
-    // Claude might occasionally wrap with markdown fences — strip them just in case
-    const cleanJson = claudeResponse
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/```\s*$/i, '')
-      .trim()
+      // Basic validation of the expected shape
+      if (
+        typeof reviewResult.overallScore !== 'number' ||
+        typeof reviewResult.atsScore !== 'number' ||
+        typeof reviewResult.quantifiedAchievements !== 'number' ||
+        !Array.isArray(reviewResult.strengths) ||
+        !Array.isArray(reviewResult.weaknesses)
+      ) {
+        throw new Error('Unexpected JSON shape from Groq')
+      }
+    } catch (parseError: any) {
+      console.error('[Resume Review] Failed to parse Groq JSON:', parseError)
+      console.error('[Resume Review] Raw Groq response:', rawReviewResponse)
 
-    reviewResult = JSON.parse(cleanJson)
+      try {
+        await Resume.findByIdAndUpdate(resumeId, {
+          status: 'error',
+          errorMessage: `Failed to process AI response: ${parseError.message || 'Unknown error'}. Please try again.`,
+        })
+      } catch (dbError) {
+        console.error('[Resume Review] MongoDB update error after parse failure:', dbError)
+      }
 
-    // Basic validation of the expected shape
-    if (
-      typeof reviewResult.overallScore !== 'number' ||
-      typeof reviewResult.atsScore !== 'number' ||
-      typeof reviewResult.quantifiedAchievements !== 'number' ||
-      !Array.isArray(reviewResult.strengths) ||
-      !Array.isArray(reviewResult.weaknesses)
-    ) {
-      throw new Error('Unexpected JSON shape from Claude')
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.ERROR, { message: 'Failed to process AI response.' })
+      } catch (e) {}
+
+      return NextResponse.json(
+        { error: `Failed to process AI response: ${parseError.message || 'Invalid JSON format'}` },
+        { status: 500 }
+      )
     }
-  } catch (parseError) {
-    console.error('[Resume Review] Failed to parse Claude JSON:', parseError)
-    console.error('[Resume Review] Raw Claude response:', claudeResponse)
 
-    await Resume.findByIdAndUpdate(resumeId, {
-      status: 'error',
-      errorMessage: 'Failed to parse AI response. Please try again.',
-    })
+    // ---- 6. Save results to MongoDB and mark complete ----
+    try {
+      const updatedResume = await Resume.findByIdAndUpdate(
+        resumeId,
+        {
+          status: 'complete',
+          reviewResult,
+        },
+        { new: true }
+      )
 
-    return NextResponse.json(
-      { error: 'Failed to process AI response. Please try uploading again.' },
-      { status: 500 }
-    )
-  }
+      // Automatically run active career target gap analysis if one exists
+      let targetCompareResult = null
+      try {
+        const activeTarget = await CareerTarget.findOne({ userId, isActive: true })
+        if (activeTarget && activeTarget.idealProfile) {
+          console.log(`[Resume Review] Active Career Target found: ${activeTarget.targetTitle}. Running gap analysis...`)
+          const groqApiKey = process.env.GROQ_API_KEY
+          const compareResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${groqApiKey}`,
+            },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are a Senior Technical Recruiter and Career Mentor.
+Compare the user's resume text against the Ideal Target Profile (which lists target technical skills, soft skills, projects, and milestones).
+Assess the alignment:
+1. Identify "matchingSkills" (skills from the ideal profile that are present in the resume).
+2. Identify "missingSkills" (important skills from the ideal profile that are missing from the resume).
+3. Compute a "readinessScore" (an integer from 0 to 100) representing how ready the candidate is for this specific target.
+4. Recommend 2 tailored, high-impact "recommendedProjects" specifically designed to bridge the missing skill gaps. Each project must list the "skillsAddressed".
+5. Define 3-5 concrete, sequential "actionSteps" they should take to reach readiness.
 
-  // ---- 6. Save results to MongoDB and mark complete ----
-  try {
-    const updatedResume = await Resume.findByIdAndUpdate(
-      resumeId,
+You must return ONLY valid JSON in this exact shape:
+{
+  "readinessScore": number,
+  "gapAnalysis": {
+    "missingSkills": ["string"],
+    "matchingSkills": ["string"],
+    "recommendedProjects": [
       {
+        "title": "string",
+        "description": "string",
+        "skillsAddressed": ["string"]
+      }
+    ],
+    "actionSteps": ["string"]
+  }
+}`,
+                },
+                {
+                  role: 'user',
+                  content: `Resume Text:\n${resume.extractedText}\n\nIdeal Profile:\n${JSON.stringify(activeTarget.idealProfile, null, 2)}`,
+                },
+              ],
+              temperature: 0.2,
+              max_tokens: 1200,
+              response_format: { type: 'json_object' },
+            }),
+          })
+
+          if (compareResponse.ok) {
+            const compareData = await compareResponse.json()
+            const compareContent = compareData?.choices?.[0]?.message?.content
+            if (compareContent) {
+              const cleanCompareJson = compareContent
+                .replace(/^```json\s*/i, '')
+                .replace(/^```\s*/i, '')
+                .replace(/```\s*$/i, '')
+                .trim()
+              const parsedCompare = JSON.parse(cleanCompareJson)
+              
+              activeTarget.readinessScore = parsedCompare.readinessScore
+              activeTarget.gapAnalysis = parsedCompare.gapAnalysis
+              await activeTarget.save()
+              targetCompareResult = {
+                targetTitle: activeTarget.targetTitle,
+                readinessScore: parsedCompare.readinessScore,
+                gapAnalysis: parsedCompare.gapAnalysis
+              }
+            }
+          }
+        }
+      } catch (compareErr) {
+        console.error('[Resume Review] Failed to run inline target comparison:', compareErr)
+      }
+
+      try {
+        const pusher = getPusherServer()
+        await pusher.trigger(getResumeChannel(userId), RESUME_EVENTS.AI_COMPLETE, { 
+          reviewResult,
+          careerTargetAlignment: targetCompareResult 
+        })
+      } catch (e) {
+        console.error('[Pusher] Failed to emit AI_COMPLETE:', e)
+      }
+
+      return NextResponse.json({
+        resumeId,
+        fileName: updatedResume?.fileName,
+        fileUrl: updatedResume?.fileUrl,
         status: 'complete',
         reviewResult,
-      },
-      { new: true }
-    )
-
-    return NextResponse.json({
-      resumeId,
-      fileName: updatedResume?.fileName,
-      fileUrl: updatedResume?.fileUrl,
-      status: 'complete',
-      reviewResult,
-    })
-  } catch (dbError) {
-    console.error('[Resume Review] MongoDB update error:', dbError)
+        careerTargetAlignment: targetCompareResult,
+      })
+    } catch (dbError: any) {
+      console.error('[Resume Review] MongoDB update error:', dbError)
+      return NextResponse.json(
+        { error: `Failed to save review results: ${dbError.message || 'Database write failure'}` },
+        { status: 500 }
+      )
+    }
+  } catch (error: any) {
+    console.error('[Resume Review] Critical unhandled route crash:', error)
     return NextResponse.json(
-      { error: 'Failed to save review results. Please try again.' },
+      { error: `Server Error: ${error.message || 'An unexpected error occurred'}` },
       { status: 500 }
     )
   }

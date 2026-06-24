@@ -34,48 +34,50 @@ export default function TeamsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="font-display text-3xl font-extrabold text-text-primary">
-          Hackathon Team Finder
-        </h1>
-        <p className="text-text-secondary text-sm mt-1">
-          Form teams for Smart India Hackathon and other national contests. Connect with students matching your tech stack.
-        </p>
-      </div>
+      {/* Header Area Wrapper */}
+      <div className="!bg-[#FAFAFA] p-6 rounded-2xl border border-[#E2E8F0] shadow-sm mb-6">
+        <div className="mb-6">
+          <h1 className="font-display text-3xl font-extrabold !text-[#0F172A]">
+            Hackathon Team Finder
+          </h1>
+          <p className="!text-[#475569] text-sm mt-1">
+            Form teams for Smart India Hackathon and other national contests. Connect with students matching your tech stack.
+          </p>
+        </div>
 
-      {/* Active Hackathons Strip */}
-      <div className="space-y-2">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-          Featured National Hackathons
-        </h3>
-        <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-thin">
-          {mockHackathons.map((hack) => (
-            <div
-              key={hack.id}
-              className="flex-shrink-0 w-80 bg-white border border-border-default rounded-card p-4 shadow-sm flex flex-col justify-between gap-3"
-            >
-              <div>
-                <div className="flex justify-between items-start">
-                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-teal/5 text-teal border border-teal/10 uppercase tracking-wider">
-                    {hack.status}
-                  </span>
-                  <span className="text-xs font-bold text-text-secondary">{hack.prize}</span>
+        {/* Active Hackathons Strip */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-bold uppercase tracking-wider !text-[#64748B]">
+            Featured National Hackathons
+          </h3>
+          <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-thin">
+            {mockHackathons.map((hack) => (
+              <div
+                key={hack.id}
+                className="flex-shrink-0 w-80 !bg-white border !border-[#E2E8F0] rounded-xl p-4 shadow-sm flex flex-col justify-between gap-3"
+              >
+                <div>
+                  <div className="flex justify-between items-start">
+                    <span className={cn("text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border", hack.status.toLowerCase().includes('open') ? '!bg-[#DCFCE7] !text-[#166534] !border-[#BBF7D0]' : '!bg-[#FFEDD5] !text-[#9A3412] !border-[#FED7AA]')}>
+                      {hack.status}
+                    </span>
+                    <span className="text-xs font-bold !text-[#475569]">{hack.prize}</span>
+                  </div>
+                  <h4 className="font-display text-sm font-bold !text-[#0F172A] mt-2">
+                    {hack.name}
+                  </h4>
                 </div>
-                <h4 className="font-display text-sm font-bold text-text-primary mt-2">
-                  {hack.name}
-                </h4>
-              </div>
 
-              <div className="flex justify-between items-center text-[10px] text-text-muted border-t border-border-subtle pt-2">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>Ends {new Date(hack.deadline).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
-                </span>
-                <span>{hack.participants.toLocaleString()} joined</span>
+                <div className="flex justify-between items-center text-[10px] !text-[#64748B] border-t border-[#E2E8F0] pt-2">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>Ends {new Date(hack.deadline).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}</span>
+                  </span>
+                  <span>{hack.participants.toLocaleString()} joined</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 

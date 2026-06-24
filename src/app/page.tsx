@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react'
 import Navbar from '@/components/landing/Navbar'
 import Hero from '@/components/landing/Hero'
-import PhoneMockup from '@/components/landing/PhoneMockup'
-import ImportantFeatures from '@/components/landing/ImportantFeatures'
 import Features from '@/components/landing/Features'
 import Stats from '@/components/landing/Stats'
-import MoreFeaturesGrid from '@/components/landing/MoreFeaturesGrid'
+import ComparisonTable from '@/components/landing/ComparisonTable'
+import AskYourself from '@/components/landing/AskYourself'
 import Testimonials from '@/components/landing/Testimonials'
 import FAQ from '@/components/landing/FAQ'
 import FinalCTA from '@/components/landing/FinalCTA'
@@ -44,24 +43,21 @@ export default function Home() {
         {/* Hero Header Section */}
         <Hero />
 
-        {/* Phone Mockup scroll-linked transitions */}
-        <PhoneMockup />
+        {/* Animated Stat Section */}
+        <Stats />
 
-        {/* New Important Features Section */}
-        <ImportantFeatures />
+        {/* Comparative grid of LaunchPad vs traditional systems */}
+        <ComparisonTable />
+
+        {/* Reflective questions section */}
+        <AskYourself />
 
         {/* Core Features alternating rows */}
         <section id="features">
           <Features />
         </section>
 
-        {/* Infinite scrolling awards marquee strip */}
-        <Stats />
-
-        {/* More minimal feature list cards */}
-        <MoreFeaturesGrid />
-
-        {/* Testimonials infinite scrolling opposite-direction rows */}
+        {/* Testimonials section */}
         <section id="testimonials">
           <Testimonials />
         </section>
@@ -78,3 +74,4 @@ export default function Home() {
     </>
   )
 }
+

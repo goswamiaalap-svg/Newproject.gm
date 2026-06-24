@@ -11,14 +11,16 @@ import { auth } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/mongoose'
 import Resume from '@/lib/models/Resume'
 
-export async function GET() {
-  // Auth check
-  const { userId } = await auth()
-  if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+export const dynamic = 'force-dynamic'
 
+export async function GET() {
   try {
+    // Auth check
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     await connectToDatabase()
 
     // Find the most recent completed resume for this user
@@ -40,8 +42,11 @@ export async function GET() {
       status: resume.status,
       reviewResult: resume.reviewResult,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('[GET /api/resume] Error fetching resume:', error)
-    return NextResponse.json({ error: 'Failed to fetch resume data' }, { status: 500 })
+    return NextResponse.json(
+      { error: `Failed to fetch resume data: ${error.message || 'Unknown error'}` },
+      { status: 500 }
+    )
   }
 }

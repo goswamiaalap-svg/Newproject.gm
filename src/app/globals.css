@@ -328,3 +328,268 @@ section.hero-section {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+
+/* ─── Dashboard Light Theme Native Implementation ─── */
+.dashboard-theme {
+  --color-bg-base: #F8F9FF;
+  --color-bg-subtle: #EEF2FF;
+  background-color: #F8F9FF !important;
+  color: #0F172A !important;
+}
+
+/* Sidebar and Navbar backgrounds */
+.dashboard-theme aside, 
+.dashboard-theme header {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Default Borders in Dashboard */
+.dashboard-theme *, 
+.dashboard-theme .border-border-default, 
+.dashboard-theme .border-border-subtle {
+  border-color: #E2E8F0 !important;
+}
+
+/* Native Light Cards inside the Dashboard */
+.dashboard-theme .bg-white,
+.dashboard-theme .dashboard-stat-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+.dashboard-theme .bg-white *,
+.dashboard-theme .bg-white .text-text-primary,
+.dashboard-theme .bg-white h1,
+.dashboard-theme .bg-white h2,
+.dashboard-theme .bg-white h3,
+.dashboard-theme .bg-white h4,
+.dashboard-theme .bg-white h5,
+.dashboard-theme .bg-white h6,
+.dashboard-theme .dashboard-stat-card *,
+.dashboard-theme .dashboard-stat-card .text-text-primary,
+.dashboard-theme .dashboard-stat-card h1,
+.dashboard-theme .dashboard-stat-card h2,
+.dashboard-theme .dashboard-stat-card h3,
+.dashboard-theme .dashboard-stat-card h4,
+.dashboard-theme .dashboard-stat-card h5,
+.dashboard-theme .dashboard-stat-card h6 {
+  color: #0F172A !important; /* Force dark text in light cards */
+}
+.dashboard-theme .bg-white .text-text-secondary,
+.dashboard-theme .dashboard-stat-card .text-text-secondary {
+  color: #475569 !important;
+}
+.dashboard-theme .bg-white .text-text-muted,
+.dashboard-theme .dashboard-stat-card .text-text-muted {
+  color: #64748B !important;
+}
+
+/* Custom Highlight Badges in Light Cards */
+.dashboard-theme .bg-white .bg-teal\/5,
+.dashboard-theme .dashboard-stat-card .bg-teal\/5 {
+  background-color: #E6FAF8 !important;
+  color: #0D9488 !important;
+}
+.dashboard-theme .bg-white .bg-teal\/5 *,
+.dashboard-theme .dashboard-stat-card .bg-teal\/5 * {
+  color: #0D9488 !important;
+}
+
+.dashboard-theme .bg-white .bg-indigo\/5,
+.dashboard-theme .dashboard-stat-card .bg-indigo\/5 {
+  background-color: #EEF2FF !important;
+  color: #6366F1 !important;
+}
+.dashboard-theme .bg-white .bg-indigo\/5 *,
+.dashboard-theme .dashboard-stat-card .bg-indigo\/5 * {
+  color: #6366F1 !important;
+}
+
+.dashboard-theme .bg-white .bg-gold\/5,
+.dashboard-theme .dashboard-stat-card .bg-gold\/5 {
+  background-color: #FFFBEB !important;
+  color: #D97706 !important;
+}
+.dashboard-theme .bg-white .bg-gold\/5 *,
+.dashboard-theme .dashboard-stat-card .bg-gold\/5 * {
+  color: #D97706 !important;
+}
+
+/* Custom progress bar styles inside light cards */
+.dashboard-theme .dashboard-stat-card .bg-bg-subtle {
+  background-color: #E2E8F0 !important;
+}
+.dashboard-theme .dashboard-stat-card .bg-teal {
+  background-color: #0D9488 !important;
+}
+.dashboard-theme .dashboard-stat-card .bg-indigo {
+  background-color: #6366F1 !important;
+}
+.dashboard-theme .dashboard-stat-card .bg-gold {
+  background-color: #F59E0B !important;
+}
+
+/* Accent Borders */
+.dashboard-theme .dashboard-stat-card.border-t-teal {
+  border-top-color: #0D9488 !important;
+}
+.dashboard-theme .dashboard-stat-card.border-t-indigo {
+  border-top-color: #6366F1 !important;
+}
+.dashboard-theme .dashboard-stat-card.border-t-gold {
+  border-top-color: #F59E0B !important;
+}
+
+/* Text Colors (non-card elements) */
+.dashboard-theme .text-text-primary {
+  color: #0F172A !important;
+}
+.dashboard-theme .text-text-secondary {
+  color: #475569 !important;
+}
+.dashboard-theme .text-text-muted {
+  color: #64748B !important;
+}
+.dashboard-theme h1,
+.dashboard-theme h2,
+.dashboard-theme h3,
+.dashboard-theme h4,
+.dashboard-theme h5,
+.dashboard-theme h6 {
+  color: #0F172A !important;
+}
+
+/* Sidebar Active states and Hovers */
+.dashboard-theme nav a {
+  color: #475569 !important;
+}
+.dashboard-theme nav a:hover {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+.dashboard-theme nav a.bg-teal\/5 {
+  background-color: #F0FDFA !important;
+  color: #0D9488 !important;
+}
+.dashboard-theme nav a.bg-teal\/5 svg {
+  color: #0D9488 !important;
+}
+
+/* Inputs and interactive elements */
+.dashboard-theme input {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+.dashboard-theme input::placeholder {
+  color: #94A3B8 !important;
+}
+.dashboard-theme input:focus {
+  border-color: #0D9488 !important;
+  background-color: #FFFFFF !important;
+}
+
+/* Quick Actions Cards */
+.dashboard-theme .bg-white.text-text-primary {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+}
+.dashboard-theme .bg-white.text-text-primary svg {
+  color: #475569 !important;
+}
+.dashboard-theme .bg-white.text-text-primary:hover {
+  background-color: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+}
+
+/* Activity Feed Timeline Dot bg */
+.dashboard-theme .relative.group .absolute.-left-\[38px\] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Deadlines list item bg */
+.dashboard-theme .bg-bg-base\/50 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Muted or custom tags */
+.dashboard-theme .bg-gold-light {
+  background-color: #FEF3C7 !important;
+  color: #D97706 !important;
+  border-color: #FCD34D !important;
+}
+.dashboard-theme .bg-teal-light,
+.dashboard-theme .bg-teal\/5 {
+  background-color: #E6FAF8 !important;
+  color: #0D9488 !important;
+  border-color: #99F6E4 !important;
+}
+.dashboard-theme .bg-indigo-light,
+.dashboard-theme .bg-indigo\/5 {
+  background-color: #EEF2FF !important;
+  color: #4F46E5 !important;
+  border-color: #C7D2FE !important;
+}
+
+/* Resume upload drag-and-drop zone */
+.dashboard-theme .border-dashed {
+  background-color: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+}
+.dashboard-theme .border-dashed.border-teal {
+  background-color: #F0FDFA !important;
+  border-color: #0D9488 !important;
+}
+
+/* Weaknesses and suggestions panels in resume reviewer */
+.dashboard-theme .bg-red-50\/50 {
+  background-color: #FEF2F2 !important;
+  border-color: #FCA5A5 !important;
+  color: #991B1B !important;
+}
+.dashboard-theme .bg-red-100 {
+  background-color: #FEE2E2 !important;
+  color: #DC2626 !important;
+}
+.dashboard-theme .bg-amber-50\/50 {
+  background-color: #FFFBEB !important;
+  border-color: #FDE68A !important;
+  color: #92400E !important;
+}
+.dashboard-theme .bg-amber-100 {
+  background-color: #FEF3C7 !important;
+  color: #D97706 !important;
+}
+.dashboard-theme .bg-green-50\/50 {
+  background-color: #F0FDF4 !important;
+  border-color: #BBF7D0 !important;
+  color: #166534 !important;
+}
+.dashboard-theme .bg-green-100 {
+  background-color: #DCFCE7 !important;
+  color: #15803D !important;
+}
+.dashboard-theme .border-black\/5 {
+  border-color: #E2E8F0 !important;
+}
+.dashboard-theme .bg-bg-subtle {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* User Card bottom in Sidebar */
+.dashboard-theme .bg-bg-base\/30 {
+  background-color: #F8FAFC !important;
+}
+.dashboard-theme button.text-red-600:hover {
+  background-color: #FEE2E2 !important;
+}
+
+/* Mobile Navigation Bottom bar */
+.dashboard-theme nav.md\:hidden {
+  background-color: #FFFFFF !important;
+  border-top-color: #E2E8F0 !important;
+}

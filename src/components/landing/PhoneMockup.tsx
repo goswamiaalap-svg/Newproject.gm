@@ -133,7 +133,7 @@ export default function PhoneMockup() {
           </div>
 
           {/* Screen Content Wrapper */}
-          <div className="relative flex-1 bg-[#F8F9FF] rounded-[36px] overflow-hidden flex flex-col text-left px-4 pt-8 pb-16">
+          <div className="relative flex-1 bg-[#F8F9FF] rounded-[36px] overflow-hidden flex flex-col text-left px-4 pt-7 pb-14">
             <AnimatePresence mode="wait">
               {activeState === 0 && (
                 <motion.div
@@ -142,55 +142,70 @@ export default function PhoneMockup() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-3 flex flex-col h-full justify-between"
+                  className="space-y-2.5 flex flex-col h-full"
                 >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between pb-1 border-b border-border-default">
-                      <span className="text-[10px] font-bold text-text-primary font-display">LaunchPad</span>
-                      <span className="w-5 h-5 rounded-full bg-teal text-white flex items-center justify-center text-[8px] font-bold">PS</span>
-                    </div>
+                  <div className="flex items-center justify-between pb-1 border-b border-border-default">
+                    <span className="text-[10px] font-bold text-text-primary font-display">LaunchPad</span>
+                    <span className="w-5 h-5 rounded-full bg-teal text-white flex items-center justify-center text-[8px] font-bold">PS</span>
+                  </div>
 
-                    {/* Dashboard card */}
-                    <div className="p-3 bg-white border border-border-default rounded-card shadow-soft space-y-2">
-                      <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Overall Progress</span>
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-text-primary">42% Complete</span>
-                        <span className="text-[9px] text-teal font-bold">14/20 topics</span>
-                      </div>
-                      <div className="w-full h-1 bg-bg-subtle rounded-full overflow-hidden">
-                        <div className="h-full bg-teal w-[42%]" />
-                      </div>
+                  {/* Dashboard card */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Overall Progress</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold text-text-primary">42% Complete</span>
+                      <span className="text-[9px] text-teal font-bold">14/20 topics</span>
                     </div>
-
-                    {/* Stats mini */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft">
-                        <span className="text-[7px] text-text-muted font-bold uppercase">Resume</span>
-                        <p className="text-xs font-bold text-teal mt-0.5">78/100</p>
-                      </div>
-                      <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft">
-                        <span className="text-[7px] text-text-muted font-bold uppercase">Streaks</span>
-                        <p className="text-xs font-bold text-indigo mt-0.5">14 Days</p>
-                      </div>
-                    </div>
-
-                    {/* Activity Graph */}
-                    <div className="p-3 bg-white border border-border-default rounded-card shadow-soft">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Activity</span>
-                        <Activity className="w-3 h-3 text-teal" />
-                      </div>
-                      <div className="flex items-end gap-1 h-8">
-                        {[40, 70, 45, 90, 65, 80, 100].map((h, i) => (
-                          <div key={i} className="flex-1 bg-teal/10 rounded-t-sm relative overflow-hidden">
-                            <div className="absolute bottom-0 w-full bg-teal rounded-t-sm" style={{ height: `${h}%` }} />
-                          </div>
-                        ))}
-                      </div>
+                    <div className="w-full h-1 bg-bg-subtle rounded-full overflow-hidden">
+                      <div className="h-full bg-teal w-[42%]" />
                     </div>
                   </div>
 
-                  <div className="p-2.5 bg-indigo/5 border border-indigo/10 rounded-card text-[9px] text-indigo font-medium text-center">
+                  {/* Stats mini */}
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <div className="p-2 bg-white border border-border-default rounded-card shadow-soft">
+                      <span className="text-[7px] text-text-muted font-bold uppercase">Resume</span>
+                      <p className="text-xs font-bold text-teal mt-0.5">78/100</p>
+                    </div>
+                    <div className="p-2 bg-white border border-border-default rounded-card shadow-soft">
+                      <span className="text-[7px] text-text-muted font-bold uppercase">Streaks</span>
+                      <p className="text-xs font-bold text-indigo mt-0.5">14 Days</p>
+                    </div>
+                  </div>
+
+                  {/* Activity Graph */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Activity</span>
+                      <Activity className="w-3 h-3 text-teal" />
+                    </div>
+                    <div className="flex items-end gap-1 h-8">
+                      {[40, 70, 45, 90, 65, 80, 100].map((h, i) => (
+                        <div key={i} className="flex-1 bg-teal/10 rounded-t-sm relative overflow-hidden">
+                          <div className="absolute bottom-0 w-full bg-teal rounded-t-sm" style={{ height: `${h}%` }} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Upcoming Tasks */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Upcoming Tasks</span>
+                    <div className="flex items-center gap-2 text-[8px]">
+                      <div className="w-1 h-1 rounded-full bg-gold flex-shrink-0" />
+                      <span className="text-text-primary font-medium">Complete Two Pointers module</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[8px]">
+                      <div className="w-1 h-1 rounded-full bg-teal flex-shrink-0" />
+                      <span className="text-text-primary font-medium">Update resume with project metrics</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[8px]">
+                      <div className="w-1 h-1 rounded-full bg-indigo flex-shrink-0" />
+                      <span className="text-text-primary font-medium">Practice mock interview</span>
+                    </div>
+                  </div>
+
+                  <div className="p-2 bg-indigo/5 border border-indigo/10 rounded-card text-[8px] text-indigo font-medium text-center mt-auto">
                     ⚡ 3 opportunities closing this week!
                   </div>
                 </motion.div>
@@ -203,48 +218,84 @@ export default function PhoneMockup() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-3 flex flex-col h-full justify-between"
+                  className="space-y-2.5 flex flex-col h-full"
                 >
-                  <div className="space-y-3">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-teal-light text-teal font-bold">AI Resume Review</span>
-                    <h5 className="text-xs font-bold text-text-primary">ATS compatibility report</h5>
+                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-teal-light text-teal font-bold w-fit">AI Resume Review</span>
+                  <h5 className="text-xs font-bold text-text-primary">ATS compatibility report</h5>
 
-                    <div className="flex items-center gap-3 p-3 bg-white border border-border-default rounded-card shadow-soft">
-                      <div className="relative w-10 h-10 flex items-center justify-center flex-shrink-0">
-                        <svg className="w-full h-full -rotate-90">
-                          <circle cx="20" cy="20" r="16" stroke="#EEF2FF" strokeWidth="3.5" fill="none" />
-                          <circle cx="20" cy="20" r="16" stroke="#0D9488" strokeWidth="3.5" fill="none" strokeDasharray={2*Math.PI*16} strokeDashoffset={2*Math.PI*16*0.22} />
-                        </svg>
-                        <span className="absolute text-[8px] font-bold text-text-primary">78</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[9px] font-bold text-text-primary truncate">Excellent Foundation!</p>
-                        <p className="text-[7px] text-text-muted leading-tight mt-0.5">Ready for SDE-1 applications.</p>
-                      </div>
+                  <div className="flex items-center gap-3 p-2.5 bg-white border border-border-default rounded-card shadow-soft">
+                    <div className="relative w-10 h-10 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-full h-full -rotate-90">
+                        <circle cx="20" cy="20" r="16" stroke="#EEF2FF" strokeWidth="3.5" fill="none" />
+                        <circle cx="20" cy="20" r="16" stroke="#0D9488" strokeWidth="3.5" fill="none" strokeDasharray={2*Math.PI*16} strokeDashoffset={2*Math.PI*16*0.22} />
+                      </svg>
+                      <span className="absolute text-[8px] font-bold text-text-primary">78</span>
                     </div>
+                    <div className="min-w-0">
+                      <p className="text-[9px] font-bold text-text-primary truncate">Excellent Foundation!</p>
+                      <p className="text-[7px] text-text-muted leading-tight mt-0.5">Ready for SDE-1 applications.</p>
+                    </div>
+                  </div>
 
-                    {/* Suggestions checklist */}
-                    <div className="space-y-1.5 mt-2 border-t border-border-default pt-2">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[9px] font-bold text-text-primary">Action Items</span>
-                        <span className="text-[7px] text-text-muted">4 pending fixes</span>
+                  {/* Score Breakdown */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-2">
+                    <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Score Breakdown</span>
+                    <div className="space-y-1.5">
+                      <div>
+                        <div className="flex justify-between text-[7px] font-medium text-text-secondary mb-0.5">
+                          <span>ATS Compatibility</span>
+                          <span>82%</span>
+                        </div>
+                        <div className="w-full h-1 bg-bg-subtle rounded-full overflow-hidden">
+                          <div className="h-full bg-teal rounded-full w-[82%]" />
+                        </div>
                       </div>
-                      <div className="p-2 bg-red-50/50 border border-red-100 rounded-md text-[8px] text-red-800 font-medium flex gap-1.5 items-start">
-                        <span>🔴</span>
-                        <span>Add quantified metrics (%, $, x) in your Tech Solutions project section.</span>
-                      </div>
-                      <div className="p-2 bg-amber-50/50 border border-amber-100 rounded-md text-[8px] text-amber-800 font-medium flex gap-1.5 items-start">
-                        <span>🟡</span>
-                        <span>Replace passive verb "worked on" with active verbs like "architected" or "spearheaded".</span>
-                      </div>
-                      <div className="p-2 bg-indigo-50 border border-indigo-100 rounded-md text-[8px] text-indigo-800 font-medium flex gap-1.5 items-start">
-                        <span>🔵</span>
-                        <span>Include link to live deployment for Smart Attendance System.</span>
+                      <div>
+                        <div className="flex justify-between text-[7px] font-medium text-text-secondary mb-0.5">
+                          <span>Impact Metrics</span>
+                          <span>65%</span>
+                        </div>
+                        <div className="w-full h-1 bg-bg-subtle rounded-full overflow-hidden">
+                          <div className="h-full bg-gold rounded-full w-[65%]" />
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <button className="w-full py-2 bg-teal text-white rounded-btn text-[8px] font-bold">
+                  {/* Suggestions checklist */}
+                  <div className="space-y-1.5 border-t border-border-default pt-2">
+                    <div className="flex justify-between items-center mb-0.5">
+                      <span className="text-[9px] font-bold text-text-primary">Action Items</span>
+                      <span className="text-[7px] text-text-muted">4 pending fixes</span>
+                    </div>
+                    <div className="p-1.5 bg-red-50/50 border border-red-100 rounded-md text-[7px] text-red-800 font-medium flex gap-1.5 items-start">
+                      <span>🔴</span>
+                      <span>Add quantified metrics (%, $, x) in your Tech Solutions project section.</span>
+                    </div>
+                    <div className="p-1.5 bg-amber-50/50 border border-amber-100 rounded-md text-[7px] text-amber-800 font-medium flex gap-1.5 items-start">
+                      <span>🟡</span>
+                      <span>Replace passive verb "worked on" with active verbs like "architected".</span>
+                    </div>
+                    <div className="p-1.5 bg-indigo-50 border border-indigo-100 rounded-md text-[7px] text-indigo-800 font-medium flex gap-1.5 items-start">
+                      <span>🔵</span>
+                      <span>Include link to live deployment for Smart Attendance System.</span>
+                    </div>
+                  </div>
+
+                  {/* Target Roles Match */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Role Matching</span>
+                    <div className="flex justify-between items-center text-[8px]">
+                      <span className="text-text-primary font-medium">Software Engineer (SDE-1)</span>
+                      <span className="text-teal font-bold bg-teal/5 px-1.5 py-0.5 rounded">84% Match</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[8px]">
+                      <span className="text-text-primary font-medium">Full Stack Developer</span>
+                      <span className="text-teal font-bold bg-teal/5 px-1.5 py-0.5 rounded">80% Match</span>
+                    </div>
+                  </div>
+
+                  <button className="w-full py-1.5 bg-teal text-white rounded-btn text-[8px] font-bold mt-auto">
                     Re-upload Resume
                   </button>
                 </motion.div>
@@ -257,65 +308,100 @@ export default function PhoneMockup() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-3 flex flex-col h-full justify-between"
+                  className="space-y-2.5 flex flex-col h-full"
                 >
-                  <div className="space-y-2">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-light text-indigo font-bold">DSA Learning Map</span>
-                    <h5 className="text-xs font-bold text-text-primary">Algorithm Nodes</h5>
+                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-light text-indigo font-bold w-fit">DSA Learning Map</span>
+                  <h5 className="text-xs font-bold text-text-primary">Algorithm Nodes</h5>
 
-                    {/* Complex Vertical Timeline Mock */}
-                    <div className="relative pl-4 border-l-2 border-slate-200 ml-1.5 space-y-4 mt-3 text-[9px]">
-                      
-                      <div className="relative">
-                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-teal border-2 border-white shadow-soft" />
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-bold text-text-primary text-[10px]">Arrays & Hashing</p>
-                            <p className="text-text-muted mt-0.5">Mastered • 15/15 Solved</p>
-                          </div>
-                          <span className="bg-teal/10 text-teal px-1.5 py-0.5 rounded text-[7px] font-bold">100%</span>
+                  {/* Complex Vertical Timeline Mock */}
+                  <div className="relative pl-4 border-l-2 border-slate-200 ml-1.5 space-y-3 mt-1 text-[9px]">
+                    
+                    <div className="relative">
+                      <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-teal border-2 border-white shadow-soft" />
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-text-primary text-[10px]">Arrays & Hashing</p>
+                          <p className="text-text-muted mt-0.5">Mastered • 15/15 Solved</p>
                         </div>
+                        <span className="bg-teal/10 text-teal px-1.5 py-0.5 rounded text-[7px] font-bold">100%</span>
                       </div>
+                    </div>
 
-                      <div className="relative">
-                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-gold border-2 border-white shadow-soft animate-pulse" />
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-bold text-text-primary text-[10px]">Two Pointers</p>
-                            <p className="text-gold font-semibold mt-0.5">In Progress • 4/8 Solved</p>
-                          </div>
-                          <span className="bg-gold/10 text-gold px-1.5 py-0.5 rounded text-[7px] font-bold">50%</span>
+                    <div className="relative">
+                      <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-gold border-2 border-white shadow-soft animate-pulse" />
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-text-primary text-[10px]">Two Pointers</p>
+                          <p className="text-gold font-semibold mt-0.5">In Progress • 4/8 Solved</p>
                         </div>
-                        <div className="w-full h-1 bg-slate-100 rounded-full mt-1.5">
-                          <div className="h-full bg-gold w-1/2 rounded-full" />
-                        </div>
+                        <span className="bg-gold/10 text-gold px-1.5 py-0.5 rounded text-[7px] font-bold">50%</span>
                       </div>
-
-                      <div className="relative">
-                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-200 border-2 border-white" />
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-bold text-text-muted text-[10px]">Sliding Window</p>
-                            <p className="text-slate-400 mt-0.5">Locked • Requires previous</p>
-                          </div>
-                          <Lock className="w-2.5 h-2.5 text-slate-400 mt-0.5" />
-                        </div>
+                      <div className="w-full h-1 bg-slate-100 rounded-full mt-1.5">
+                        <div className="h-full bg-gold w-1/2 rounded-full" />
                       </div>
+                    </div>
 
-                      <div className="relative">
-                        <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-200 border-2 border-white" />
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-bold text-text-muted text-[10px]">Trees & Graphs</p>
-                            <p className="text-slate-400 mt-0.5">Locked • Advanced</p>
-                          </div>
-                          <Lock className="w-2.5 h-2.5 text-slate-400 mt-0.5" />
+                    <div className="relative">
+                      <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-200 border-2 border-white" />
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-text-muted text-[10px]">Sliding Window</p>
+                          <p className="text-slate-400 mt-0.5">Locked • Requires previous</p>
                         </div>
+                        <Lock className="w-2.5 h-2.5 text-slate-400 mt-0.5" />
+                      </div>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-200 border-2 border-white" />
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-text-muted text-[10px]">Trees & Graphs</p>
+                          <p className="text-slate-400 mt-0.5">Locked • Advanced</p>
+                        </div>
+                        <Lock className="w-2.5 h-2.5 text-slate-400 mt-0.5" />
+                      </div>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-slate-200 border-2 border-white" />
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-text-muted text-[10px]">Dynamic Programming</p>
+                          <p className="text-slate-400 mt-0.5">Locked • Expert</p>
+                        </div>
+                        <Lock className="w-2.5 h-2.5 text-slate-400 mt-0.5" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-2.5 bg-indigo/5 border border-indigo/10 rounded-card text-[8px] text-text-secondary text-center">
+                  {/* AI Daily Goal */}
+                  <div className="p-2 bg-indigo-50/50 border border-indigo-100/50 rounded-card text-[8px] text-text-secondary leading-normal flex items-start gap-1.5">
+                    <span>💡</span>
+                    <p>
+                      Solve 2 more questions in <strong>Two Pointers</strong> to unlock the <strong>Sliding Window</strong> node.
+                    </p>
+                  </div>
+
+                  {/* AI Recommendations */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <div className="flex justify-between items-center text-[7px] text-text-muted font-bold uppercase tracking-wider">
+                      <span>Recommended Problems</span>
+                      <span className="text-indigo font-bold">Try Next</span>
+                    </div>
+                    <div className="space-y-1 text-[8px]">
+                      <div className="flex items-center justify-between p-1 bg-slate-50 border border-slate-100 rounded-md">
+                        <span className="font-medium text-text-primary">3Sum</span>
+                        <span className="text-gold font-bold">Medium</span>
+                      </div>
+                      <div className="flex items-center justify-between p-1 bg-slate-50 border border-slate-100 rounded-md">
+                        <span className="font-medium text-text-primary">Container With Most Water</span>
+                        <span className="text-gold font-bold">Medium</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-2 bg-indigo/5 border border-indigo/10 rounded-card text-[8px] text-text-secondary text-center mt-auto">
                     Solved: <strong>120 / 200</strong> problems
                   </div>
                 </motion.div>
@@ -328,42 +414,75 @@ export default function PhoneMockup() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-3 flex flex-col h-full justify-between"
+                  className="space-y-2.5 flex flex-col h-full"
                 >
-                  <div className="space-y-3">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold">Live Mock Interview</span>
-                    <h5 className="text-xs font-bold text-text-primary">Behavioral Session</h5>
-                    
-                    {/* Video Call Mock */}
-                    <div className="relative w-full h-32 bg-slate-900 rounded-xl overflow-hidden shadow-soft">
-                      <div className="absolute inset-0 flex items-center justify-center opacity-50">
-                        <div className="w-16 h-16 rounded-full bg-indigo-500 blur-xl animate-pulse" />
+                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold w-fit">Live Mock Interview</span>
+                  <h5 className="text-xs font-bold text-text-primary">Behavioral Session</h5>
+                  
+                  {/* Video Call Mock */}
+                  <div className="relative w-full h-28 bg-slate-900 rounded-xl overflow-hidden shadow-soft">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-50">
+                      <div className="w-16 h-16 rounded-full bg-indigo-500 blur-xl animate-pulse" />
+                    </div>
+                    <div className="absolute bottom-2 left-2 flex gap-1">
+                      <div className="bg-black/50 backdrop-blur-md p-1.5 rounded-full">
+                        <Mic className="w-3 h-3 text-white" />
                       </div>
-                      <div className="absolute bottom-2 left-2 flex gap-1">
-                        <div className="bg-black/50 backdrop-blur-md p-1.5 rounded-full">
-                          <Mic className="w-3 h-3 text-white" />
-                        </div>
-                        <div className="bg-black/50 backdrop-blur-md p-1.5 rounded-full">
-                          <Video className="w-3 h-3 text-white" />
-                        </div>
-                      </div>
-                      <div className="absolute top-2 right-2 bg-red-500 text-white text-[7px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> REC
-                      </div>
-                      <div className="absolute bottom-2 right-2 w-10 h-14 bg-slate-800 rounded border border-white/20 overflow-hidden shadow-lg">
-                        <div className="w-full h-full bg-gradient-to-t from-teal-500/30 to-indigo-500/30" />
+                      <div className="bg-black/50 backdrop-blur-md p-1.5 rounded-full">
+                        <Video className="w-3 h-3 text-white" />
                       </div>
                     </div>
-
-                    <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1">
-                      <span className="text-[8px] text-text-muted font-bold uppercase">AI Feedback</span>
-                      <p className="text-[9px] text-text-primary leading-tight">
-                        "Great STAR method usage! Try to speak a bit slower when explaining the technical constraints."
-                      </p>
+                    <div className="absolute top-2 right-2 bg-red-500 text-white text-[7px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> REC
+                    </div>
+                    <div className="absolute bottom-2 right-2 w-10 h-14 bg-slate-800 rounded border border-white/20 overflow-hidden shadow-lg">
+                      <div className="w-full h-full bg-gradient-to-t from-teal-500/30 to-indigo-500/30" />
                     </div>
                   </div>
 
-                  <button className="w-full py-2 bg-purple-600 text-white rounded-btn text-[8px] font-bold">
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1">
+                    <span className="text-[8px] text-text-muted font-bold uppercase">AI Feedback</span>
+                    <p className="text-[9px] text-text-primary leading-tight">
+                      "Great STAR method usage! Try to speak a bit slower when explaining the technical constraints."
+                    </p>
+                  </div>
+
+                  {/* Performance Metrics */}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <div className="p-2 bg-white border border-border-default rounded-card shadow-soft text-center">
+                      <span className="text-[7px] text-text-muted font-bold uppercase">Clarity</span>
+                      <p className="text-[10px] font-bold text-teal mt-0.5">8/10</p>
+                    </div>
+                    <div className="p-2 bg-white border border-border-default rounded-card shadow-soft text-center">
+                      <span className="text-[7px] text-text-muted font-bold uppercase">Structure</span>
+                      <p className="text-[10px] font-bold text-indigo mt-0.5">9/10</p>
+                    </div>
+                    <div className="p-2 bg-white border border-border-default rounded-card shadow-soft text-center">
+                      <span className="text-[7px] text-text-muted font-bold uppercase">Pace</span>
+                      <p className="text-[10px] font-bold text-gold mt-0.5">6/10</p>
+                    </div>
+                  </div>
+
+                  <div className="p-2 bg-purple-50 border border-purple-100 rounded-card text-[8px] text-purple-700 font-medium text-center">
+                    📊 Session 3 of 5 completed
+                  </div>
+
+                  {/* Key Takeaways */}
+                  <div className="p-2.5 bg-white border border-border-default rounded-card shadow-soft space-y-1.5">
+                    <span className="text-[8px] text-text-muted font-bold uppercase tracking-wider">Key Strengths</span>
+                    <div className="space-y-1 text-[8px]">
+                      <div className="flex items-center gap-1.5 text-text-secondary">
+                        <span className="text-purple-600 font-bold">✓</span>
+                        <span>Structured response format (STAR method)</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-text-secondary">
+                        <span className="text-purple-600 font-bold">✓</span>
+                        <span>Clear communication of technical constraints</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button className="w-full py-1.5 bg-purple-600 text-white rounded-btn text-[8px] font-bold mt-auto">
                     End Session
                   </button>
                 </motion.div>

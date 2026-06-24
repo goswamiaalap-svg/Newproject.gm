@@ -106,28 +106,28 @@ export default function DSATrackerPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header and Stats */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Area Wrapper */}
+      <div className="!bg-[#FAFAFA] p-6 rounded-2xl border border-[#E2E8F0] shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-extrabold text-text-primary">
+          <h1 className="font-display text-3xl font-extrabold !text-[#0F172A]">
             DSA Tracker
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="!text-[#475569] text-sm mt-1">
             Track your node-based learning path and tackle 200+ curated problems.
           </p>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-1.5 bg-white border border-border-default p-1.5 rounded-btn shadow-sm">
+        <div className="flex flex-wrap gap-1.5 !bg-white border !border-[#E2E8F0] p-1.5 rounded-lg shadow-sm">
           {(['all', 'completed', 'in-progress', 'locked'] as const).map((opt) => (
             <button
               key={opt}
               onClick={() => setFilter(opt)}
               className={cn(
-                'text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-btn transition-all',
+                'text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-md transition-all',
                 filter === opt
-                  ? 'bg-teal text-white shadow-sm'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-subtle'
+                  ? '!bg-[#0D9488] !text-white shadow-sm'
+                  : '!text-[#64748B] hover:!text-[#0F172A] hover:!bg-[#F1F5F9]'
               )}
             >
               {opt}

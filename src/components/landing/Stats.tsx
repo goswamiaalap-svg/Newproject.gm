@@ -1,43 +1,66 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useRef, useEffect } from 'react'
+import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion'
 
-export default function Stats() {
-  const items = [
-    '1.5M+ Engineering Graduates',
-    '85% Outside IITs',
-    '12 AI Features',
-    'MVP by 30 June',
-    '200+ Students',
-    'Zero Guidance for Tier 2/3',
-    'Built by Students, for Students',
-  ]
+interface AnimatedNumberProps {
+  value: number
+  suffix: string
+  decimals?: number
+}
 
-  const marqueeItems = [...items, ...items]
+function AnimatedNumber({ value, suffix, decimals = 0 }: AnimatedNumberProps) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const count = useMotionValue(0)
+  const rounded = useTransform(count, (latest) => latest.toFixed(decimals))
+
+  useEffect(() => {
+    if (inView) {
+      const controls = animate(count, value, {
+        duration: 1.8,
+        ease: [0.16, 1, 0.3, 1], // easeOutExpo curve for premium feel
+      })
+      return controls.stop
+    }
+  }, [inView, count, value])
 
   return (
-    <section className="relative bg-[#06070A] py-8 overflow-hidden border-y border-white/5">
-      {/* Scan-line glow sweep */}
-      <motion.div
-        className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-teal/20 to-transparent pointer-events-none z-10"
-        animate={{ x: ['-20vw', '120vw'] }}
-        transition={{ repeat: Infinity, duration: 5, ease: 'linear', repeatDelay: 3 }}
-      />
+    <span className="font-display font-extrabold text-6xl sm:text-7xl md:text-8xl tracking-tight text-zinc-950 flex items-baseline justify-center md:justify-start">
+      <motion.span ref={ref}>{rounded}</motion.span>
+      <span className="text-teal ml-1">{suffix}</span>
+    </span>
+  )
+}
 
-      {/* Ambient left/right fade masks */}
-      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#06070A] to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#06070A] to-transparent z-10 pointer-events-none" />
+export default function Stats() {
+  const stats = [
+    { value: 1.5, suffix: 'M+', label: 'Engineering Graduates', decimals: 1 },
+    { value: 200, suffix: '+', label: 'Active Students', decimals: 0 },
+    { value: 78, suffix: '%', label: 'Avg Resume Score Improvement', decimals: 0 },
+    { value: 12, suffix: '+', label: 'Hackathons Tracked', decimals: 0 },
+  ]
 
-      <div className="flex w-max items-center animate-scroll-right">
-        {marqueeItems.map((item, idx) => (
-          <div key={idx} className="flex items-center gap-6 mx-6 flex-shrink-0">
-            <span className="text-white/80 font-display font-bold text-sm md:text-base tracking-wide uppercase">
-              {item}
-            </span>
-            <span className="text-teal font-display font-bold text-base select-none animate-pulse">✦</span>
-          </div>
-        ))}
+  return (
+    <section className="bg-white border-y border-zinc-100 py-20 sm:py-24 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-2 items-start text-center md:text-left divide-y md:divide-y-0 md:divide-x divide-zinc-200/60">
+          {stats.map((stat, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.6, delay: idx * 0.12 }}
+              className="flex flex-col space-y-2.5 pt-8 md:pt-0 md:px-6 first:pt-0 first:pl-0 last:pr-0"
+            >
+              <AnimatedNumber value={stat.value} suffix={stat.suffix} decimals={stat.decimals} />
+              <p className="text-zinc-500 font-sans font-medium text-xs sm:text-sm md:text-base max-w-xs md:max-w-none mx-auto md:mx-0 leading-normal">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   )

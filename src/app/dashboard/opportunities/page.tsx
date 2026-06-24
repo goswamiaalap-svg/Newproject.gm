@@ -78,69 +78,72 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header and Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-extrabold text-text-primary">
-            Opportunity Tracker
-          </h1>
-          <p className="text-text-secondary text-sm mt-1">
-            Never miss SDE internships, open-source programs, and campus hackathons.
-          </p>
+      {/* Header Area Wrapper */}
+      <div className="!bg-[#FAFAFA] p-6 rounded-2xl border border-[#E2E8F0] shadow-sm mb-6">
+        {/* Header and Toggle */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="font-display text-3xl font-extrabold !text-[#0F172A]">
+              Opportunity Tracker
+            </h1>
+            <p className="!text-[#475569] text-sm mt-1">
+              Never miss SDE internships, open-source programs, and campus hackathons.
+            </p>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-1.5 !bg-white border !border-[#E2E8F0] p-1 rounded-lg shadow-sm self-start sm:self-center">
+            <button
+              onClick={() => setViewMode('list')}
+              className={cn(
+                'p-2 rounded-md transition-colors',
+                viewMode === 'list' ? '!bg-[#F0FDFA] !text-[#0F766E]' : '!text-[#64748B] hover:!text-[#0F172A]'
+              )}
+              title="List View"
+            >
+              <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={cn(
+                'p-2 rounded-md transition-colors',
+                viewMode === 'calendar' ? '!bg-[#F0FDFA] !text-[#0F766E]' : '!text-[#64748B] hover:!text-[#0F172A]'
+              )}
+              title="Calendar View"
+            >
+              <Calendar className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex items-center gap-1.5 bg-white border border-border-default p-1 rounded-btn shadow-sm self-start sm:self-center">
-          <button
-            onClick={() => setViewMode('list')}
-            className={cn(
-              'p-2 rounded-btn transition-colors',
-              viewMode === 'list' ? 'bg-teal/5 text-teal' : 'text-text-muted hover:text-text-secondary'
-            )}
-            title="List View"
-          >
-            <List className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode('calendar')}
-            className={cn(
-              'p-2 rounded-btn transition-colors',
-              viewMode === 'calendar' ? 'bg-teal/5 text-teal' : 'text-text-muted hover:text-text-secondary'
-            )}
-            title="Calendar View"
-          >
-            <Calendar className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Top 3 Nearest Deadlines Row */}
-      <div className="space-y-2">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-          🔥 Nearest Active Deadlines
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {topDeadlines.map((opp) => {
-            const daysLeft = getDaysLeft(opp.deadline)
-            return (
-              <div
-                key={opp.id}
-                className="bg-white border border-border-default border-l-4 border-l-gold rounded-card p-4 shadow-card flex items-center justify-between gap-4"
-              >
-                <div>
-                  <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">{opp.company}</span>
-                  <h4 className="font-display text-sm font-bold text-text-primary truncate max-w-[150px] mt-0.5">
-                    {opp.title}
-                  </h4>
+        {/* Top 3 Nearest Deadlines Row */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-bold uppercase tracking-wider !text-[#64748B]">
+            🔥 Nearest Active Deadlines
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {topDeadlines.map((opp) => {
+              const daysLeft = getDaysLeft(opp.deadline)
+              return (
+                <div
+                  key={opp.id}
+                  className="!bg-white border !border-[#E2E8F0] !border-l-4 !border-l-[#F59E0B] rounded-xl p-4 shadow-sm flex items-center justify-between gap-4"
+                >
+                  <div>
+                    <span className="text-[10px] !text-[#64748B] font-bold uppercase tracking-wider">{opp.company}</span>
+                    <h4 className="font-display text-sm font-bold !text-[#0F172A] truncate max-w-[150px] mt-0.5">
+                      {opp.title}
+                    </h4>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <span className="text-[9px] px-2 py-0.5 rounded-full !bg-[#FEF3C7] !text-[#B45309] border !border-[#FDE68A] font-bold block animate-pulse">
+                      {daysLeft > 0 ? `${daysLeft} Days Left` : 'Closing Today'}
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-gold-light text-gold border border-gold/20 font-bold block animate-pulse">
-                    {daysLeft > 0 ? `${daysLeft} Days Left` : 'Closing Today'}
-                  </span>
-                </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div>
 
