@@ -593,3 +593,11 @@ section.hero-section {
   background-color: #FFFFFF !important;
   border-top-color: #E2E8F0 !important;
 }
+
+/* Hide Clerk development mode and footer branding */
+.cl-footer, 
+[class^="cl-footer"],
+.cl-internal-b3826t,
+[class*="cl-internal-b3826t"] {
+  display: none !important;
+}

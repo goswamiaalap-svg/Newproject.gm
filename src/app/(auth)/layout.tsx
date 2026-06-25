@@ -18,7 +18,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-10 overflow-hidden font-sans">
       {/* Left panel: 3D visuals & branding (hidden on small screens) */}
-      <div className="relative hidden lg:flex lg:col-span-5 xl:col-span-6 bg-gradient-hero items-center justify-center p-12 overflow-hidden">
+      <div className="relative hidden lg:flex lg:col-span-5 xl:col-span-6 hero-animated-mesh items-center justify-center p-12 overflow-hidden">
         {/* Three.js Background */}
         <HeroScene density="light" />
 

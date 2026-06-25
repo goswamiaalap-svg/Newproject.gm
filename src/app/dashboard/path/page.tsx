@@ -48,7 +48,7 @@ export default function DefinePathPage() {
   
   // Selection state
   const [hasTarget, setHasTarget] = useState<boolean | null>(null)
-  const [targetType, setTargetType] = useState<'job' | 'gig' | 'solo' | 'research' | null>(null)
+  const [targetType, setTargetType] = useState<'job' | 'gig' | 'solo' | 'research' | 'open_source' | 'higher_ed' | null>(null)
   
   // Inputs
   const [targetTitle, setTargetTitle] = useState('')
@@ -66,11 +66,36 @@ export default function DefinePathPage() {
   const [idealProfile, setIdealProfile] = useState<IdealProfile | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  // Load existing target on mount
+  React.useEffect(() => {
+    const fetchActiveTarget = async () => {
+      try {
+        const res = await fetch('/api/career-target')
+        if (res.ok) {
+          const data = await res.json()
+          if (data && data.targetTitle) {
+            setTargetTitle(data.targetTitle)
+            setTargetDescription(data.targetDescription || '')
+            setTargetType(data.targetType)
+            setIdealProfile(data.idealProfile)
+            setStep('ideal_profile')
+            setHasTarget(true)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch active target:', err)
+      }
+    }
+    fetchActiveTarget()
+  }, [])
+
   const categories = [
     { id: 'job', label: 'Job / Employment', desc: 'Product companies, tech startups, service firms', icon: Briefcase, color: 'bg-emerald-50 text-emerald-600 border-emerald-200' },
     { id: 'gig', label: 'Gig / Freelancing', desc: 'Upwork, contracting, remote freelance, consulting', icon: Globe, color: 'bg-blue-50 text-blue-600 border-blue-200' },
     { id: 'solo', label: 'Solo Creator / SaaS', desc: 'Indie hacking, build own products, content business', icon: Lightbulb, color: 'bg-amber-50 text-amber-600 border-amber-200' },
     { id: 'research', label: 'Research & Academia', desc: 'PhD, research assistant, publishing papers', icon: BookOpen, color: 'bg-purple-50 text-purple-600 border-purple-200' },
+    { id: 'open_source', label: 'Open Source / DevRel', desc: 'GitHub contributions, developer advocacy, dev community', icon: Cpu, color: 'bg-rose-50 text-rose-600 border-rose-200' },
+    { id: 'higher_ed', label: 'Higher Ed / Studies', desc: 'Master\'s degree, MBA, PG entrance, GRE/GATE prep', icon: Award, color: 'bg-orange-50 text-orange-600 border-orange-200' },
   ] as const
 
   const handleNextFromMode = () => {
@@ -259,7 +284,7 @@ export default function DefinePathPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">Category</label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {categories.map((cat) => {
                       const Icon = cat.icon
                       return (
