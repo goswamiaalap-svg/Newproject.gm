@@ -31,7 +31,7 @@ export interface IRoadmapWeek {
 
 export interface ICareerTarget extends Document {
   userId: string           // Clerk user ID (matches User.clerkId)
-  targetType: 'job' | 'gig' | 'solo' | 'research'
+  targetType: 'job' | 'gig' | 'solo' | 'research' | 'open_source' | 'higher_ed'
   targetTitle: string
   targetDescription: string
   idealProfile?: IIdealProfile
@@ -116,7 +116,7 @@ const CareerTargetSchema = new Schema<ICareerTarget>(
     },
     targetType: {
       type: String,
-      enum: ['job', 'gig', 'solo', 'research'],
+      enum: ['job', 'gig', 'solo', 'research', 'open_source', 'higher_ed'],
       required: true,
     },
     targetTitle: {

@@ -18,7 +18,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-10 overflow-hidden font-sans">
       {/* Left panel: 3D visuals & branding (hidden on small screens) */}
-      <div className="relative hidden lg:flex lg:col-span-5 xl:col-span-6 hero-animated-mesh items-center justify-center p-12 overflow-hidden">
+      <div className="relative hidden lg:flex lg:col-span-5 xl:col-span-6 bg-gradient-to-br from-[#3b82f6] via-[#818cf8] to-[#fdba74] items-center justify-center p-12 overflow-hidden">
         {/* Three.js Background */}
         <HeroScene density="light" />
 
@@ -26,11 +26,10 @@ export default function AuthLayout({
         <div className="relative z-10 max-w-lg w-full flex flex-col justify-between h-full">
           <div>
             <Link href="/" className="flex items-center gap-1 group">
-              <span className="font-display font-bold text-2xl text-white">
-                Launch
+              <span className="font-heading font-extrabold text-2xl tracking-tight text-[#111111]">
+                LaunchPad
               </span>
-              <span className="text-teal font-display font-bold text-2xl">Pad</span>
-              <span className="w-2 h-2 rounded-full bg-teal -mt-2 group-hover:scale-150 transition-transform" />
+              <span className="w-2 h-2 rounded-full bg-[#3B82F6] -mt-2 group-hover:scale-150 transition-transform" />
             </Link>
           </div>
 
@@ -38,20 +37,20 @@ export default function AuthLayout({
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="glass p-8 rounded-hero border border-white/10 shadow-glass backdrop-blur-md"
+            className="glass p-8 rounded-hero border border-white/50 shadow-glass backdrop-blur-md"
           >
-            <span className="text-teal text-xs font-semibold uppercase tracking-wider block mb-2">
+            <span className="text-[#3B82F6] text-xs font-bold uppercase tracking-wider block mb-2">
               ✦ Built for Engineering Students
             </span>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="font-display text-2xl font-bold text-[#111111] mb-3">
               The Placement Prep Platform That Works
             </h2>
-            <p className="text-white/60 text-sm leading-relaxed">
+            <p className="text-slate-600 text-sm leading-relaxed font-medium">
               Unlock AI resume screening, step-by-step DSA learning roadmaps, and custom mock interviews tailored to your dream companies.
             </p>
           </motion.div>
 
-          <div className="text-white/30 text-xs">
+          <div className="text-[#111111]/40 text-xs font-semibold">
             © {new Date().getFullYear()} LaunchPad.
           </div>
         </div>

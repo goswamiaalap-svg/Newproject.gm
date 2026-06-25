@@ -345,7 +345,6 @@ section.hero-section {
 }
 
 /* Default Borders in Dashboard */
-.dashboard-theme *, 
 .dashboard-theme .border-border-default, 
 .dashboard-theme .border-border-subtle {
   border-color: #E2E8F0 !important;
@@ -357,7 +356,6 @@ section.hero-section {
   background-color: #FFFFFF !important;
   border-color: #E2E8F0 !important;
 }
-.dashboard-theme .bg-white *,
 .dashboard-theme .bg-white .text-text-primary,
 .dashboard-theme .bg-white h1,
 .dashboard-theme .bg-white h2,
@@ -365,7 +363,6 @@ section.hero-section {
 .dashboard-theme .bg-white h4,
 .dashboard-theme .bg-white h5,
 .dashboard-theme .bg-white h6,
-.dashboard-theme .dashboard-stat-card *,
 .dashboard-theme .dashboard-stat-card .text-text-primary,
 .dashboard-theme .dashboard-stat-card h1,
 .dashboard-theme .dashboard-stat-card h2,

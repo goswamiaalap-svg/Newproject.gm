@@ -26,18 +26,20 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="absolute top-0 left-0 right-0 z-50 flex flex-col items-center"
+      className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center"
     >
       <div className={cn(
         'w-full max-w-7xl px-4 mt-4 transition-all duration-500',
       )}>
         <div className={cn(
-          "w-full bg-white rounded-full flex items-center justify-between h-16 px-8 transition-all duration-300",
-          scrolled ? "shadow-lg border border-gray-100" : "shadow-md border border-gray-50"
+          "w-full flex items-center justify-between h-16 px-8 transition-all duration-300 rounded-full",
+          scrolled 
+            ? "bg-[#EEF2FF]/80 backdrop-blur-md border border-[#C7D2FE]/50 shadow-lg" 
+            : "bg-white border border-gray-50 shadow-md"
         )}>
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1 group">
-            <span className="font-heading font-800 text-2xl tracking-tight transition-colors duration-300 text-[#111111]">
+            <span className="font-heading font-extrabold text-2xl tracking-tight transition-colors duration-300 text-[#111111]">
               LaunchPad
             </span>
           </Link>

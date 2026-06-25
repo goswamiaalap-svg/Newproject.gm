@@ -55,7 +55,7 @@ function SubPoint({ index, title, description, isActive, setActiveIndex, visual,
         "py-10 border-l-2 transition-all duration-500 pl-6 space-y-2 cursor-pointer",
         isActive 
           ? cn("opacity-100 border-l-4", activeBorderColor) 
-          : "border-slate-200 hover:border-slate-400 opacity-65"
+          : "border-slate-200 hover:border-slate-400 opacity-80"
       )}
       onClick={() => setActiveIndex(index)}
     >
@@ -70,7 +70,7 @@ function SubPoint({ index, title, description, isActive, setActiveIndex, visual,
       <div className="block lg:hidden pt-6">
         <div className={cn(
           "bg-white rounded-2xl border border-slate-200 p-6 flex items-center justify-center min-h-[300px] transition-opacity duration-500 shadow-sm",
-          isActive ? "opacity-100" : "opacity-40"
+          isActive ? "opacity-100" : "opacity-75"
         )}>
           {visual}
         </div>

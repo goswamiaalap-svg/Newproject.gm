@@ -50,12 +50,12 @@ export default function SignUpPage({
             formFieldLabel: 'text-xs font-semibold uppercase tracking-wider text-text-secondary',
             // Inputs
             formFieldInput:
-              'w-full px-4 py-2.5 bg-white border border-border-default rounded-btn text-sm focus:outline-none focus:border-teal text-text-primary transition-colors',
+              'w-full px-4 py-2.5 bg-white border border-border-default rounded-btn text-sm focus:outline-none focus:border-[#3B82F6] focus:ring-1 focus:ring-[#3B82F6]/50 text-text-primary transition-colors',
             // Primary submit button — matches the gradient style used across the app
             formButtonPrimary:
-              'w-full py-3 bg-gradient-to-r from-teal to-teal-600 text-white font-semibold rounded-btn hover:opacity-90 active:scale-[0.99] transition-all text-sm shadow-sm',
+              'w-full py-3 bg-gradient-to-r from-[#3B82F6] to-[#4F46E5] text-white font-semibold rounded-btn hover:opacity-90 active:scale-[0.99] transition-all text-sm shadow-sm',
             // Footer links
-            footerActionLink: 'text-teal hover:underline font-semibold',
+            footerActionLink: 'text-blue-600 hover:text-blue-700 hover:underline font-semibold',
             footerActionText: 'text-text-secondary text-sm',
             // Error messages
             formFieldErrorText: 'text-red-500 text-xs mt-1',

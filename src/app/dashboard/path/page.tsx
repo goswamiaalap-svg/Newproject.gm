@@ -287,18 +287,25 @@ export default function DefinePathPage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {categories.map((cat) => {
                       const Icon = cat.icon
+                      const isSelected = targetType === cat.id
                       return (
                         <button
                           key={cat.id}
+                          type="button"
                           onClick={() => setTargetType(cat.id)}
-                          className={`flex flex-col items-center justify-center p-4 border rounded-xl text-center transition-all ${
-                            targetType === cat.id
-                              ? 'border-teal bg-teal/5'
+                          className={`relative flex flex-col items-center justify-center p-4 border rounded-xl text-center transition-all ${
+                            isSelected
+                              ? 'border-teal bg-teal-50/70 ring-2 ring-teal/20 shadow-sm'
                               : 'border-border-default hover:bg-bg-subtle/50'
                           }`}
                         >
                           <Icon className="w-5 h-5 mb-2 text-text-secondary" />
                           <span className="text-xs font-bold text-text-primary">{cat.label.split(' ')[0]}</span>
+                          {isSelected && (
+                            <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-teal text-white rounded-full flex items-center justify-center shadow-sm">
+                              <Check className="w-2.5 h-2.5" />
+                            </span>
+                          )}
                         </button>
                       )
                     })}
@@ -329,20 +336,26 @@ export default function DefinePathPage() {
                       return (
                         <button
                           key={cat.id}
+                          type="button"
                           onClick={() => setTargetType(cat.id)}
-                          className={`flex items-start p-4 border rounded-xl text-left transition-all ${
+                          className={`relative flex items-start p-4 border rounded-xl text-left transition-all ${
                             isSelected
-                              ? 'border-indigo-500 bg-indigo-50/20 shadow-sm'
+                              ? 'border-indigo-600 bg-indigo-50/70 shadow-md ring-2 ring-indigo-500/20'
                               : 'border-border-default hover:bg-bg-subtle/50'
                           }`}
                         >
                           <div className={`p-2.5 rounded-lg mr-3 flex-shrink-0 ${cat.color} border`}>
                             <Icon className="w-5 h-5" />
                           </div>
-                          <div>
+                          <div className="flex-1 pr-6">
                             <h4 className="font-bold text-text-primary text-sm">{cat.label}</h4>
                             <p className="text-text-muted text-[10px] mt-0.5">{cat.desc}</p>
                           </div>
+                          {isSelected && (
+                            <span className="absolute top-3 right-3 w-5 h-5 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-sm">
+                              <Check className="w-3.5 h-3.5" />
+                            </span>
+                          )}
                         </button>
                       )
                     })}
