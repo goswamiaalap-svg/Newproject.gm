@@ -8,7 +8,13 @@
 
 import { SignUp } from '@clerk/nextjs'
 
-export default function SignUpPage() {
+export default function SignUpPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const emailAddress = typeof searchParams.email_address === 'string' ? searchParams.email_address : undefined
+
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <div className="mb-6 text-center">
@@ -23,6 +29,9 @@ export default function SignUpPage() {
       <SignUp
         routing="path"
         path="/sign-up"
+        initialValues={{
+          emailAddress,
+        }}
         appearance={{
           elements: {
             // Outer card — match existing card style

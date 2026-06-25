@@ -21,32 +21,13 @@ export default function Navbar() {
     { label: 'Team', href: '#testimonials' },
   ]
 
-  const [showAnnouncement, setShowAnnouncement] = useState(true)
-
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center"
+      className="absolute top-0 left-0 right-0 z-50 flex flex-col items-center"
     >
-      {showAnnouncement && (
-        <div className="w-full bg-[#3B82F6] py-3 px-4 text-center relative flex items-center justify-center z-50">
-          <p className="text-sm text-white font-medium select-none pr-8">
-            LaunchPad Secures over $2M in funding —{' '}
-            <Link href="/sign-up" className="text-white underline hover:text-blue-100 transition-colors">
-              Learn more here
-            </Link>
-          </p>
-          <button
-            onClick={() => setShowAnnouncement(false)}
-            className="absolute right-4 text-white hover:text-blue-100 transition-colors text-lg font-normal leading-none p-1 focus:outline-none"
-            aria-label="Dismiss announcement"
-          >
-            ✕
-          </button>
-        </div>
-      )}
       <div className={cn(
         'w-full max-w-7xl px-4 mt-4 transition-all duration-500',
       )}>

@@ -55,14 +55,14 @@ function SubPoint({ index, title, description, isActive, setActiveIndex, visual,
         "py-10 border-l-2 transition-all duration-500 pl-6 space-y-2 cursor-pointer",
         isActive 
           ? cn("opacity-100 border-l-4", activeBorderColor) 
-          : "border-slate-200 hover:border-slate-400 opacity-50"
+          : "border-slate-200 hover:border-slate-400 opacity-65"
       )}
       onClick={() => setActiveIndex(index)}
     >
-      <h4 className="font-display font-bold text-lg sm:text-xl text-slate-800">
+      <h4 className="font-display font-bold text-lg sm:text-xl text-text-primary">
         {title}
       </h4>
-      <p className="text-slate-500 font-sans text-sm sm:text-base leading-relaxed">
+      <p className="text-text-secondary font-sans text-sm sm:text-base leading-relaxed">
         {description}
       </p>
 

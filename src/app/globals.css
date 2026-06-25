@@ -241,10 +241,10 @@ html.lenis body {
 
 /* ─── Google Fonts Global Overrides (FIX 2) ─── */
 h1, h2, h3, h4, .font-heading {
-  font-family: 'Syne', sans-serif !important;
+  font-family: var(--font-serif), serif;
 }
 body, p, span, a, button, input, select, textarea, .font-body {
-  font-family: 'Inter', sans-serif !important;
+  font-family: var(--font-inter), sans-serif;
 }
 
 /* ─── Global Whitespace Adjustments (FIX 5) ─── */

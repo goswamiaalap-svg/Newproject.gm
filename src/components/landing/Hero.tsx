@@ -1,8 +1,20 @@
 'use client'
 
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 export default function Hero() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+
+  const handleGetStarted = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (email.trim()) {
+      router.push(`/sign-up?email_address=${encodeURIComponent(email.trim())}`)
+    }
+  }
+
   return (
     <section id="hero" className="relative w-full px-4 md:px-8 pt-36 pb-16 flex justify-center bg-[#F5F5F3] min-h-screen">
       <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
@@ -22,16 +34,19 @@ export default function Hero() {
             LaunchPad powers your growth with <span className="text-[#3B82F6]">Intelligence</span>.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
+          <form onSubmit={handleGetStarted} className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
             <input 
               type="email" 
               placeholder="What's your email?" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="w-full px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition-all text-[#111111] placeholder-gray-400"
             />
-            <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#3B82F6] hover:bg-blue-600 text-white font-bold whitespace-nowrap transition-colors shadow-lg shadow-blue-500/30">
+            <button type="submit" className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#3B82F6] hover:bg-blue-600 text-white font-bold whitespace-nowrap transition-colors shadow-lg shadow-blue-500/30">
               Get Started &rarr;
             </button>
-          </div>
+          </form>
         </div>
 
         {/* Right Card: Visuals */}
