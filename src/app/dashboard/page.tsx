@@ -96,16 +96,16 @@ export default function DashboardPage() {
         >
           <div className="relative z-10 max-w-xl">
             <span className="text-teal text-[10px] font-bold uppercase tracking-widest block mb-2 opacity-80 flex items-center gap-1">
-              <Target className="w-3.5 h-3.5" /> Target Career: {activeTarget.targetTitle}
+              <Target className="w-3.5 h-3.5" /> Aim for Excellence: {activeTarget.targetTitle}
             </span>
             <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight !text-[#0F172A]">
               {greeting}, {userName}!
             </h1>
             <p className="text-[#475569] text-sm mt-3 leading-relaxed max-w-lg">
               {!activeTarget.gapAnalysis ? (
-                "Step 2: Upload or scan your resume to measure how well you align with the skills, projects, and milestones required for this career target."
+                "Step 2: Analyze your current resume side-by-side with your Target Resume of Excellence. Pinpoint what skills and projects you need to build."
               ) : (
-                `Your target readiness score is at ${activeTarget.readinessScore || 0}%. You have ${activeTarget.gapAnalysis?.missingSkills?.length || 0} skill gaps left to bridge to reach peak readiness.`
+                `Your target Resume of Excellence is ${activeTarget.readinessScore || 0}% complete. Focus on bridging the remaining ${activeTarget.gapAnalysis?.missingSkills?.length || 0} skill gaps to let success chase you.`
               )}
             </p>
           </div>

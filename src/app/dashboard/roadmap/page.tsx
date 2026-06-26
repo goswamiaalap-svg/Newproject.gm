@@ -174,10 +174,10 @@ export default function RoadmapPage() {
       <div className="!bg-[#FAFAFA] p-6 rounded-2xl border border-[#E2E8F0] shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-extrabold !text-[#0F172A]">
-            {activeTarget ? `Path to becoming ready for: ${activeTarget.targetTitle}` : 'Placement Prep Learning Path'}
+            {activeTarget ? `Time-based Plan to Earn Your Target Resume: ${activeTarget.targetTitle}` : 'Placement Prep Learning Path'}
           </h1>
           <p className="!text-[#475569] text-sm mt-1">
-            {activeTarget ? `Bridging your computed skill gaps for your active target career.` : 'Personalized week-by-week preparation plan from our live Database.'}
+            {activeTarget ? `A customized sequence to bridge your gaps and build your Resume of Excellence.` : 'Personalized week-by-week preparation plan.'}
           </p>
         </div>
 

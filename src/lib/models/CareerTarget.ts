@@ -15,6 +15,26 @@ export interface IIdealProfile {
   }
 }
 
+export interface ITargetResume {
+  summary: string
+  skills: {
+    category: string
+    items: string[]
+  }[]
+  projects: {
+    title: string
+    description: string
+    technologies: string[]
+    bullets: string[]
+  }[]
+  experience: {
+    role: string
+    organization: string
+    duration: string
+    bullets: string[]
+  }[]
+}
+
 export interface IRoadmapItem {
   id: string
   title: string
@@ -35,6 +55,7 @@ export interface ICareerTarget extends Document {
   targetTitle: string
   targetDescription: string
   idealProfile?: IIdealProfile
+  perfectResume?: ITargetResume
   readinessScore?: number  // 0-100 overall readiness
   gapAnalysis?: {
     missingSkills: string[]
@@ -91,6 +112,35 @@ const IdealProfileSchema = new Schema<IIdealProfile>(
   { _id: false }
 )
 
+const TargetResumeSchema = new Schema<ITargetResume>(
+  {
+    summary: { type: String, required: true },
+    skills: [
+      {
+        category: { type: String, required: true },
+        items: [{ type: String }],
+      },
+    ],
+    projects: [
+      {
+        title: { type: String, required: true },
+        description: { type: String, required: true },
+        technologies: [{ type: String }],
+        bullets: [{ type: String }],
+      },
+    ],
+    experience: [
+      {
+        role: { type: String, required: true },
+        organization: { type: String, required: true },
+        duration: { type: String, required: true },
+        bullets: [{ type: String }],
+      },
+    ],
+  },
+  { _id: false }
+)
+
 const GapAnalysisSchema = new Schema(
   {
     missingSkills: [{ type: String }],
@@ -129,6 +179,10 @@ const CareerTargetSchema = new Schema<ICareerTarget>(
     },
     idealProfile: {
       type: IdealProfileSchema,
+      required: false,
+    },
+    perfectResume: {
+      type: TargetResumeSchema,
       required: false,
     },
     readinessScore: {

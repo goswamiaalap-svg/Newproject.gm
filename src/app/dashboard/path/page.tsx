@@ -42,6 +42,26 @@ interface IdealProfile {
   }
 }
 
+interface TargetResume {
+  summary: string
+  skills: {
+    category: string
+    items: string[]
+  }[]
+  projects: {
+    title: string
+    description: string
+    technologies: string[]
+    bullets: string[]
+  }[]
+  experience: {
+    role: string
+    organization: string
+    duration: string
+    bullets: string[]
+  }[]
+}
+
 export default function DefinePathPage() {
   const router = useRouter()
   const [step, setStep] = useState<'choose_mode' | 'input_details' | 'view_suggestions' | 'ideal_profile'>('choose_mode')
@@ -64,6 +84,8 @@ export default function DefinePathPage() {
   // Loading & result state for profile
   const [loadingProfile, setLoadingProfile] = useState(false)
   const [idealProfile, setIdealProfile] = useState<IdealProfile | null>(null)
+  const [perfectResume, setPerfectResume] = useState<TargetResume | null>(null)
+  const [activeTab, setActiveTab] = useState<'resume' | 'benchmarks'>('resume')
   const [error, setError] = useState<string | null>(null)
 
   // Load existing target on mount
@@ -78,6 +100,7 @@ export default function DefinePathPage() {
             setTargetDescription(data.targetDescription || '')
             setTargetType(data.targetType)
             setIdealProfile(data.idealProfile)
+            setPerfectResume(data.perfectResume || null)
             setStep('ideal_profile')
             setHasTarget(true)
           }
@@ -145,6 +168,8 @@ export default function DefinePathPage() {
       if (!res.ok) throw new Error('Failed to generate ideal profile')
       const targetDoc = await res.json()
       setIdealProfile(targetDoc.idealProfile)
+      setPerfectResume(targetDoc.perfectResume)
+      setActiveTab('resume')
     } catch (err: any) {
       setError(err.message || 'Something went wrong')
     } finally {
@@ -165,7 +190,7 @@ export default function DefinePathPage() {
             <Compass className="w-8 h-8 text-teal" /> Define Your Career Path
           </h1>
           <p className="text-[#475569] text-sm mt-1">
-            Build your personalized Career Target. Our AI model will draft a customized "North Star" profile matching your goals.
+            Establish clarity over features. Define your target outcome, preview your target Resume of Excellence, and build a roadmap to achieve it.
           </p>
         </div>
       </div>
@@ -203,7 +228,7 @@ export default function DefinePathPage() {
                 </div>
                 <h3 className="font-bold text-text-primary">Yes, I know exactly what I want</h3>
                 <p className="text-text-muted text-xs mt-1 px-4">
-                  Define your specific title and target company (e.g. "Frontend Engineer at Google" or "Data Analyst")
+                  Define your specific title and target (e.g. SDE at Google, Remote Designer, SaaS solopreneur)
                 </p>
               </button>
 
@@ -220,7 +245,7 @@ export default function DefinePathPage() {
                 </div>
                 <h3 className="font-bold text-text-primary">No, I want to explore suggestions</h3>
                 <p className="text-text-muted text-xs mt-1 px-4">
-                  Input your skills and interests, and let AI outline potential target roles for you
+                  Explore new roles beyond standard 9-5 jobs: gigs, creators, solopreneurs, and academics
                 </p>
               </button>
             </div>
@@ -266,7 +291,7 @@ export default function DefinePathPage() {
                     type="text"
                     value={targetTitle}
                     onChange={(e) => setTargetTitle(e.target.value)}
-                    placeholder="e.g. SDE-1 at a product-based tech company like Swiggy"
+                    placeholder="e.g. Frontend Engineer at a startup, or freelance Shopify expert"
                     className="w-full px-4 py-3 border border-border-default rounded-lg text-sm focus:outline-none focus:border-teal"
                   />
                 </div>
@@ -277,7 +302,7 @@ export default function DefinePathPage() {
                     rows={4}
                     value={targetDescription}
                     onChange={(e) => setTargetDescription(e.target.value)}
-                    placeholder="Add details about target domains, salary range, specific companies, or types of projects you want to build."
+                    placeholder="Add details about target domains, client profiles (gigs/solobusiness), or company size."
                     className="w-full px-4 py-3 border border-border-default rounded-lg text-sm focus:outline-none focus:border-teal"
                   />
                 </div>
@@ -379,7 +404,7 @@ export default function DefinePathPage() {
                     rows={3}
                     value={interests}
                     onChange={(e) => setInterests(e.target.value)}
-                    placeholder="e.g. fintech, SaaS software, content writing, tutoring, deep learning, web development"
+                    placeholder="e.g. fintech, SaaS, content writing, consulting, web development"
                     className="w-full px-4 py-3 border border-border-default rounded-lg text-sm focus:outline-none focus:border-teal"
                   />
                 </div>
@@ -473,7 +498,7 @@ export default function DefinePathPage() {
           </motion.div>
         )}
 
-        {/* STEP 4: VIEW IDEAL PROFILE */}
+        {/* STEP 4: VIEW IDEAL PROFILE & TARGET RESUME */}
         {step === 'ideal_profile' && (
           <motion.div
             key="ideal_profile"
@@ -486,89 +511,222 @@ export default function DefinePathPage() {
               <div className="bg-white border border-border-default rounded-2xl p-12 shadow-card text-center flex flex-col items-center justify-center min-h-[400px] space-y-4">
                 <Loader2 className="w-10 h-10 animate-spin text-teal" />
                 <div>
-                  <h3 className="font-display font-bold text-lg text-text-primary">Drafting Ideal Profile</h3>
+                  <h3 className="font-display font-bold text-lg text-text-primary">Drafting Ideal Profile & Target Resume</h3>
                   <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
-                    Analyzing target market standards to establish your skills benchmarks, tailored projects, and milestones...
+                    Analyzing target standards to model your Career Target benchmarks and building your aspirational Resume of Excellence...
                   </p>
                 </div>
               </div>
             ) : idealProfile ? (
               <div className="bg-white border border-border-default rounded-2xl p-8 shadow-card space-y-6">
-                <div>
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-teal text-[10px] font-bold uppercase tracking-wider mb-2">
-                    <Sparkles className="w-3 h-3" /> Ideal Target Profile
+                
+                {/* 3 Idiots Excellence Banner */}
+                <div className="bg-gradient-to-r from-teal/10 to-indigo/5 border border-teal/20 rounded-xl p-5 flex items-start gap-4 shadow-sm">
+                  <div className="p-3 bg-teal text-white rounded-lg">
+                    <Sparkles className="w-5 h-5 fill-current" />
                   </div>
-                  <h2 className="text-2xl font-extrabold text-text-primary">{targetTitle}</h2>
-                  <p className="text-xs text-text-secondary mt-1">{targetDescription || `Benchmark profile for ${targetTitle}`}</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                  {/* Skills Benchmarks */}
-                  <div className="space-y-4">
-                    <h3 className="font-display font-bold text-sm text-text-primary border-b border-border-subtle pb-2">Skills Benchmarks</h3>
-                    
-                    <div className="space-y-3">
-                      <div>
-                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1.5">Core Technical Skills</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {idealProfile.skills.technical.map((skill, i) => (
-                            <span key={i} className="text-xs font-semibold px-2.5 py-1 bg-bg-subtle text-text-primary rounded-lg border border-border-default">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1.5">Essential Soft Skills</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {idealProfile.skills.soft.map((skill, i) => (
-                            <span key={i} className="text-xs font-semibold px-2.5 py-1 bg-bg-subtle/40 text-text-secondary rounded-lg border border-border-subtle">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Milestones / Checklist */}
-                  <div className="space-y-4">
-                    <h3 className="font-display font-bold text-sm text-text-primary border-b border-border-subtle pb-2">Target Milestones</h3>
-                    <div className="space-y-2">
-                      {idealProfile.experience.milestones.map((m, i) => (
-                        <div key={i} className="flex items-start gap-2.5 p-2 rounded-lg bg-bg-base/30 text-xs">
-                          <CheckCircle className="w-4 h-4 text-teal/80 mt-0.5 flex-shrink-0" />
-                          <span className="text-text-primary font-medium">{m}</span>
-                        </div>
-                      ))}
-                    </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-[#0D9488] font-display">
+                      3 Idiots Wisdom: Aim for Excellence (The Resume, Not The Job)
+                    </h4>
+                    <p className="text-xs text-[#475569] mt-1 leading-relaxed">
+                      "Make yourself capable, aim for excellence, and success will chase you." Your target is not to apply blindly to job boards, but to systematically earn the skills and construct this <strong>Resume of Excellence</strong>. Once you achieve this profile, opportunity will seek you out.
+                    </p>
                   </div>
                 </div>
 
-                {/* Suggested Projects */}
-                <div className="space-y-4 pt-4 border-t border-border-subtle">
-                  <h3 className="font-display font-bold text-sm text-text-primary">Tailored Portfolio Projects</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {idealProfile.projects.map((proj, i) => (
-                      <div key={i} className="p-4 border border-border-default rounded-xl bg-bg-base/20 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-xs text-text-primary truncate">{proj.title}</h4>
-                            <span className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full ${
-                              proj.difficulty === 'beginner' ? 'bg-green-50 text-green-700' :
-                              proj.difficulty === 'intermediate' ? 'bg-amber-50 text-amber-700' :
-                              'bg-rose-50 text-rose-700'
-                            }`}>
-                              {proj.difficulty}
-                            </span>
+                <div className="flex items-center justify-between border-b border-border-subtle pb-4">
+                  <div>
+                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-teal text-[10px] font-bold uppercase tracking-wider mb-2">
+                      Target Outcome Established
+                    </div>
+                    <h2 className="text-2xl font-extrabold text-text-primary">{targetTitle}</h2>
+                    <p className="text-xs text-text-secondary mt-1">{targetDescription || `Benchmark blueprint for ${targetTitle}`}</p>
+                  </div>
+
+                  {/* Tab Selectors */}
+                  <div className="flex bg-bg-subtle p-1 rounded-lg border border-border-default">
+                    <button
+                      onClick={() => setActiveTab('resume')}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                        activeTab === 'resume'
+                          ? 'bg-white text-text-primary shadow-sm'
+                          : 'text-text-muted hover:text-text-primary'
+                      }`}
+                    >
+                      Target Resume
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('benchmarks')}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                        activeTab === 'benchmarks'
+                          ? 'bg-white text-text-primary shadow-sm'
+                          : 'text-text-muted hover:text-text-primary'
+                      }`}
+                    >
+                      Required Benchmarks
+                    </button>
+                  </div>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {/* TAB 1: PERFECT RESUME VIEW */}
+                  {activeTab === 'resume' && (
+                    <motion.div
+                      key="resume-tab"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="border border-[#E2E8F0] rounded-xl p-8 bg-[#F8FAFC] shadow-inner max-w-3xl mx-auto"
+                    >
+                      {perfectResume ? (
+                        <div className="bg-white p-8 md:p-10 border border-gray-200 shadow-md rounded-md font-sans text-xs text-[#334155] space-y-6 max-h-[600px] overflow-y-auto">
+                          {/* Resume Header */}
+                          <div className="text-center pb-4 border-b border-gray-200 space-y-1.5">
+                            <h3 className="text-lg font-bold text-gray-900 tracking-wide uppercase">Your Target Resume</h3>
+                            <p className="text-gray-500 font-medium text-[10px] tracking-widest uppercase">
+                              Blueprint for {targetTitle} Excellence
+                            </p>
                           </div>
-                          <p className="text-[10px] text-text-secondary mt-2 line-clamp-3">{proj.description}</p>
+
+                          {/* Profile Summary */}
+                          <div className="space-y-1.5">
+                            <h4 className="font-bold text-gray-900 uppercase border-b border-gray-150 pb-1 tracking-wider text-[10px]">
+                              Career Objective / Summary
+                            </h4>
+                            <p className="leading-relaxed italic text-gray-600 pr-4">
+                              {perfectResume.summary}
+                            </p>
+                          </div>
+
+                          {/* Skills Grid */}
+                          <div className="space-y-2">
+                            <h4 className="font-bold text-gray-900 uppercase border-b border-gray-150 pb-1 tracking-wider text-[10px]">
+                              Technical Expertise
+                            </h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 pl-1">
+                              {perfectResume.skills.map((skillGroup, i) => (
+                                <div key={i} className="flex gap-2">
+                                  <span className="font-bold text-gray-800 text-[10px] uppercase w-24 flex-shrink-0">
+                                    {skillGroup.category}:
+                                  </span>
+                                  <span className="text-gray-600">
+                                    {skillGroup.items.join(', ')}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Professional Target Milestones / Experience */}
+                          <div className="space-y-3">
+                            <h4 className="font-bold text-gray-900 uppercase border-b border-gray-150 pb-1 tracking-wider text-[10px]">
+                              Aspirational Milestones & Experience
+                            </h4>
+                            {perfectResume.experience.map((exp, i) => (
+                              <div key={i} className="space-y-1.5">
+                                <div className="flex justify-between font-bold text-gray-800 text-[11px]">
+                                  <span>{exp.role} @ {exp.organization}</span>
+                                  <span className="text-gray-500 font-medium text-[10px]">{exp.duration}</span>
+                                </div>
+                                <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                                  {exp.bullets.map((bullet, idx) => (
+                                    <li key={idx} className="leading-relaxed">
+                                      {bullet}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Target Portflio Projects */}
+                          <div className="space-y-3">
+                            <h4 className="font-bold text-gray-900 uppercase border-b border-gray-150 pb-1 tracking-wider text-[10px]">
+                              Standout Portfolio Projects to Build
+                            </h4>
+                            {perfectResume.projects.map((proj, i) => (
+                              <div key={i} className="space-y-1.5">
+                                <div className="flex justify-between font-bold text-gray-800 text-[11px]">
+                                  <span>{proj.title}</span>
+                                  <span className="text-teal font-semibold text-[9px] uppercase">
+                                    {proj.technologies.join(' | ')}
+                                  </span>
+                                </div>
+                                <p className="text-gray-500 leading-snug">{proj.description}</p>
+                                <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                                  {proj.bullets.map((bullet, idx) => (
+                                    <li key={idx} className="leading-relaxed">
+                                      {bullet}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+
+                        </div>
+                      ) : (
+                        <div className="text-center py-10 text-text-muted text-xs">
+                          No Perfect Resume generated for this path yet. Try deactivating and defining a new path.
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {/* TAB 2: BENCHMARKS LIST */}
+                  {activeTab === 'benchmarks' && (
+                    <motion.div
+                      key="benchmarks-tab"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2"
+                    >
+                      {/* Skills Benchmarks */}
+                      <div className="space-y-4">
+                        <h3 className="font-display font-bold text-sm text-text-primary border-b border-border-subtle pb-2">Skills Benchmarks</h3>
+                        
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1.5">Core Technical Skills</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {idealProfile.skills.technical.map((skill, i) => (
+                                <span key={i} className="text-xs font-semibold px-2.5 py-1 bg-bg-subtle text-text-primary rounded-lg border border-border-default">
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1.5">Essential Soft Skills</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {idealProfile.skills.soft.map((skill, i) => (
+                                <span key={i} className="text-xs font-semibold px-2.5 py-1 bg-bg-subtle/40 text-text-secondary rounded-lg border border-border-subtle">
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
+
+                      {/* Milestones / Checklist */}
+                      <div className="space-y-4">
+                        <h3 className="font-display font-bold text-sm text-text-primary border-b border-border-subtle pb-2">Target Milestones</h3>
+                        <div className="space-y-2">
+                          {idealProfile.experience.milestones.map((m, i) => (
+                            <div key={i} className="flex items-start gap-2.5 p-2 rounded-lg bg-bg-base/30 text-xs">
+                              <CheckCircle className="w-4 h-4 text-teal/80 mt-0.5 flex-shrink-0" />
+                              <span className="text-text-primary font-medium">{m}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Footer Buttons */}
                 <div className="flex items-center justify-between pt-6 border-t border-border-subtle">

@@ -19,14 +19,15 @@ You must return ONLY valid JSON in this exact shape:
       "items": [
         {
           "id": "string (unique task id, e.g., 'w1t1')",
-          "title": "string (actionable milestone/task details, e.g., 'Solve 5 Easy String problems on LeetCode')",
+          "title": "string (actionable milestone/task details, e.g., 'Build the caching layer using Redis and add it to your Resume')",
           "type": "dsa" | "subject" | "project" | "general"
         }
       ]
     }
   ]
 }
-Each week should contain exactly 3 to 4 items. Distribute the focus areas and missing skills across the weeks logically. Make tasks concrete, specific and actionable. Mark all tasks as not completed. Do not include markdown code block ticks or any text outside the JSON.`
+Each week should contain exactly 3 to 4 items. Distribute the focus areas and missing skills across the weeks logically. Make tasks concrete, specific and actionable. Mark all tasks as not completed.
+IMPORTANT: Design every week's tasks to actively guide the student toward building and earning their "Perfect Target Resume" (Resume of Excellence). Write tasks like 'Learn [Skill] and add it to your draft resume', or 'Implement [Project Title] to fill your portfolio project gap'. The roadmap is the time-based plan to transform their current resume into the Resume of Excellence. Do not include markdown code block ticks or any text outside the JSON.`
 
 export async function GET(req: Request) {
   try {

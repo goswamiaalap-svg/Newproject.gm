@@ -121,7 +121,7 @@ function CentralObject({
 }
 
 /* ── Main Export ────────────────────────────────────────── */
-export default function HeroScene() {
+export default function HeroScene({ density }: { density?: 'light' | 'normal' }) {
   const mouseX = useRef(0)
   const mouseY = useRef(0)
 

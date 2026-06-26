@@ -67,6 +67,40 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No active career target found. Please define your path first.' }, { status: 404 })
     }
 
+    // Generate perfect resume if it doesn't exist (for backward compatibility)
+    if (!target.perfectResume) {
+      console.log(`[Compare POST] target has no perfect resume. Generating it...`)
+      try {
+        const resumePrompt = `You are a career mentor. Given a target role/outcome, its category, and description, construct a "Perfect target resume" representing excellence. Return ONLY valid JSON matching this shape: { "summary": "string", "skills": [{ "category": "string", "items": ["string"] }], "projects": [{ "title": "string", "description": "string", "technologies": ["string"], "bullets": ["string"] }], "experience": [{ "role": "string", "organization": "string", "duration": "string", "bullets": ["string"] }] }`
+        const resResume = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${groqApiKey}`,
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              { role: 'system', content: resumePrompt },
+              { role: 'user', content: `Category: ${target.targetType}\nTitle: ${target.targetTitle}\nDescription: ${target.targetDescription}` }
+            ],
+            temperature: 0.3,
+            max_tokens: 1500,
+            response_format: { type: 'json_object' }
+          })
+        })
+        if (resResume.ok) {
+          const resData = await resResume.json()
+          const cleanText = resData?.choices?.[0]?.message?.content
+          if (cleanText) {
+            target.perfectResume = JSON.parse(cleanText)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to generate perfect resume during compare:', err)
+      }
+    }
+
     console.log(`[Compare POST] Comparing resume ${resumeId} with active target: ${target.targetTitle}`)
 
     // 3. Call Groq
