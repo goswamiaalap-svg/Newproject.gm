@@ -12,8 +12,10 @@ export default function OpportunitiesPage() {
   const [filterType, setFilterType] = useState<'all' | 'internship' | 'hackathon' | 'open-source' | 'fellowship'>('all')
   const [opportunities, setOpportunities] = useState(mockOpportunities)
   const [remindedList, setRemindedList] = useState<string[]>([])
+  const [mounted, setMounted] = useState(false)
 
   React.useEffect(() => {
+    setMounted(true)
     fetch('/api/opportunities')
       .then(res => res.json())
       .then(data => {
@@ -179,7 +181,7 @@ export default function OpportunitiesPage() {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <span className="text-[9px] px-2 py-0.5 rounded-full !bg-[#FEF3C7] !text-[#B45309] border !border-[#FDE68A] font-bold block animate-pulse">
-                      {daysLeft > 0 ? `${daysLeft} Days Left` : 'Closing Today'}
+                      {mounted ? (daysLeft > 0 ? `${daysLeft} Days Left` : 'Closing Today') : '...'}
                     </span>
                   </div>
                 </div>
@@ -256,10 +258,10 @@ export default function OpportunitiesPage() {
                     <div className="flex flex-col text-left sm:text-right">
                       <span className="text-[9px] text-text-muted uppercase">Deadline</span>
                       <p className="text-xs font-bold text-text-secondary mt-0.5">
-                        {opp.deadline.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        {mounted ? opp.deadline.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : '...'}
                       </p>
-                      <span className={cn('text-[9px] font-bold mt-1 inline-block', daysLeft < 7 ? 'text-gold' : 'text-text-muted')}>
-                        {daysLeft > 0 ? `${daysLeft} days remaining` : 'Closing today'}
+                      <span className={cn('text-[9px] font-bold mt-1 inline-block', (mounted && daysLeft < 7) ? 'text-gold' : 'text-text-muted')}>
+                        {mounted ? (daysLeft > 0 ? `${daysLeft} days remaining` : 'Closing today') : 'Loading...'}
                       </span>
                     </div>
 
