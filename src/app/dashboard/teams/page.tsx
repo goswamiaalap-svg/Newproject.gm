@@ -12,18 +12,45 @@ export default function TeamsPage() {
   const [teamRequests, setTeamRequests] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'teammates' | 'my-team'>('teammates')
 
+  const [dbTeamMembers, setDbTeamMembers] = useState<any[]>(mockTeamMembers)
+  const [dbHackathons, setDbHackathons] = useState<any[]>(mockHackathons)
+
   const domainsList = ['all', 'Web Dev', 'AI/ML', 'Mobile Dev', 'Backend', 'DevOps', 'UI/UX']
 
+  React.useEffect(() => {
+    fetch('/api/teams')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.invitations)) {
+          setTeamRequests(data.invitations.map((inv: any) => inv.teammateId))
+        }
+        if (data && Array.isArray(data.teammates) && data.teammates.length > 0) {
+          setDbTeamMembers(data.teammates)
+        }
+        if (data && Array.isArray(data.hackathons) && data.hackathons.length > 0) {
+          setDbHackathons(data.hackathons)
+        }
+      })
+      .catch(console.error)
+  }, [])
+
   const handleToggleRequest = (id: string) => {
-    if (teamRequests.includes(id)) {
+    const isInvited = teamRequests.includes(id)
+    if (isInvited) {
       setTeamRequests(teamRequests.filter((reqId) => reqId !== id))
     } else {
       setTeamRequests([...teamRequests, id])
     }
+
+    fetch('/api/teams', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ teammateId: id, action: isInvited ? 'cancel' : 'invite' }),
+    }).catch(console.error)
   }
 
   // Filter teammate cards
-  const filteredTeammates = mockTeamMembers.filter((member) => {
+  const filteredTeammates = dbTeamMembers.filter((member) => {
     const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.skills.some((s) => s.toLowerCase().includes(searchTerm.toLowerCase()))
     
@@ -51,7 +78,7 @@ export default function TeamsPage() {
             Featured National Hackathons
           </h3>
           <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-thin">
-            {mockHackathons.map((hack) => (
+            {dbHackathons.map((hack) => (
               <div
                 key={hack.id}
                 className="flex-shrink-0 w-80 !bg-white border !border-[#E2E8F0] rounded-xl p-4 shadow-sm flex flex-col justify-between gap-3"
@@ -230,7 +257,7 @@ export default function TeamsPage() {
               {/* Display invite requests accepted */}
               {teamRequests.length > 0 ? (
                 teamRequests.map((reqId) => {
-                  const m = mockTeamMembers.find((member) => member.id === reqId)
+                  const m = dbTeamMembers.find((member) => member.id === reqId)
                   if (!m) return null
                   return (
                     <div

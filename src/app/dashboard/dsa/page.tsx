@@ -55,26 +55,74 @@ export default function DSATrackerPage() {
   const [solvedCount, setSolvedCount] = useState(0)
   const [streakCount, setStreakCount] = useState(0)
 
+  // Database-loaded topics and problem sets mapping
+  const [dbTopics, setDbTopics] = useState<any[]>(mockDSATopics)
+  const [dbTopicProblems, setDbTopicProblems] = useState<Record<string, Problem[]>>(topicProblems)
+
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('launchpad_dsa_solved')
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved)
-          setSolvedProblems(parsed)
-          setSolvedCount(parsed.length)
-          if (parsed.length > 0) {
-            const streak = localStorage.getItem('launchpad_dsa_streak')
-            setStreakCount(streak ? parseInt(streak) : 1)
-          } else {
-            setStreakCount(0)
+    // 1. Fetch from MongoDB API
+    fetch('/api/dsa')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.solvedProblems)) {
+          setSolvedProblems(data.solvedProblems)
+          setSolvedCount(data.solvedProblems.length)
+          setStreakCount(data.streak || 0)
+          
+          if (Array.isArray(data.topics) && data.topics.length > 0) {
+            setDbTopics(data.topics)
           }
-        } catch (e) {
-          console.error(e)
+
+          if (Array.isArray(data.problems) && data.problems.length > 0) {
+            const problemsMap: Record<string, Problem[]> = {}
+            data.problems.forEach((p: any) => {
+              if (!problemsMap[p.topicId]) {
+                problemsMap[p.topicId] = []
+              }
+              problemsMap[p.topicId].push({
+                id: p.id,
+                name: p.name,
+                difficulty: p.difficulty,
+                solved: data.solvedProblems.includes(p.id),
+                url: p.url
+              })
+            })
+            setDbTopicProblems(problemsMap)
+          }
+          
+          // Sync local storage as cache
+          localStorage.setItem('launchpad_dsa_solved', JSON.stringify(data.solvedProblems))
+          localStorage.setItem('launchpad_dsa_streak', (data.streak || 0).toString())
+        } else {
+          loadFromLocalStorage()
         }
-      } else {
-        setSolvedCount(0)
-        setStreakCount(0)
+      })
+      .catch((err) => {
+        console.error('Failed to fetch DSA progress, falling back to local storage:', err)
+        loadFromLocalStorage()
+      })
+
+    function loadFromLocalStorage() {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('launchpad_dsa_solved')
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved)
+            setSolvedProblems(parsed)
+            setSolvedCount(parsed.length)
+            if (parsed.length > 0) {
+              const streak = localStorage.getItem('launchpad_dsa_streak')
+              setStreakCount(streak ? parseInt(streak) : 1)
+            } else {
+              setStreakCount(0)
+            }
+          } catch (e) {
+            console.error(e)
+          }
+        } else {
+          setSolvedCount(0)
+          setStreakCount(0)
+        }
       }
     }
   }, [])
@@ -82,7 +130,7 @@ export default function DSATrackerPage() {
   // Sync problems list with solvedProblems when selectedTopic changes
   useEffect(() => {
     if (selectedTopic) {
-      const list = topicProblems[selectedTopic.id] || [
+      const list = dbTopicProblems[selectedTopic.id] || [
         { id: `${selectedTopic.id}p1`, name: `Sample Problem for ${selectedTopic.name} I`, difficulty: 'Medium', solved: false, url: '#' },
         { id: `${selectedTopic.id}p2`, name: `Sample Problem for ${selectedTopic.name} II`, difficulty: 'Hard', solved: false, url: '#' },
       ]
@@ -92,13 +140,13 @@ export default function DSATrackerPage() {
       }))
       setProblems(mapped)
     }
-  }, [solvedProblems, selectedTopic?.id])
+  }, [solvedProblems, selectedTopic?.id, dbTopicProblems])
 
   // Load problems when topic is clicked
   const handleTopicClick = (topic: any) => {
     if (topic.status === 'locked') return
     setSelectedTopic(topic)
-    const list = topicProblems[topic.id] || [
+    const list = dbTopicProblems[topic.id] || [
       { id: `${topic.id}p1`, name: `Sample Problem for ${topic.name} I`, difficulty: 'Medium', solved: false, url: '#' },
       { id: `${topic.id}p2`, name: `Sample Problem for ${topic.name} II`, difficulty: 'Hard', solved: false, url: '#' },
     ]
@@ -130,23 +178,31 @@ export default function DSATrackerPage() {
     setSolvedCount(nextSolvedProblems.length)
     localStorage.setItem('launchpad_dsa_solved', JSON.stringify(nextSolvedProblems))
     
+    let nextStreak = streakCount
     if (nextSolvedProblems.length > 0) {
       const currentStreak = localStorage.getItem('launchpad_dsa_streak')
       if (!currentStreak || currentStreak === '0') {
-        localStorage.setItem('launchpad_dsa_streak', '1')
-        setStreakCount(1)
+        nextStreak = 1
       } else {
-        setStreakCount(parseInt(currentStreak))
+        nextStreak = parseInt(currentStreak)
       }
     } else {
-      localStorage.setItem('launchpad_dsa_streak', '0')
-      setStreakCount(0)
+      nextStreak = 0
     }
+    setStreakCount(nextStreak)
+    localStorage.setItem('launchpad_dsa_streak', nextStreak.toString())
+
+    // Sync to MongoDB database
+    fetch('/api/dsa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ solvedProblems: nextSolvedProblems, streak: nextStreak }),
+    }).catch(err => console.error('Failed to save DSA progress to DB:', err))
   }
 
   // Calculate dynamic status and solved count for each topic
-  const dynamicTopics = mockDSATopics.map((topic) => {
-    const problemsList = topicProblems[topic.id] || [
+  const dynamicTopics = dbTopics.map((topic) => {
+    const problemsList = dbTopicProblems[topic.id] || [
       { id: `${topic.id}p1`, name: `Sample Problem for ${topic.name} I`, difficulty: 'Medium', solved: false, url: '#' },
       { id: `${topic.id}p2`, name: `Sample Problem for ${topic.name} II`, difficulty: 'Hard', solved: false, url: '#' },
     ]

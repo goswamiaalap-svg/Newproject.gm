@@ -11,31 +11,73 @@ export default function OpportunitiesPage() {
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
   const [filterType, setFilterType] = useState<'all' | 'internship' | 'hackathon' | 'open-source' | 'fellowship'>('all')
   const [opportunities, setOpportunities] = useState(mockOpportunities)
-  const [remindedList, setRemindedList] = useState<string[]>(['2', '5'])
+  const [remindedList, setRemindedList] = useState<string[]>([])
+
+  React.useEffect(() => {
+    fetch('/api/opportunities')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.opportunities)) {
+          const fetchedOpps = data.opportunities.map((opp: any) => ({
+            ...opp,
+            deadline: new Date(opp.deadline),
+          }))
+          const states = Array.isArray(data.states) ? data.states : []
+
+          setOpportunities(fetchedOpps.map((opp: any) => {
+            const match = states.find((item: any) => item.opportunityId === opp.id)
+            return {
+              ...opp,
+              applied: match ? match.applied : false,
+            }
+          }))
+
+          const remindedIds = states.filter((item: any) => item.reminded).map((item: any) => item.opportunityId)
+          setRemindedList(remindedIds)
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   const handleToggleApply = (id: string) => {
+    let nextValue = false
     setOpportunities((prev) =>
       prev.map((opp) => {
         if (opp.id === id) {
-          const updated = !opp.applied
-          toast(updated ? `Applied to ${opp.title}!` : `Removed applied state for ${opp.title}`, {
+          nextValue = !opp.applied
+          toast(nextValue ? `Applied to ${opp.title}!` : `Removed applied state for ${opp.title}`, {
             icon: '✅',
           })
-          return { ...opp, applied: updated }
+          return { ...opp, applied: nextValue }
         }
         return opp
       })
     )
+
+    fetch('/api/opportunities', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ opportunityId: id, field: 'applied', value: nextValue }),
+    }).catch(console.error)
   }
 
   const handleToggleReminder = (id: string, title: string) => {
+    let nextValue = false
     if (remindedList.includes(id)) {
       setRemindedList(remindedList.filter((rId) => rId !== id))
       toast(`Removed reminder for ${title}`, { icon: '🔕' })
+      nextValue = false
     } else {
       setRemindedList([...remindedList, id])
       toast(`Reminder set! We will email you 24h before the ${title} deadline.`, { icon: '🔔' })
+      nextValue = true
     }
+
+    fetch('/api/opportunities', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ opportunityId: id, field: 'reminded', value: nextValue }),
+    }).catch(console.error)
   }
 
   const getDaysLeft = (date: Date) => {

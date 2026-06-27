@@ -57,6 +57,10 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
 
   try {
     cached.conn = await cached.promise
+    
+    // Seed database collections with template data if empty
+    const { seedDatabase } = await import('./db-seed')
+    seedDatabase().catch(err => console.error('[Mongoose Connect] Seeding failed:', err))
   } catch (e) {
     // Reset the promise so the next call retries
     cached.promise = null
