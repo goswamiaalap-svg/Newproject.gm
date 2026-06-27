@@ -459,6 +459,7 @@ export const mockOpportunities = [
     logo: '🅰️',
     applied: false,
     reminded: false,
+    applyUrl: 'https://www.amazon.jobs/en/teams/internship-opportunities',
   },
   {
     id: '2',
@@ -469,6 +470,7 @@ export const mockOpportunities = [
     logo: '🔵',
     applied: true,
     reminded: true,
+    applyUrl: 'https://summerofcode.withgoogle.com/',
   },
   {
     id: '3',
@@ -479,6 +481,7 @@ export const mockOpportunities = [
     logo: '🟡',
     applied: false,
     reminded: false,
+    applyUrl: 'https://unstop.com/hackathon/flipkart-grid-60-software-development-track-flipkart-1025532',
   },
   {
     id: '4',
@@ -489,6 +492,7 @@ export const mockOpportunities = [
     logo: '🟢',
     applied: false,
     reminded: false,
+    applyUrl: 'https://careers.microsoft.com/us/en/student-programs',
   },
   {
     id: '5',
@@ -499,6 +503,7 @@ export const mockOpportunities = [
     logo: '🔴',
     applied: false,
     reminded: true,
+    applyUrl: 'https://fellowship.mlh.io/',
   },
   {
     id: '6',
@@ -509,6 +514,7 @@ export const mockOpportunities = [
     logo: '🟣',
     applied: false,
     reminded: false,
+    applyUrl: 'https://codeforces.com/contests',
   },
 ]
 

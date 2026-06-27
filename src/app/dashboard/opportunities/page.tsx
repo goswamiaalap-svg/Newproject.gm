@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, BellOff, Calendar, List, CalendarCheck, Check, Clock, ChevronLeft, ChevronRight, ShieldAlert } from 'lucide-react'
+import { Bell, BellOff, Calendar, List, CalendarCheck, Check, Clock, ChevronLeft, ChevronRight, ShieldAlert, ExternalLink } from 'lucide-react'
 import { mockOpportunities } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner' // standard react-sonner styling or simple custom toast
@@ -235,6 +235,20 @@ export default function OpportunitiesPage() {
                       >
                         {hasReminder ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
                       </button>
+
+                      {/* Apply Now Button */}
+                      <a
+                        href={opp.applyUrl || 'https://example.com/apply-placeholder'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          'px-4 py-2.5 rounded-btn text-xs font-bold border transition-colors flex items-center gap-1',
+                          'bg-indigo hover:bg-indigo-600 border-indigo text-white shadow-indigo-glow'
+                        )}
+                      >
+                        <span>Apply Now</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
 
                       {/* Applied Checkbox */}
                       <button

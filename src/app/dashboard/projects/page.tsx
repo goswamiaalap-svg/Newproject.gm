@@ -6,6 +6,7 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
+  ChevronDown,
   Clipboard,
   Code2,
   Copy,
@@ -151,6 +152,98 @@ const templates: ProjectIdea[] = [
     validation: 'Track one week of practice for 10 users and compare whether repeated weak patterns reduce after targeted recommendations.',
     extensions: ['LeetCode scraper with user consent', 'Peer challenge mode', 'Company-wise pattern filter'],
   },
+  {
+    id: 'placement-mock-interview',
+    title: 'Mock Interview Feedback Coach',
+    role: 'Full Stack + AI',
+    difficulty: 'Intermediate',
+    timeline: '10-12 days',
+    fitScore: 88,
+    originality: 17,
+    recruiterValue: 32,
+    feasibility: 14,
+    problem: 'Students practice answers alone but do not get structured feedback on clarity, confidence, examples, or technical accuracy.',
+    whyItWorks: 'It creates a repeatable interview practice loop with question sets, recorded answers, AI feedback, score trends, and next-practice prompts.',
+    stack: ['Next.js', 'Node.js', 'Groq optional', 'MongoDB', 'Web Audio API'],
+    mvp: ['Role-based question bank', 'Timed answer recorder', 'Answer transcript review', 'Feedback scorecard', 'Practice history'],
+    roadmap: ['Day 1-2: question bank and session flow', 'Day 3-4: recording and transcript storage', 'Day 5-7: feedback scoring and tips', 'Day 8-10: progress dashboard and export'],
+    resumeBullets: [
+      'Built an AI mock interview coach that records practice answers, generates feedback scorecards, and tracks improvement over repeated sessions.',
+      'Designed rubric-based scoring for answer structure, role relevance, technical depth, and confidence indicators.',
+    ],
+    interviewQuestions: ['How did you design the feedback rubric?', 'How would you prevent vague AI feedback?', 'What privacy concerns exist with recorded answers?', 'How would you test feedback quality?'],
+    validation: 'Ask 10 students to complete two practice sessions and compare whether their second answers improve against the same rubric.',
+    extensions: ['Peer review mode', 'Company-specific interview packs', 'Voice confidence analytics'],
+  },
+  {
+    id: 'campus-resource-finder',
+    title: 'Campus Placement Resource Finder',
+    role: 'Full Stack',
+    difficulty: 'Beginner-Intermediate',
+    timeline: '6-9 days',
+    fitScore: 85,
+    originality: 16,
+    recruiterValue: 29,
+    feasibility: 16,
+    problem: 'Students waste time searching scattered PDFs, drives, seniors messages, and YouTube playlists for company-specific preparation.',
+    whyItWorks: 'It organizes preparation material by role, company, topic, freshness, and student rating so the best resources surface quickly.',
+    stack: ['Next.js', 'Supabase', 'PostgreSQL', 'Tailwind', 'Search'],
+    mvp: ['Resource submission form', 'Company and topic filters', 'Rating and bookmark system', 'Freshness labels', 'Admin moderation queue'],
+    roadmap: ['Day 1: schema and resource form', 'Day 2-3: filters and search', 'Day 4-5: bookmarks and ratings', 'Day 6-7: moderation and analytics'],
+    resumeBullets: [
+      'Created a placement resource discovery platform with company filters, peer ratings, bookmarks, and moderation workflows.',
+      'Improved resource retrieval by categorizing preparation material across roles, topics, freshness, and student usefulness scores.',
+    ],
+    interviewQuestions: ['How do you rank useful resources?', 'How would you prevent spam submissions?', 'What database schema did you use?', 'How would search scale?'],
+    validation: 'Seed 100 resources from a college placement group and measure whether students find relevant material faster than manual searching.',
+    extensions: ['Senior notes verification', 'Auto-expiring stale links', 'Personal prep collections'],
+  },
+  {
+    id: 'skill-gap-roadmap',
+    title: 'Skill Gap Roadmap Generator',
+    role: 'AI/ML',
+    difficulty: 'Intermediate',
+    timeline: '8-11 days',
+    fitScore: 90,
+    originality: 18,
+    recruiterValue: 33,
+    feasibility: 14,
+    problem: 'Students know their target role but do not know the exact skill gaps between their current profile and realistic job expectations.',
+    whyItWorks: 'It compares a student profile against job descriptions and turns the missing skills into a weekly learning roadmap with project proof.',
+    stack: ['Next.js', 'Groq optional', 'Node.js', 'MongoDB', 'Charts'],
+    mvp: ['Profile skill input', 'Job description comparison', 'Gap priority score', 'Weekly roadmap', 'Project proof suggestions'],
+    roadmap: ['Day 1-2: profile and target role inputs', 'Day 3-4: skill extraction and matching', 'Day 5-7: roadmap builder', 'Day 8-9: charts and progress tracking'],
+    resumeBullets: [
+      'Built a skill gap analyzer that compares student profiles against job descriptions and generates prioritized weekly learning roadmaps.',
+      'Implemented gap scoring based on role relevance, missing frequency, current skill confidence, and project proof availability.',
+    ],
+    interviewQuestions: ['How are skill gaps detected?', 'How do you prioritize roadmap items?', 'How would you avoid hallucinated skills?', 'How can users prove completion?'],
+    validation: 'Run 15 target job descriptions through the tool and manually verify whether extracted gaps match real role requirements.',
+    extensions: ['Resume import', 'Progress streaks', 'Mentor review workflow'],
+  },
+  {
+    id: 'portfolio-case-study-builder',
+    title: 'Portfolio Case Study Builder',
+    role: 'Frontend',
+    difficulty: 'Beginner-Intermediate',
+    timeline: '5-7 days',
+    fitScore: 86,
+    originality: 15,
+    recruiterValue: 31,
+    feasibility: 16,
+    problem: 'Students build projects but present them as screenshots and generic descriptions, so recruiters cannot judge decisions or impact.',
+    whyItWorks: 'It guides students to turn projects into case studies with problem, users, architecture, tradeoffs, metrics, screenshots, and resume-ready copy.',
+    stack: ['Next.js', 'Tailwind', 'Supabase', 'Image upload', 'Markdown'],
+    mvp: ['Project intake wizard', 'Case study sections', 'Screenshot upload', 'Public portfolio page', 'Resume bullet export'],
+    roadmap: ['Day 1: template and data model', 'Day 2-3: intake wizard', 'Day 4: public case study page', 'Day 5-6: exports and polish'],
+    resumeBullets: [
+      'Developed a portfolio case study builder that converts student projects into structured recruiter-ready stories with metrics and tradeoffs.',
+      'Implemented reusable templates for architecture notes, decisions, screenshots, validation, and resume bullet generation.',
+    ],
+    interviewQuestions: ['What makes a good project case study?', 'How do you store draft sections?', 'How would you handle image uploads?', 'How would you improve SEO?'],
+    validation: 'Compare recruiter readability of 10 plain project pages versus generated case studies using a checklist and peer review.',
+    extensions: ['Custom domains', 'Analytics for portfolio visits', 'PDF portfolio export'],
+  },
 ]
 
 function getFitLabel(
@@ -279,8 +372,6 @@ export default function ProjectsPage() {
 
   const copyBrief = async () => {
     try {
-      console.log("Copy button clicked");
-
       const brief = `
   ${activeProject.title}
   
@@ -297,11 +388,7 @@ export default function ProjectsPage() {
   ${activeProject.resumeBullets.join("\n")}
   `;
 
-      console.log(brief);
-
       await navigator.clipboard.writeText(brief);
-
-      console.log("Copied successfully");
 
       setCopied(true);
 
@@ -334,15 +421,30 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <aside className="xl:col-span-4">
-          <div className="sticky top-6 space-y-4 rounded-card border border-border-default bg-white p-5 shadow-card">
-            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
-              <h2 className={`${headingFont} font-display text-base font-bold text-text-primary`}>Student profile</h2>
-              <Wand2 className="h-4 w-4 text-teal" />
+      <section className="rounded-card border border-border-default bg-white p-4 shadow-card">
+        <div className="flex flex-col gap-3 border-b border-border-subtle pb-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-btn bg-teal-light text-teal">
+              <Wand2 className="h-4 w-4" />
             </div>
+            <div>
+              <h2 className={`${headingFont} font-display text-base font-bold text-text-primary`}>Student profile</h2>
+              <p className="text-xs text-text-secondary">Tune your profile once, then compare project briefs below.</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={generateIdeas}
+            disabled={isGenerating}
+            className="flex items-center justify-center gap-2 rounded-btn bg-teal px-4 py-2.5 text-xs font-bold text-white shadow-teal-glow transition-all hover:bg-teal-700 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
+          >
+            <Sparkles className="h-4 w-4" />
+            {isGenerating ? 'Generating...' : 'Generate ideas'}
+          </button>
+        </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1">
+        <div className="grid gap-4 pt-4 xl:grid-cols-[1fr_1.25fr_220px] xl:items-start">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {[
                 ['Year', year, setYear, ['1st Year', '2nd Year', '3rd Year', '4th Year']],
                 ['Target role', role, setRole, ['Frontend', 'Backend', 'Full Stack', 'AI/ML', 'Data Analyst']],
@@ -364,86 +466,113 @@ export default function ProjectsPage() {
                   </select>
                 </label>
               ))}
-            </div>
+          </div>
 
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Skills</span>
-              <div className="flex gap-2">
-                <input
-                  value={skillInput}
-                  onChange={(event) => setSkillInput(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') addSkill(skillInput)
-                  }}
-                  placeholder="Add a skill"
-                  className="min-w-0 flex-1 rounded-btn border border-border-default bg-bg-base px-3 py-2 text-xs font-semibold outline-none transition-colors focus:border-teal"
-                />
+          <div className="space-y-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Skills</span>
+            <div className="flex gap-2">
+              <input
+                value={skillInput}
+                onChange={(event) => setSkillInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') addSkill(skillInput)
+                }}
+                placeholder="Add a skill"
+                className="min-w-0 flex-1 rounded-btn border border-border-default bg-bg-base px-3 py-2 text-xs font-semibold outline-none transition-colors focus:border-teal"
+              />
+              <button
+                type="button"
+                onClick={() => addSkill(skillInput)}
+                className="rounded-btn bg-teal px-3 text-white shadow-teal-glow transition-transform active:scale-95"
+                aria-label="Add skill"
+              >
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {skillPresets.map((skill) => (
                 <button
                   type="button"
-                  onClick={() => addSkill(skillInput)}
-                  className="rounded-btn bg-teal px-3 text-white shadow-teal-glow transition-transform active:scale-95"
-                  aria-label="Add skill"
+                  key={skill}
+                  onClick={() => (selectedSkills.includes(skill) ? setSelectedSkills(selectedSkills.filter((item) => item !== skill)) : addSkill(skill))}
+                  className={cn(
+                    'rounded-full border px-2.5 py-1 text-[10px] font-bold transition-colors',
+                    selectedSkills.includes(skill)
+                      ? 'border-teal/20 bg-teal-light text-teal'
+                      : 'border-border-subtle bg-white text-text-secondary hover:border-teal/20'
+                  )}
                 >
-                  <ArrowRight className="h-4 w-4" />
+                  {skill}
                 </button>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {skillPresets.map((skill) => (
-                  <button
-                    type="button"
-                    key={skill}
-                    onClick={() => (selectedSkills.includes(skill) ? setSelectedSkills(selectedSkills.filter((item) => item !== skill)) : addSkill(skill))}
-                    className={cn(
-                      'rounded-full border px-2.5 py-1 text-[10px] font-bold transition-colors',
-                      selectedSkills.includes(skill)
-                        ? 'border-teal/20 bg-teal-light text-teal'
-                        : 'border-border-subtle bg-white text-text-secondary hover:border-teal/20'
-                    )}
-                  >
-                    {skill}
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {selectedSkills.map((skill) => (
+                <span key={skill} className="inline-flex items-center gap-1 rounded-full bg-indigo/5 px-2.5 py-1 text-[10px] font-bold text-indigo">
+                  {skill}
+                  <button type="button" onClick={() => setSelectedSkills(selectedSkills.filter((item) => item !== skill))} aria-label={`Remove ${skill}`}>
+                    <X className="h-3 w-3" />
                   </button>
-                ))}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 text-center">
+            {[
+              ['Ideas', projects.length],
+              ['Saved', savedProjects.length],
+              ['Skills', selectedSkills.length],
+            ].map(([label, value]) => (
+              <div key={label as string} className="rounded-btn border border-border-subtle bg-bg-base px-2 py-2">
+                <p className="text-sm font-black text-text-primary">{value as number}</p>
+                <p className="text-[9px] font-bold uppercase text-text-muted">{label as string}</p>
               </div>
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {selectedSkills.map((skill) => (
-                  <span key={skill} className="inline-flex items-center gap-1 rounded-full bg-indigo/5 px-2.5 py-1 text-[10px] font-bold text-indigo">
-                    {skill}
-                    <button type="button" onClick={() => setSelectedSkills(selectedSkills.filter((item) => item !== skill))} aria-label={`Remove ${skill}`}>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(360px,0.9fr)_minmax(0,2fr)]">
+        <aside className="space-y-4 xl:sticky xl:top-6 xl:self-start">
+          <div className="rounded-card border border-teal/10 bg-teal-light/70 p-4 shadow-soft">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-teal">Best match</p>
+                <h3 className={`${headingFont} mt-1 text-sm font-extrabold leading-tight text-text-primary`}>
+                  {bestProject.title}
+                </h3>
+              </div>
+              <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-white text-teal">
+                <span className="text-lg font-black leading-none">{bestProject.fitScore}</span>
+                <span className="text-[8px] font-bold uppercase">Fit</span>
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={generateIdeas}
-              disabled={isGenerating}
-              className="flex w-full items-center justify-center gap-2 rounded-btn bg-teal px-4 py-3 text-xs font-bold text-white shadow-teal-glow transition-all hover:bg-teal-700 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
-            >
-              <Sparkles className="h-4 w-4" />
-              {isGenerating ? 'Generating briefs...' : 'Generate placement-ready ideas'}
-            </button>
           </div>
-        </aside>
 
-        <main className="space-y-5 xl:col-span-8">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-1">
             {sortedProjects.map((project, index) => {
               const isSaved = savedProjects.includes(project.title)
+              const isActive = activeProject.id === project.id
 
               return (
-              <motion.button
-                type="button"
+              <motion.article
+                role="button"
+                tabIndex={0}
                 key={project.id}
                 onClick={() => setActiveId(project.id)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    setActiveId(project.id)
+                  }
+                }}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.06 }}
                 className={cn(
-                  'rounded-card border bg-white p-4 text-left shadow-card transition-all hover:-translate-y-1 hover:shadow-card-hover',
-                  activeProject.id === project.id ? 'border-teal/30 ring-4 ring-teal/5' : 'border-border-default'
+                  'cursor-pointer rounded-card border bg-white p-4 text-left shadow-card transition-all hover:-translate-y-1 hover:shadow-card-hover focus:outline-none focus:ring-4 focus:ring-teal/10',
+                  isActive ? 'border-teal/30 ring-4 ring-teal/5' : 'border-border-default'
                 )}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -454,6 +583,14 @@ export default function ProjectsPage() {
                       </span>
                       <span
                         className={`rounded-full px-2 py-1 text-[9px] font-bold ${project.id === bestProject.id
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-blue-100 text-blue-700'
+                          }`}
+                      >
+                        {getFitLabel(project.id, bestProject.id)}
+                      </span>
+                      <span
+                        className={`hidden rounded-full px-2 py-1 text-[9px] font-bold ${project.id === bestProject.id
                             ? 'bg-green-100 text-green-700'
                             : 'bg-blue-100 text-blue-700'
                           }`}
@@ -495,11 +632,18 @@ export default function ProjectsPage() {
                     </span>
                   ))}
                 </div>
-              </motion.button>
+                <div className="mt-4 flex items-center justify-between border-t border-border-subtle pt-3 text-[10px] font-bold uppercase tracking-wider text-text-muted">
+                  <span>{isActive ? 'Selected brief' : 'View brief'}</span>
+                  <ChevronDown className={cn('h-4 w-4 -rotate-90 transition-transform', isActive && 'rotate-0 text-teal')} />
+                </div>
+              </motion.article>
               )
             })}
           </div>
 
+        </aside>
+
+        <main className="space-y-5">
           <section className="rounded-card border border-border-default bg-white p-5 shadow-card">
             <div className="flex flex-col gap-4 border-b border-border-subtle pb-5 lg:flex-row lg:items-start lg:justify-between">
               <div>
@@ -522,11 +666,7 @@ export default function ProjectsPage() {
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  console.log("BUTTON CLICKED");
-                  alert("BUTTON CLICKED");
-                  copyBrief();
-                }}
+                onClick={copyBrief}
                 className="relative z-50 inline-flex items-center justify-center gap-2 rounded-btn border border-border-default bg-bg-subtle px-4 py-2 text-xs font-bold text-text-primary transition-colors hover:border-teal/20 hover:text-teal cursor-pointer"
               >
                 {copied ? (
@@ -559,7 +699,7 @@ export default function ProjectsPage() {
               ))}
             </div>
 
-            <div className={`${headingFont} grid grid-cols-1 gap-5 lg:grid-cols-2`}>
+            <div className={`${headingFont} grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3`}>
               <BriefBlock icon={Lightbulb} title="Problem statement" items={[activeProject.problem]} />
               <BriefBlock icon={Layers3} title="MVP features" items={activeProject.mvp} />
               <BriefBlock icon={GitBranch} title="Build roadmap" items={activeProject.roadmap} />
