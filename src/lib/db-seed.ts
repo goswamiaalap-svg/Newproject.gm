@@ -55,22 +55,20 @@ export async function seedDatabase() {
       await DsaProblem.insertMany(SEED_PROBLEMS)
     }
 
-    // 3. Seed Opportunities
-    const opportunityCount = await Opportunity.countDocuments()
-    if (opportunityCount === 0) {
-      console.log('[Seed] Seeding Opportunities...')
-      await Opportunity.insertMany(
-        mockOpportunities.map((opp) => ({
-          id: opp.id,
-          title: opp.title,
-          type: opp.type,
-          company: opp.company,
-          deadline: opp.deadline,
-          logo: opp.logo,
-          applyUrl: opp.applyUrl
-        }))
-      )
-    }
+    // 3. Seed/Update Opportunities with latest dates
+    console.log('[Seed] Re-seeding Opportunities with active 2026 dates...')
+    await Opportunity.deleteMany({})
+    await Opportunity.insertMany(
+      mockOpportunities.map((opp) => ({
+        id: opp.id,
+        title: opp.title,
+        type: opp.type,
+        company: opp.company,
+        deadline: opp.deadline,
+        logo: opp.logo,
+        applyUrl: opp.applyUrl
+      }))
+    )
 
     // 4. Seed Teammates
     const teammateCount = await Teammate.countDocuments()
@@ -90,21 +88,19 @@ export async function seedDatabase() {
       )
     }
 
-    // 5. Seed Hackathons
-    const hackathonCount = await Hackathon.countDocuments()
-    if (hackathonCount === 0) {
-      console.log('[Seed] Seeding Hackathons...')
-      await Hackathon.insertMany(
-        mockHackathons.map((h) => ({
-          id: h.id,
-          name: h.name,
-          deadline: h.deadline,
-          prize: h.prize,
-          participants: h.participants,
-          status: h.status
-        }))
-      )
-    }
+    // 5. Seed/Update Hackathons with latest dates
+    console.log('[Seed] Re-seeding Hackathons with active 2026 dates...')
+    await Hackathon.deleteMany({})
+    await Hackathon.insertMany(
+      mockHackathons.map((h) => ({
+        id: h.id,
+        name: h.name,
+        deadline: h.deadline,
+        prize: h.prize,
+        participants: h.participants,
+        status: h.status
+      }))
+    )
 
     console.log('[Seed] Seeding check completed.')
   } catch (error) {
