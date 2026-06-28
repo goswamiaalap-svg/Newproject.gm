@@ -459,7 +459,7 @@ export const mockOpportunities = [
     logo: '🅰️',
     applied: false,
     reminded: false,
-    applyUrl: 'https://www.amazon.jobs/en/teams/internship-opportunities',
+    applyUrl: 'https://www.amazon.jobs/en/landing_pages/student-programs',
   },
   {
     id: '2',
@@ -481,7 +481,7 @@ export const mockOpportunities = [
     logo: '🟡',
     applied: false,
     reminded: false,
-    applyUrl: 'https://unstop.com/hackathon/flipkart-grid-60-software-development-track-flipkart-1025532',
+    applyUrl: 'https://unstop.com/search?keyword=Flipkart%20GRiD',
   },
   {
     id: '4',
@@ -492,7 +492,7 @@ export const mockOpportunities = [
     logo: '🟢',
     applied: false,
     reminded: false,
-    applyUrl: 'https://careers.microsoft.com/us/en/student-programs',
+    applyUrl: 'https://careers.microsoft.com/',
   },
   {
     id: '5',
