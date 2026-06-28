@@ -2,15 +2,15 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, BellOff, Calendar, List, CalendarCheck, Check, Clock, ChevronLeft, ChevronRight, ShieldAlert, ExternalLink } from 'lucide-react'
-import { mockOpportunities } from '@/lib/mock-data'
+import { Bell, BellOff, Calendar, List, CalendarCheck, Check, Clock, ChevronLeft, ChevronRight, ShieldAlert, ExternalLink, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner' // standard react-sonner styling or simple custom toast
 
 export default function OpportunitiesPage() {
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
   const [filterType, setFilterType] = useState<'all' | 'internship' | 'hackathon' | 'open-source' | 'fellowship'>('all')
-  const [opportunities, setOpportunities] = useState(mockOpportunities)
+  const [opportunities, setOpportunities] = useState<any[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
   const [remindedList, setRemindedList] = useState<string[]>([])
   const [mounted, setMounted] = useState(false)
 
@@ -90,8 +90,11 @@ export default function OpportunitiesPage() {
 
   // Filter list
   const filteredOpps = opportunities.filter((opp) => {
-    if (filterType === 'all') return true
-    return opp.type === filterType
+    const matchesType = filterType === 'all' || opp.type === filterType
+    const matchesSearch =
+      opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opp.company.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesType && matchesSearch
   })
 
   // Sort by deadline to get top 3 nearest
@@ -191,22 +194,36 @@ export default function OpportunitiesPage() {
         </div>
       </div>
 
-      {/* Filters bar */}
-      <div className="flex flex-wrap gap-1.5 border-b border-border-subtle pb-3">
-        {(['all', 'internship', 'hackathon', 'open-source', 'fellowship'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setFilterType(t)}
-            className={cn(
-              'text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all',
-              filterType === t
-                ? 'bg-text-primary text-white border-text-primary shadow-sm'
-                : 'bg-white text-text-secondary border-border-default hover:bg-bg-subtle'
-            )}
-          >
-            {t.replace('-', ' ')}
-          </button>
-        ))}
+      {/* Filters and Search Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-subtle pb-3">
+        <div className="flex flex-wrap gap-1.5">
+          {(['all', 'internship', 'hackathon', 'open-source', 'fellowship'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilterType(t)}
+              className={cn(
+                'text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all',
+                filterType === t
+                  ? 'bg-text-primary text-white border-text-primary shadow-sm'
+                  : 'bg-white text-text-secondary border-border-default hover:bg-bg-subtle'
+              )}
+            >
+              {t.replace('-', ' ')}
+            </button>
+          ))}
+        </div>
+
+        {/* Search Input */}
+        <div className="relative w-full md:w-64">
+          <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by company or role..."
+            className="w-full pl-9 pr-4 py-1.5 bg-white border border-border-default rounded-btn text-xs focus:outline-none focus:border-teal text-text-primary transition-all shadow-sm"
+          />
+        </div>
       </div>
 
       {/* Main View Display */}

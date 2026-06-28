@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { connectToDatabase } from '@/lib/mongoose'
 import Opportunity from '@/lib/models/Opportunity'
 import OpportunityState from '@/lib/models/OpportunityState'
+import crypto from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,31 +38,57 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { opportunityId, field, value } = await req.json()
-    if (!opportunityId || !field) {
-      return NextResponse.json({ error: 'opportunityId and field are required' }, { status: 400 })
+    const body = await req.json()
+
+    // If it's a state toggle/update request
+    if (body.opportunityId && body.field) {
+      const { opportunityId, field, value } = body
+      if (field !== 'applied' && field !== 'reminded') {
+        return NextResponse.json({ error: 'Invalid field' }, { status: 400 })
+      }
+
+      await connectToDatabase()
+
+      const updateDoc: Record<string, any> = {
+        userId,
+        opportunityId,
+        updatedAt: new Date(),
+      }
+      updateDoc[field] = Boolean(value)
+
+      const state = await OpportunityState.findOneAndUpdate(
+        { userId, opportunityId },
+        updateDoc,
+        { upsert: true, new: true }
+      )
+
+      return NextResponse.json(state)
     }
 
-    if (field !== 'applied' && field !== 'reminded') {
-      return NextResponse.json({ error: 'Invalid field' }, { status: 400 })
+    // Otherwise, it is a request to create a new opportunity
+    const { title, type, company, deadline, logo, applyUrl, id } = body
+    if (!title || !type || !company || !deadline || !logo || !applyUrl) {
+      return NextResponse.json(
+        { error: 'title, type, company, deadline, logo, and applyUrl are required to create an opportunity' },
+        { status: 400 }
+      )
     }
 
     await connectToDatabase()
 
-    const updateDoc: Record<string, any> = {
-      userId,
-      opportunityId,
-      updatedAt: new Date(),
-    }
-    updateDoc[field] = Boolean(value)
+    const oppId = id || crypto.randomUUID()
 
-    const state = await OpportunityState.findOneAndUpdate(
-      { userId, opportunityId },
-      updateDoc,
-      { upsert: true, new: true }
-    )
+    const newOpp = await Opportunity.create({
+      id: oppId,
+      title,
+      type,
+      company,
+      deadline: new Date(deadline),
+      logo,
+      applyUrl,
+    })
 
-    return NextResponse.json(state)
+    return NextResponse.json(newOpp, { status: 201 })
   } catch (error: any) {
     console.error('[Opportunities POST] Error:', error)
     return NextResponse.json({ error: error.message || 'Server Error' }, { status: 500 })
