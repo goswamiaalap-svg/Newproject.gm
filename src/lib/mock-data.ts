@@ -481,7 +481,7 @@ export const mockOpportunities = [
     logo: '🟡',
     applied: false,
     reminded: false,
-    applyUrl: 'https://unstop.com/search?keyword=Flipkart%20GRiD',
+    applyUrl: 'https://flipkartearlycareers.hirepro.in/grid8.0.html',
   },
   {
     id: '4',
@@ -492,7 +492,7 @@ export const mockOpportunities = [
     logo: '🟢',
     applied: false,
     reminded: false,
-    applyUrl: 'https://careers.microsoft.com/',
+    applyUrl: 'https://careers.microsoft.com/v2/global/en/students.html',
   },
   {
     id: '5',
