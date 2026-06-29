@@ -653,7 +653,7 @@ export default function ProjectsPage() {
 
         </aside>
 
-        <main className="space-y-5 xl:sticky xl:top-6 xl:self-start xl:max-h-[calc(100vh-48px)] xl:overflow-y-auto xl:pr-2">
+        <main className="space-y-5 xl:sticky xl:top-6 xl:self-start">
           <section className="rounded-card border border-border-default bg-white p-5 shadow-card">
             <div className="flex flex-col gap-4 border-b border-border-subtle pb-5 lg:flex-row lg:items-start lg:justify-between">
               <div>
