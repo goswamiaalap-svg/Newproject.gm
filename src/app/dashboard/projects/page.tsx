@@ -544,7 +544,7 @@ export default function ProjectsPage() {
       </section>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(360px,0.9fr)_minmax(0,2fr)]">
-        <aside className="space-y-4 xl:sticky xl:top-6 xl:self-start">
+        <aside className="space-y-4">
           <div className="rounded-card border border-teal/10 bg-teal-light/70 p-4 shadow-soft">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -653,7 +653,7 @@ export default function ProjectsPage() {
 
         </aside>
 
-        <main className="space-y-5">
+        <main className="space-y-5 xl:sticky xl:top-6 xl:self-start xl:max-h-[calc(100vh-48px)] xl:overflow-y-auto xl:pr-2">
           <section className="rounded-card border border-border-default bg-white p-5 shadow-card">
             <div className="flex flex-col gap-4 border-b border-border-subtle pb-5 lg:flex-row lg:items-start lg:justify-between">
               <div>
@@ -688,11 +688,12 @@ export default function ProjectsPage() {
               </button>
             </div>
 
-            <div className={`${headingFont} grid grid-cols-1 gap-5 py-5 lg:grid-cols-3`}>
+            <div className={`${headingFont} grid grid-cols-1 gap-5 py-5 sm:grid-cols-2 lg:grid-cols-4`}>
               {[
                 ['Recruiter relevance', activeProject.recruiterValue, 35, Target],
                 ['Technical depth', activeProject.fitScore - 58, 30, Code2],
                 ['Originality', activeProject.originality, 20, Gauge],
+                ['Feasibility score', activeProject.feasibility, 20, ShieldCheck],
               ].map(([label, value, max, Icon]) => (
                 <div key={label as string} className="rounded-card border border-border-subtle bg-bg-base p-4">
                   <div className="flex items-center justify-between">
@@ -716,6 +717,45 @@ export default function ProjectsPage() {
               <BriefBlock icon={Clipboard} title="Resume bullets" items={activeProject.resumeBullets} />
               <BriefBlock icon={BookOpen} title="Interview defense" items={activeProject.interviewQuestions} />
               <BriefBlock icon={ListChecks} title="Validation plan" items={[activeProject.validation, ...activeProject.extensions.map((item) => `Extension: ${item}`)]} />
+            </div>
+
+            <div className="mt-6 border-t border-border-subtle pt-6">
+              <h3 className="font-display text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
+                <Rocket className="h-4 w-4 text-indigo" />
+                Recommended Next Steps to Start
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="rounded-btn border border-border-default bg-bg-base p-4 transition-all hover:shadow-soft">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-text-muted">Step 1</p>
+                    <span className="text-[10px] font-bold text-teal bg-teal/5 px-2 py-0.5 rounded-full">Git Setup</span>
+                  </div>
+                  <p className="mt-2 text-xs font-bold text-text-primary">Initialize Repository</p>
+                  <p className="mt-1 text-[11px] text-text-secondary leading-relaxed">
+                    Create a new repository on GitHub named <code className="bg-white px-1 py-0.5 rounded border border-border-subtle font-mono text-[10px]">{activeProject.id}</code>.
+                  </p>
+                </div>
+                <div className="rounded-btn border border-border-default bg-bg-base p-4 transition-all hover:shadow-soft">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-text-muted">Step 2</p>
+                    <span className="text-[10px] font-bold text-indigo bg-indigo/5 px-2 py-0.5 rounded-full">Boilerplate</span>
+                  </div>
+                  <p className="mt-2 text-xs font-bold text-text-primary">Setup Tech Stack</p>
+                  <p className="mt-1 text-[11px] text-text-secondary leading-relaxed">
+                    Initialize your project folder using <code className="bg-white px-1 py-0.5 rounded border border-border-subtle font-mono text-[10px]">{activeProject.stack.includes('Next.js') ? 'npx create-next-app@latest' : 'npm init'}</code>.
+                  </p>
+                </div>
+                <div className="rounded-btn border border-border-default bg-bg-base p-4 transition-all hover:shadow-soft">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-text-muted">Step 3</p>
+                    <span className="text-[10px] font-bold text-gold bg-gold/5 px-2 py-0.5 rounded-full">Development</span>
+                  </div>
+                  <p className="mt-2 text-xs font-bold text-text-primary">Implement MVP</p>
+                  <p className="mt-1 text-[11px] text-text-secondary leading-relaxed">
+                    Focus strictly on the MVP features first: {activeProject.mvp.slice(0, 2).join(', ')}.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
         </main>
