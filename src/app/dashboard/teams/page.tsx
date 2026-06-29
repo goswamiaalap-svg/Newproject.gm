@@ -52,7 +52,7 @@ export default function TeamsPage() {
   // Filter teammate cards
   const filteredTeammates = dbTeamMembers.filter((member) => {
     const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.skills.some((s) => s.toLowerCase().includes(searchTerm.toLowerCase()))
+      member.skills.some((s: string) => s.toLowerCase().includes(searchTerm.toLowerCase()))
     
     const matchesDomain = selectedDomain === 'all' || member.domains.includes(selectedDomain)
     
@@ -176,7 +176,7 @@ export default function TeamsPage() {
 
                     {/* Domains list */}
                     <div className="flex flex-wrap gap-1">
-                      {member.domains.map((dom) => (
+                      {member.domains.map((dom: string) => (
                         <span
                           key={dom}
                           className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo/5 text-indigo border border-indigo/10"
@@ -188,7 +188,7 @@ export default function TeamsPage() {
 
                     {/* Skills */}
                     <div className="flex flex-wrap gap-1 pt-1.5">
-                      {member.skills.map((skill) => (
+                      {member.skills.map((skill: string) => (
                         <span
                           key={skill}
                           className="text-[9px] font-semibold px-2 py-0.5 rounded bg-bg-base text-text-secondary border border-border-subtle"

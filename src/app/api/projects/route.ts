@@ -39,12 +39,18 @@ function parseIdeas(content: string): ProjectIdea[] {
   return parsed.filter(isProjectIdea).slice(0, 4)
 }
 
+export async function GET() {
+  const apiKey = process.env.GROQ_API_KEY
+  const configured = Boolean(apiKey && apiKey !== 'your_groq_api_key_here')
+  return NextResponse.json({ configured })
+}
+
 export async function POST(request: Request) {
   const profile = normaliseProfile(await request.json().catch(() => ({})))
   const fallbackIdeas = personalizeProjectIdeas(profile)
   const apiKey = process.env.GROQ_API_KEY
 
-  if (!apiKey) {
+  if (!apiKey || apiKey === 'your_groq_api_key_here') {
     return NextResponse.json({
       provider: 'local',
       note: 'GROQ_API_KEY is not configured, so local zero-cost ideas were used.',

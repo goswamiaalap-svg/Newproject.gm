@@ -289,6 +289,19 @@ export default function ProjectsPage() {
         }
       })
       .catch(console.error)
+
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.configured) {
+          setGenerationNote('AI engine is active. Generate personalized project ideas with Groq.')
+        } else {
+          setGenerationNote('Ideas are ready. Add GROQ_API_KEY to enable live Groq generation.')
+        }
+      })
+      .catch(() => {
+        setGenerationNote('Ideas are ready. Add GROQ_API_KEY to enable live Groq generation.')
+      })
   }, [])
 
   const bestProject = [...projects].sort(
@@ -415,9 +428,6 @@ export default function ProjectsPage() {
           <p className="mt-1 max-w-2xl text-sm leading-relaxed text-text-secondary">
             Generate practical, placement-ready project briefs with fit scores, validation plans, resume bullets, and interview defense points.
           </p>
-        </div>
-        <div className="rounded-card border border-amber-100 bg-amber-50 px-4 py-3 text-xs font-semibold leading-relaxed text-amber-800">
-          {generationNote}
         </div>
       </div>
 
