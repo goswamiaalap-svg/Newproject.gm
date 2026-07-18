@@ -14,19 +14,17 @@ import {
   BellRing,
   Route,
   LogOut,
-  Sparkles,
 } from 'lucide-react'
 
 const sidebarItems = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-  { label: 'Define Your Path ✦', icon: Sparkles, href: '/dashboard/path' },
   { label: 'Resume Reviewer', icon: FileText, href: '/dashboard/resume' },
   { label: 'DSA Tracker', icon: Map, href: '/dashboard/dsa' },
   { label: 'Mock Interview', icon: Video, href: '/dashboard/interview' },
   { label: 'Project Ideas', icon: Code2, href: '/dashboard/projects' },
   { label: 'Team Finder', icon: Users2, href: '/dashboard/teams' },
   { label: 'Opportunities', icon: BellRing, href: '/dashboard/opportunities' },
-  { label: 'Learning Path', icon: Route, href: '/dashboard/roadmap' },
+  { label: 'Learning Path', icon: Route, href: '/dashboard/learningpath' },
 ]
 
 export default function Sidebar() {
