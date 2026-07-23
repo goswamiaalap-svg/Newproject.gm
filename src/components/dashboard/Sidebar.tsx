@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useUser, useClerk } from '@clerk/nextjs'
 import {
   LayoutDashboard,
   FileText,
@@ -15,6 +16,10 @@ import {
   Route,
   LogOut,
   Sparkles,
+  Edit2,
+  X,
+  Loader2,
+  UserCheck
 } from 'lucide-react'
 
 const sidebarItems = [
@@ -32,25 +37,97 @@ const sidebarItems = [
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const { user, isLoaded } = useUser()
+  const { signOut } = useClerk()
 
-  const handleLogout = () => {
+  const [userName, setUserName] = useState('Student')
+  const [userYear, setUserYear] = useState('')
+  const [collegeName, setCollegeName] = useState('')
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+  
+  // Modal Edit States
+  const [editName, setEditName] = useState('')
+  const [editYear, setEditYear] = useState('')
+  const [editCollegeName, setEditCollegeName] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch('/api/user/profile')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.name) setUserName(data.name)
+        if (data.year) setUserYear(data.year)
+        if (data.collegeName) setCollegeName(data.collegeName)
+      } else if (user) {
+        // Fallback to clerk user
+        setUserName(user.fullName || user.firstName || 'Student')
+      }
+    } catch (e) {
+      console.error('Error fetching profile:', e)
+      if (user) {
+        setUserName(user.fullName || user.firstName || 'Student')
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      setUserName(user.fullName || user.firstName || 'Student')
+      fetchProfile()
+    }
+
+    const handleProfileUpdate = () => {
+      fetchProfile()
+    }
+
+    window.addEventListener('profile-updated', handleProfileUpdate)
+    return () => window.removeEventListener('profile-updated', handleProfileUpdate)
+  }, [isLoaded, user])
+
+  const handleLogout = async () => {
     localStorage.removeItem('launchpad_user')
+    await signOut()
     router.push('/')
   }
 
-  const [userName, setUserName] = React.useState('Demo Student')
-  const [userYear, setUserYear] = React.useState('3rd Year')
+  const openModal = () => {
+    setEditName(userName)
+    setEditYear(userYear || '3rd Year')
+    setEditCollegeName(collegeName)
+    setIsProfileModalOpen(true)
+  }
 
-  React.useEffect(() => {
-    const userStr = localStorage.getItem('launchpad_user')
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr)
-        if (user.name) setUserName(user.name)
-        if (user.year) setUserYear(user.year)
-      } catch (e) {}
+  const saveProfile = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSaving(true)
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editName,
+          year: editYear,
+          collegeName: editCollegeName,
+        }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setUserName(data.name)
+        setUserYear(data.year)
+        setCollegeName(data.collegeName)
+        
+        // Notify other components (Navbar, Projects page, etc.)
+        window.dispatchEvent(new Event('profile-updated'))
+        setIsProfileModalOpen(false)
+      }
+    } catch (err) {
+      console.error('Error saving profile:', err)
+    } finally {
+      setIsSaving(false)
     }
-  }, [])
+  }
 
   return (
     <>
@@ -96,14 +173,27 @@ export default function Sidebar() {
 
         {/* User Card & Logout */}
         <div className="p-4 border-t border-border-subtle bg-bg-base/30 space-y-2">
-          <div className="flex items-center gap-3 px-2 py-1.5">
-            <div className="w-9 h-9 rounded-full bg-teal text-white flex items-center justify-center font-display font-bold text-sm shadow-sm">
-              {userName.split(' ').map((n) => n[0]).join('')}
+          <div 
+            onClick={openModal}
+            className="flex items-center gap-3 px-2 py-1.5 hover:bg-bg-subtle/50 rounded-btn cursor-pointer transition-colors group relative"
+            title="Edit Profile"
+          >
+            <div className="w-9 h-9 rounded-full bg-teal text-white flex items-center justify-center font-display font-bold text-sm shadow-sm overflow-hidden flex-shrink-0">
+              {user?.imageUrl ? (
+                <img src={user.imageUrl} alt={userName} className="w-full h-full object-cover" />
+              ) : (
+                userName.split(' ').map((n) => n[0]).join('')
+              )}
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 pr-4">
               <p className="text-xs font-semibold text-text-primary truncate">{userName}</p>
-              <p className="text-[10px] text-text-muted">{userYear}</p>
+              {userYear ? (
+                <p className="text-[10px] text-text-muted truncate">{userYear}</p>
+              ) : (
+                <span className="text-[9px] text-teal font-extrabold uppercase animate-pulse">Complete Profile</span>
+              )}
             </div>
+            <Edit2 className="w-3.5 h-3.5 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity absolute right-2 top-1/2 -translate-y-1/2" />
           </div>
           <button
             onClick={handleLogout}
@@ -133,7 +223,6 @@ export default function Sidebar() {
             </Link>
           )
         })}
-        {/* Mobile Extra Menu button pointing to opportunities */}
         <Link
           href="/dashboard/opportunities"
           className={cn(
@@ -147,6 +236,111 @@ export default function Sidebar() {
           <span>More</span>
         </Link>
       </nav>
+
+      {/* Profile Edit Glassmorphic Modal */}
+      {isProfileModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="bg-white border border-border-default rounded-card w-full max-w-md p-6 shadow-2xl relative overflow-hidden animate-scaleIn">
+            <button
+              onClick={() => setIsProfileModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-bg-subtle text-text-muted hover:text-text-primary transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-2.5 mb-6 border-b border-border-subtle pb-3">
+              <div className="w-10 h-10 rounded-full bg-teal/5 flex items-center justify-center text-teal shadow-sm">
+                <UserCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-display text-lg font-bold text-text-primary">
+                  Profile Settings
+                </h3>
+                <p className="text-text-muted text-xs">
+                  Update your display name, college details, and academic year.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={saveProfile} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">
+                  Email Address (Clerk Account)
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  value={user?.primaryEmailAddress?.emailAddress || ''}
+                  className="w-full text-xs px-3 py-2.5 bg-bg-base border border-border-subtle rounded-lg text-text-muted cursor-not-allowed outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Alap Goswami"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full text-xs px-3 py-2.5 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal text-text-primary font-medium"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">
+                    Academic Year *
+                  </label>
+                  <select
+                    value={editYear}
+                    onChange={(e) => setEditYear(e.target.value)}
+                    className="w-full text-xs px-2 py-2.5 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal text-text-primary font-medium"
+                  >
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1.5">
+                    College Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. IIT Bombay"
+                    value={editCollegeName}
+                    onChange={(e) => setEditCollegeName(e.target.value)}
+                    className="w-full text-xs px-3 py-2.5 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal text-text-primary font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2.5 justify-end pt-4 border-t border-border-subtle">
+                <button
+                  type="button"
+                  onClick={() => setIsProfileModalOpen(false)}
+                  className="px-4 py-2.5 border border-border-default rounded-lg text-xs font-bold text-text-secondary hover:bg-bg-subtle transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving || !editName}
+                  className="px-5 py-2.5 bg-teal hover:bg-teal-600 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-teal-glow transition-all flex items-center gap-1.5"
+                >
+                  {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   )
 }

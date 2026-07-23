@@ -28,8 +28,10 @@ import {
 } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 import { getPusherClient } from '@/lib/pusher-client'
 import { getResumeChannel, RESUME_EVENTS } from '@/lib/pusher-shared'
+import { trackEvent } from '@/lib/events'
 
 // ---- Types ----
 interface Weakness {
@@ -103,6 +105,7 @@ export default function ResumePage() {
   const [progress, setProgress] = useState(0)
   const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0])
   const [resumeData, setResumeData] = useState<ResumeData | null>(null)
+  const [resumeMetrics, setResumeMetrics] = useState<any | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
   const [isDragOver, setIsDragOver] = useState(false)
   const [activeTarget, setActiveTarget] = useState<any | null>(null)
@@ -166,6 +169,7 @@ export default function ResumePage() {
         if (data?.reviewResult) {
           setResumeData(data)
           setFileName(data.fileName || 'resume.pdf')
+          setResumeMetrics((data as any).resumeMetrics || null)
           setStep('results')
         }
       } catch {
@@ -242,6 +246,7 @@ export default function ResumePage() {
       }
 
       resumeId = uploadData.resumeId
+      trackEvent('Resume uploaded', { fileName: file.name, fileSize: file.size });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to upload resume. Please try again.'
       setErrorMessage(message)
@@ -276,27 +281,39 @@ export default function ResumePage() {
 
       // Pusher AI_COMPLETE event sets progress to 100, but we can do it here too just in case
 
-      // Short delay before showing results for visual polish
-      setTimeout(() => {
-        setResumeData({
-          resumeId,
-          fileName: file.name,
-          fileUrl: reviewData.fileUrl || '',
-          uploadedAt: new Date().toISOString(),
-          status: 'complete',
-          reviewResult: reviewData.reviewResult,
+      setResumeData({
+        resumeId,
+        fileName: file.name,
+        fileUrl: reviewData.fileUrl || '',
+        uploadedAt: new Date().toISOString(),
+        status: 'complete',
+        reviewResult: reviewData.reviewResult,
+      })
+      if (reviewData.reviewResult) {
+        trackEvent('Resume review completed', {
+          overallScore: reviewData.reviewResult.overallScore,
+          atsScore: reviewData.reviewResult.atsScore
+        });
+      }
+      setResumeMetrics(reviewData.resumeMetrics || null)
+      if (reviewData.careerTargetAlignment) {
+        setActiveTarget((prev: any) => {
+          if (prev) {
+            return {
+              ...prev,
+              ...reviewData.careerTargetAlignment,
+            }
+          }
+          return reviewData.careerTargetAlignment
         })
-        if (reviewData.careerTargetAlignment) {
-          setActiveTarget(reviewData.careerTargetAlignment)
-        } else {
-          // fetch latest target from DB to see if target was updated in background
-          fetch('/api/career-target')
-            .then(res => res.json())
-            .then(data => { if (data) setActiveTarget(data) })
-            .catch(() => {})
-        }
-        setStep('results')
-      }, 600)
+      } else {
+        // fetch latest target from DB to see if target was updated in background
+        fetch('/api/career-target')
+          .then(res => res.json())
+          .then(data => { if (data) setActiveTarget(data) })
+          .catch(() => {})
+      }
+      setStep('results')
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'AI analysis failed. Please try again.'
       setErrorMessage(message)
@@ -329,6 +346,7 @@ export default function ResumePage() {
     setFileName('')
     setProgress(0)
     setErrorMessage('')
+    setResumeMetrics(null)
     setStep('upload')
   }
 
@@ -355,37 +373,109 @@ export default function ResumePage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className={`bg-white border-2 border-dashed rounded-card p-10 shadow-card flex flex-col items-center justify-center text-center max-w-2xl mx-auto min-h-[350px] transition-colors ${
-              isDragOver ? 'border-teal bg-teal/5' : 'border-border-default'
-            }`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-6xl mx-auto"
           >
-            <div className="w-16 h-16 rounded-full bg-teal/5 flex items-center justify-center text-teal mb-6">
-              <Upload className="w-8 h-8" />
+            {/* Left Column: Drag & Drop Area */}
+            <div
+              className={`lg:col-span-7 bg-white border-2 border-dashed rounded-card p-10 shadow-card flex flex-col items-center justify-center text-center min-h-[350px] cursor-pointer transition-colors ${
+                isDragOver ? 'border-teal bg-teal/5' : 'border-border-default hover:border-teal/50'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('file-upload-input')?.click()}
+            >
+              <div className="w-16 h-16 rounded-full bg-teal/5 flex items-center justify-center text-teal mb-6">
+                <Upload className="w-8 h-8" />
+              </div>
+
+              <h3 className="font-display text-lg font-bold text-text-primary mb-2">
+                Upload your resume
+              </h3>
+              <p className="text-text-muted text-xs max-w-xs mb-8">
+                Supports PDF and DOCX formats. Maximum size 5MB. Files are analyzed securely using AI.
+              </p>
+
+              <label 
+                className="px-6 py-3 bg-teal hover:bg-teal-600 text-white text-xs font-bold rounded-btn cursor-pointer transition-all shadow-teal-glow active:scale-95"
+                onClick={(e) => e.stopPropagation()} // Prevent trigger double click
+              >
+                <span>Choose File</span>
+                <input
+                  id="file-upload-input"
+                  type="file"
+                  accept=".pdf,.docx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
+
+              <p className="text-[10px] text-text-muted mt-4">
+                Or drag and drop your file here
+              </p>
             </div>
 
-            <h3 className="font-display text-lg font-bold text-text-primary mb-2">
-              Upload your resume
-            </h3>
-            <p className="text-text-muted text-xs max-w-sm mb-8">
-              Supports PDF and DOCX formats. Maximum size 5MB. Files are analyzed securely using AI.
-            </p>
+            {/* Right Column: Guidelines & Guidelines Checklist (The Yellow box resides here) */}
+            <div className="lg:col-span-5 bg-white border border-border-default rounded-card p-6 shadow-card flex flex-col justify-between min-h-[350px]">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 border-b border-border-subtle pb-3">
+                  <Compass className="w-5 h-5 text-teal" />
+                  <h4 className="font-heading text-sm font-bold text-text-primary">
+                    Resume Guidelines & Best Practices
+                  </h4>
+                </div>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  Review these industry guidelines to maximize your ATS compatibility and review score.
+                </p>
 
-            <label className="px-6 py-3 bg-teal hover:bg-teal-600 text-white text-xs font-bold rounded-btn cursor-pointer transition-all shadow-teal-glow active:scale-95">
-              <span>Choose File</span>
-              <input
-                type="file"
-                accept=".pdf,.docx"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </label>
+                <div className="space-y-3.5 pr-1">
+                  {/* Yellow Box: ATS Warnings */}
+                  <div className="p-3 bg-amber-50/50 border border-amber-200 rounded-lg">
+                    <span className="text-[9px] font-extrabold bg-amber-600 text-white px-2 py-0.5 rounded uppercase">ATS WARNING</span>
+                    <h5 className="font-bold text-xs text-amber-900 mt-1.5">Avoid Non-Standard Formatting</h5>
+                    <p className="text-[10px] text-amber-800 mt-0.5 leading-normal font-medium">
+                      Avoid dual-column layouts, graphics, tables, or images. Upload text-based PDF or DOCX files so standard parser algorithms can read your content successfully.
+                    </p>
+                  </div>
 
-            <p className="text-[10px] text-text-muted mt-4">
-              Or drag and drop your file here
-            </p>
+                  {/* Green Box: Impact Quantification */}
+                  <div className="p-3 bg-teal/5 border border-teal/10 rounded-lg">
+                    <span className="text-[9px] font-extrabold bg-teal-600 text-white px-2 py-0.5 rounded uppercase">QUANTIFIED METRICS</span>
+                    <h5 className="font-bold text-xs text-text-primary mt-1.5">Quantify Your Achievements</h5>
+                    <p className="text-[10px] text-text-secondary mt-0.5 leading-normal">
+                      Use the Google X-Y-Z formula: "Accomplished [X] as measured by [Y], by doing [Z]". Always back up your SDE bullets with numbers (e.g. latency, scale).
+                    </p>
+                  </div>
+
+                  {/* Purple Box: Core Sections */}
+                  <div className="p-3 bg-indigo/5 border border-indigo/10 rounded-lg">
+                    <span className="text-[9px] font-extrabold bg-indigo-600 text-white px-2 py-0.5 rounded uppercase">CORE STRUCTURE</span>
+                    <h5 className="font-bold text-xs text-text-primary mt-1.5">Include Standard Sections</h5>
+                    <p className="text-[10px] text-text-secondary mt-0.5 leading-normal font-medium">
+                      Ensure your document clearly labels: **Education**, **Experience**, **Projects**, and **Skills**. Creative headers can confuse parser parsers.
+                    </p>
+                  </div>
+
+                  {/* Blue Box: Action Verbs */}
+                  <div className="p-3 bg-blue-50/50 border border-blue-200 rounded-lg">
+                    <span className="text-[9px] font-extrabold bg-blue-600 text-white px-2 py-0.5 rounded uppercase">ACTION VERBS</span>
+                    <h5 className="font-bold text-xs text-blue-950 mt-1.5">Start with Strong Action Verbs</h5>
+                    <p className="text-[10px] text-blue-800 mt-0.5 leading-normal">
+                      Avoid weak phrases like "Responsible for..." or "Worked on...". Start every bullet point with strong, active verbs like **Architected**, **Optimized**, **Automated**, or **Streamlined**.
+                    </p>
+                  </div>
+
+                  {/* Orange/Red Box: Page Limit */}
+                  <div className="p-3 bg-rose-50/50 border border-rose-200 rounded-lg">
+                    <span className="text-[9px] font-extrabold bg-rose-600 text-white px-2 py-0.5 rounded uppercase">PAGE LIMIT</span>
+                    <h5 className="font-bold text-xs text-rose-950 mt-1.5">Strict One-Page Target</h5>
+                    <p className="text-[10px] text-rose-800 mt-0.5 leading-normal font-medium">
+                      For students and developers with under 5 years of experience, keep your resume strictly to 1 page. Prune minor course projects to fit this limit.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -889,8 +979,7 @@ export default function ResumePage() {
                               } catch (err) {
                                 console.error('Failed to run comparison:', err)
                               } finally {
-                                const el = document.getElementById('compare-tab-btn')
-                                if (el) el.click()
+                                setReportTab('comparison')
                                 setLoadingCompare(false)
                               }
                             }}
@@ -1091,6 +1180,94 @@ export default function ResumePage() {
                       </ul>
                     </div>
                   )}
+
+                  {/* Resume Action Checklist */}
+                  <div className="bg-white border border-border-default rounded-card p-6 shadow-card space-y-4">
+                    <div className="border-b border-border-subtle pb-3">
+                      <h4 className="font-display text-sm font-bold text-text-primary flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-teal" />
+                        <span>Resume Action Checklist</span>
+                      </h4>
+                      <p className="text-[10px] text-text-muted mt-0.5">
+                        Follow these steps to make your resume placement-ready and maximize callback rates.
+                      </p>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* Step 1: Define Target */}
+                      <div className="flex items-start gap-2.5 p-2.5 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                        {activeTarget ? (
+                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border border-border-default flex-shrink-0 mt-0.5" />
+                        )}
+                        <div>
+                          <span className="font-bold text-xs text-text-primary block">1. Define Your Career Path</span>
+                          <span className="text-[10px] text-text-muted leading-tight block mt-0.5">
+                            {activeTarget 
+                              ? `Linked to target: ${activeTarget.targetTitle}`
+                              : 'Set a target role (e.g. SDE, Data Analyst) in the "Define Your Path" tab to customize alignment.'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Step 2: Fix Layout Audit */}
+                      <div className="flex items-start gap-2.5 p-2.5 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                        {resumeMetrics && !resumeMetrics.hasEmail && !resumeMetrics.hasPhone ? (
+                          <div className="w-4 h-4 rounded-full border border-border-default flex-shrink-0 mt-0.5" />
+                        ) : (
+                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        )}
+                        <div>
+                          <span className="font-bold text-xs text-text-primary block">2. Complete Core Information</span>
+                          <span className="text-[10px] text-text-muted leading-tight block mt-0.5">
+                            Ensure contact details (email, phone, LinkedIn) and mandatory sections (Experience, Projects, Education) are present.
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Step 3: Quantify Achievements */}
+                      <div className="flex items-start gap-2.5 p-2.5 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                        {resumeMetrics && resumeMetrics.metricsCount >= 3 ? (
+                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border border-border-default flex-shrink-0 mt-0.5" />
+                        )}
+                        <div>
+                          <span className="font-bold text-xs text-text-primary block">3. Quantify Impact Statements</span>
+                          <span className="text-[10px] text-text-muted leading-tight block mt-0.5">
+                            Add at least 3 numeric results, metrics, or performance percentages to your project and experience descriptions.
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Step 4: Action Verbs */}
+                      <div className="flex items-start gap-2.5 p-2.5 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                        {resumeMetrics && resumeMetrics.strongVerbsCount >= 5 ? (
+                          <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border border-border-default flex-shrink-0 mt-0.5" />
+                        )}
+                        <div>
+                          <span className="font-bold text-xs text-text-primary block">4. Use Strong Engineering Verbs</span>
+                          <span className="text-[10px] text-text-muted leading-tight block mt-0.5">
+                            Start experience bullet points with active verbs like *Architected*, *Optimized*, or *Automated*.
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Step 5: Build Roadmap */}
+                      <div className="flex items-start gap-2.5 p-2.5 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                        <div className="w-4 h-4 rounded-full border border-border-default flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold text-xs text-text-primary block">5. Generate Gaps-Bridge Roadmap</span>
+                          <span className="text-[10px] text-text-muted leading-tight block mt-0.5">
+                            Go to "Learning Path" to generate a personalized timeline with resources mapping your missing gaps.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* ---- Right Column: Weaknesses & Suggestions (Col span 7) ---- */}
@@ -1113,6 +1290,156 @@ export default function ResumePage() {
                       </p>
                     </div>
                   </div>
+
+                  {/* Resume Checklist Audit */}
+                  {resumeMetrics && (
+                    <div className="bg-white border border-border-default rounded-card p-6 shadow-card space-y-4">
+                      <div className="border-b border-border-subtle pb-3">
+                        <h4 className="font-display text-sm font-bold text-text-primary flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-teal" />
+                          <span>Resume Checklist Audit</span>
+                        </h4>
+                        <p className="text-[10px] text-text-muted mt-0.5">
+                          Comprehensive analysis of resume content strength, contact links, formatting, and sections.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Section 1: Contact Details */}
+                        <div className="space-y-2">
+                          <h5 className="text-[9px] font-bold text-text-muted uppercase tracking-wider">Contact & Profiles</h5>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Email Address</span>
+                              {resumeMetrics.hasEmail ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">MISSING</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Phone Number</span>
+                              {resumeMetrics.hasPhone ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">MISSING</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">LinkedIn Profile</span>
+                              {resumeMetrics.hasLinkedIn ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">MISSING</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">GitHub / Portfolio</span>
+                              {resumeMetrics.hasGitHub ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">MISSING</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Section 2: Structure & Sections */}
+                        <div className="space-y-2">
+                          <h5 className="text-[9px] font-bold text-text-muted uppercase tracking-wider">Required Sections</h5>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Work Experience</span>
+                              {resumeMetrics.hasExperience ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">MISSING</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Projects Portfolio</span>
+                              {resumeMetrics.hasProjects ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">MISSING</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Technical Skills</span>
+                              {resumeMetrics.hasSkills ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">MISSING</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Education History</span>
+                              {resumeMetrics.hasEducation ? (
+                                <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">FOUND</span>
+                              ) : (
+                                <span className="text-[8px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">MISSING</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-border-subtle">
+                        {/* Section 3: Formatting */}
+                        <div className="space-y-2">
+                          <h5 className="text-[9px] font-bold text-text-muted uppercase tracking-wider">Formatting Rules</h5>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Word Count</span>
+                              <span className={cn(
+                                'text-[8px] font-bold px-2 py-0.5 rounded border',
+                                resumeMetrics.wordCount >= 300 && resumeMetrics.wordCount <= 650
+                                  ? 'text-green-700 bg-green-50 border-green-200'
+                                  : 'text-amber-700 bg-amber-50 border-amber-200'
+                              )}>
+                                {resumeMetrics.wordCount} ({resumeMetrics.wordCount >= 300 && resumeMetrics.wordCount <= 650 ? 'OPTIMAL' : 'ADJUST'})
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Page Estimate</span>
+                              <span className="text-[8px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">
+                                {resumeMetrics.estimatedPages} PAGE{resumeMetrics.estimatedPages > 1 ? 'S' : ''}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Section 4: Content Strength */}
+                        <div className="space-y-2">
+                          <h5 className="text-[9px] font-bold text-text-muted uppercase tracking-wider">Content Auditing</h5>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Quantified Results</span>
+                              <span className={cn(
+                                'text-[8px] font-bold px-2 py-0.5 rounded border',
+                                resumeMetrics.metricsCount >= 3
+                                  ? 'text-green-700 bg-green-50 border-green-200'
+                                  : 'text-amber-700 bg-amber-50 border-amber-200'
+                              )}>
+                                {resumeMetrics.metricsCount} METRICS ({resumeMetrics.metricsCount >= 3 ? 'GOOD' : 'WEAK'})
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] p-2 bg-bg-base/30 rounded-lg border border-border-subtle/50">
+                              <span className="text-text-secondary">Action Verbs Quality</span>
+                              <span className={cn(
+                                'text-[8px] font-bold px-2 py-0.5 rounded border',
+                                resumeMetrics.strongVerbsCount >= 5
+                                  ? 'text-green-700 bg-green-50 border-green-200'
+                                  : 'text-amber-700 bg-amber-50 border-amber-200'
+                              )}>
+                                {resumeMetrics.strongVerbsCount} STRONG ({resumeMetrics.strongVerbsCount >= 5 ? 'GOOD' : 'IMPROVE'})
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Weaknesses / Suggestions */}
                   <div className="bg-white border border-border-default rounded-card p-6 shadow-card space-y-4">

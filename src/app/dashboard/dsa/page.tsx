@@ -6,6 +6,7 @@ import { CheckCircle, Lock, BookOpen, ChevronRight, Play, CheckCircle2, Trophy, 
 import { mockDSATopics } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
 import confetti from 'canvas-confetti'
+import { trackEvent } from '@/lib/events'
 
 interface Problem {
   id: string
@@ -163,6 +164,10 @@ export default function DSATrackerPage() {
     
     if (isAdding) {
       nextSolvedProblems.push(id)
+      const probObj = problems.find(p => p.id === id)
+      if (probObj) {
+        trackEvent('DSA problem marked complete', { problemName: probObj.name, difficulty: probObj.difficulty });
+      }
       // Trigger confetti
       confetti({
         particleCount: 80,

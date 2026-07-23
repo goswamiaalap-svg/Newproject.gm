@@ -56,19 +56,21 @@ export async function seedDatabase() {
     }
 
     // 3. Seed/Update Opportunities with latest dates
-    console.log('[Seed] Re-seeding Opportunities with active 2026 dates...')
-    await Opportunity.deleteMany({})
-    await Opportunity.insertMany(
-      mockOpportunities.map((opp) => ({
-        id: opp.id,
-        title: opp.title,
-        type: opp.type,
-        company: opp.company,
-        deadline: opp.deadline,
-        logo: opp.logo,
-        applyUrl: opp.applyUrl
-      }))
-    )
+    const oppCount = await Opportunity.countDocuments()
+    if (oppCount === 0) {
+      console.log('[Seed] Seeding Opportunities with active 2026 dates...')
+      await Opportunity.insertMany(
+        mockOpportunities.map((opp) => ({
+          id: opp.id,
+          title: opp.title,
+          type: opp.type,
+          company: opp.company,
+          deadline: opp.deadline,
+          logo: opp.logo,
+          applyUrl: opp.applyUrl
+        }))
+      )
+    }
 
     // 4. Seed Teammates
     const teammateCount = await Teammate.countDocuments()
@@ -89,18 +91,20 @@ export async function seedDatabase() {
     }
 
     // 5. Seed/Update Hackathons with latest dates
-    console.log('[Seed] Re-seeding Hackathons with active 2026 dates...')
-    await Hackathon.deleteMany({})
-    await Hackathon.insertMany(
-      mockHackathons.map((h) => ({
-        id: h.id,
-        name: h.name,
-        deadline: h.deadline,
-        prize: h.prize,
-        participants: h.participants,
-        status: h.status
-      }))
-    )
+    const hackCount = await Hackathon.countDocuments()
+    if (hackCount === 0) {
+      console.log('[Seed] Seeding Hackathons with active 2026 dates...')
+      await Hackathon.insertMany(
+        mockHackathons.map((h) => ({
+          id: h.id,
+          name: h.name,
+          deadline: h.deadline,
+          prize: h.prize,
+          participants: h.participants,
+          status: h.status
+        }))
+      )
+    }
 
     console.log('[Seed] Seeding check completed.')
   } catch (error) {

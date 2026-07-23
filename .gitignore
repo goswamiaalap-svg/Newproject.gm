@@ -37,11 +37,7 @@ next-env.d.ts
 
 /src/generated/prisma
 
-# Database and secrets
-.env
+# local env files and secrets
+.env*
+*.env
 
-# Skip lockfile to avoid peer-dep conflicts on Vercel
-package-lock.json
-
-.vercel
-.env*.local

@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { trackEvent } from '@/lib/events'
 import {
   Compass,
   ArrowRight,
@@ -169,6 +170,7 @@ export default function DefinePathPage() {
       const targetDoc = await res.json()
       setIdealProfile(targetDoc.idealProfile)
       setPerfectResume(targetDoc.perfectResume)
+      trackEvent('Career target defined', { targetTitle: title, targetType: type });
       setActiveTab('resume')
     } catch (err: any) {
       setError(err.message || 'Something went wrong')
@@ -580,7 +582,7 @@ export default function DefinePathPage() {
                       className="border border-[#E2E8F0] rounded-xl p-8 bg-[#F8FAFC] shadow-inner max-w-3xl mx-auto"
                     >
                       {perfectResume ? (
-                        <div className="bg-white p-8 md:p-10 border border-gray-200 shadow-md rounded-md font-sans text-xs text-[#334155] space-y-6 max-h-[600px] overflow-y-auto">
+                        <div className="bg-white p-8 md:p-10 border border-gray-200 shadow-md rounded-md font-sans text-xs text-[#334155] space-y-6">
                           {/* Resume Header */}
                           <div className="text-center pb-4 border-b border-gray-200 space-y-1.5">
                             <h3 className="text-lg font-bold text-gray-900 tracking-wide uppercase">Your Target Resume</h3>

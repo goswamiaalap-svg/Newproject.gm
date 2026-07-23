@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useUser } from '@clerk/nextjs'
 import {
   FileText,
   Flame,
@@ -22,6 +23,9 @@ import StatCard from '@/components/dashboard/StatCard'
 import ActivityFeed from '@/components/dashboard/ActivityFeed'
 import { mockDashboardStats, mockOpportunities } from '@/lib/mock-data'
 import { getGreeting } from '@/lib/utils'
+import { AnimatePresence } from 'framer-motion'
+import OnboardingSurvey from '@/components/dashboard/OnboardingSurvey'
+import WeeklyCheckinPrompt from '@/components/dashboard/WeeklyCheckinPrompt'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('Student')
@@ -29,18 +33,45 @@ export default function DashboardPage() {
   const [activeTarget, setActiveTarget] = useState<any | null>(null)
   const [solvedCount, setSolvedCount] = useState(0)
   const [streakCount, setStreakCount] = useState(0)
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [showWeeklyCheckin, setShowWeeklyCheckin] = useState(false)
   const greeting = getGreeting()
 
+  const { user } = useUser()
+
   useEffect(() => {
-    fetch('/api/dashboard')
-      .then(res => res.json())
-      .then(data => {
-        if (!data.error) {
-          setDashboardData(data)
-          if (data.userName) setUserName(data.userName)
-        }
-      })
-      .catch(console.error)
+    if (user) {
+      setUserName(user.fullName || user.firstName || 'Student')
+    }
+  }, [user])
+
+  useEffect(() => {
+    const fetchDashboardAndProfile = () => {
+      fetch('/api/dashboard')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) {
+            setDashboardData(data)
+            if (data.userName) setUserName(data.userName)
+          }
+        })
+        .catch(console.error)
+
+      fetch('/api/user/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.name) {
+            setUserName(data.name)
+          } else if (user) {
+            setUserName(user.fullName || user.firstName || 'Student')
+          }
+        })
+        .catch(console.error)
+    }
+
+    fetchDashboardAndProfile()
+
+    window.addEventListener('profile-updated', fetchDashboardAndProfile)
 
     fetch('/api/career-target')
       .then(res => res.json())
@@ -70,6 +101,30 @@ export default function DashboardPage() {
       setSolvedCount(0)
       setStreakCount(0)
     }
+
+    return () => window.removeEventListener('profile-updated', fetchDashboardAndProfile)
+  }, [])
+
+  useEffect(() => {
+    // Check onboarding survey status
+    fetch('/api/user-profile')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.hasProfile || (!data.completed && !data.dismissed)) {
+          setShowOnboarding(true)
+        }
+      })
+      .catch(console.error)
+
+    // Check weekly check-in status
+    fetch('/api/weekly-checkin')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.shouldShow) {
+          setShowWeeklyCheckin(true)
+        }
+      })
+      .catch(console.error)
   }, [])
 
   // Sequential Quick Action Buttons
@@ -87,6 +142,18 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <AnimatePresence>
+        {showOnboarding && (
+          <OnboardingSurvey onComplete={() => setShowOnboarding(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showWeeklyCheckin && (
+          <WeeklyCheckinPrompt onComplete={() => setShowWeeklyCheckin(false)} />
+        )}
+      </AnimatePresence>
+
       {/* Conditional Hero Banner */}
       {activeTarget ? (
         <motion.div

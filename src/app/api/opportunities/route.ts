@@ -16,7 +16,7 @@ export async function GET() {
     await connectToDatabase()
 
     const [opps, states] = await Promise.all([
-      Opportunity.find({}),
+      Opportunity.find({ $or: [{ userId: { $exists: false } }, { userId }] }),
       OpportunityState.find({ userId })
     ])
 
@@ -37,12 +37,56 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { opportunityId, field, value } = await req.json()
+    const body = await req.json()
+
+    // 1. Check if we are creating a new custom opportunity
+    if (body.title && body.company) {
+      const { title, company, type, deadline, applyUrl, logo, notes } = body
+
+      if (!type || !deadline) {
+        return NextResponse.json({ error: 'title, company, type, and deadline are required' }, { status: 400 })
+      }
+
+      await connectToDatabase()
+
+      // Generate a unique ID for the custom opportunity
+      const oppId = `custom-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+      
+      const newOpp = await Opportunity.create({
+        id: oppId,
+        title,
+        company,
+        type,
+        deadline: new Date(deadline),
+        logo: logo || '💼',
+        applyUrl: applyUrl || '',
+        userId,
+      })
+
+      let initialState = null
+      if (notes) {
+        initialState = await OpportunityState.create({
+          userId,
+          opportunityId: oppId,
+          notes,
+          applied: false,
+          reminded: false,
+        })
+      }
+
+      return NextResponse.json({
+        opportunity: newOpp,
+        state: initialState,
+      }, { status: 201 })
+    }
+
+    // 2. Otherwise, update state (applied, reminded, or notes)
+    const { opportunityId, field, value } = body
     if (!opportunityId || !field) {
       return NextResponse.json({ error: 'opportunityId and field are required' }, { status: 400 })
     }
 
-    if (field !== 'applied' && field !== 'reminded') {
+    if (field !== 'applied' && field !== 'reminded' && field !== 'notes') {
       return NextResponse.json({ error: 'Invalid field' }, { status: 400 })
     }
 
@@ -53,7 +97,12 @@ export async function POST(req: Request) {
       opportunityId,
       updatedAt: new Date(),
     }
-    updateDoc[field] = Boolean(value)
+    
+    if (field === 'notes') {
+      updateDoc[field] = String(value)
+    } else {
+      updateDoc[field] = Boolean(value)
+    }
 
     const state = await OpportunityState.findOneAndUpdate(
       { userId, opportunityId },

@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, BellOff, Calendar, List, CalendarCheck, Check, Clock, ChevronLeft, ChevronRight, ShieldAlert, ExternalLink } from 'lucide-react'
+import { Bell, BellOff, Calendar, List, CalendarCheck, Check, Clock, ChevronLeft, ChevronRight, ShieldAlert, ExternalLink, Search, Plus, X } from 'lucide-react'
 import { mockOpportunities } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner' // standard react-sonner styling or simple custom toast
+import { trackEvent } from '@/lib/events'
 
 export default function OpportunitiesPage() {
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list')
@@ -13,6 +14,22 @@ export default function OpportunitiesPage() {
   const [opportunities, setOpportunities] = useState(mockOpportunities)
   const [remindedList, setRemindedList] = useState<string[]>([])
   const [mounted, setMounted] = useState(false)
+
+  // New States
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [selectedOpp, setSelectedOpp] = useState<any | null>(null)
+  const [editingNotes, setEditingNotes] = useState('')
+  const [isSavingNotes, setIsSavingNotes] = useState(false)
+
+  // Add Form States
+  const [newOppTitle, setNewOppTitle] = useState('')
+  const [newOppCompany, setNewOppCompany] = useState('')
+  const [newOppType, setNewOppType] = useState<'internship' | 'hackathon' | 'open-source' | 'fellowship'>('internship')
+  const [newOppDeadline, setNewOppDeadline] = useState('')
+  const [newOppApplyUrl, setNewOppApplyUrl] = useState('')
+  const [newOppLogo, setNewOppLogo] = useState('💼')
+  const [newOppNotes, setNewOppNotes] = useState('')
 
   React.useEffect(() => {
     setMounted(true)
@@ -31,6 +48,7 @@ export default function OpportunitiesPage() {
             return {
               ...opp,
               applied: match ? match.applied : false,
+              notes: match ? (match.notes || '') : '',
             }
           }))
 
@@ -82,16 +100,97 @@ export default function OpportunitiesPage() {
     }).catch(console.error)
   }
 
+  const handleSaveNotes = async () => {
+    if (!selectedOpp) return
+    setIsSavingNotes(true)
+    try {
+      const res = await fetch('/api/opportunities', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          opportunityId: selectedOpp.id,
+          field: 'notes',
+          value: editingNotes,
+        })
+      })
+      if (res.ok) {
+        setOpportunities(prev => prev.map(o => o.id === selectedOpp.id ? { ...o, notes: editingNotes } : o))
+        toast('Notes saved successfully!', { icon: '📝' })
+      } else {
+        toast('Failed to save notes', { icon: '❌' })
+      }
+    } catch (err) {
+      console.error(err)
+      toast('Error saving notes', { icon: '❌' })
+    } finally {
+      setIsSavingNotes(false)
+    }
+  }
+
+  const handleAddOpportunity = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newOppTitle || !newOppCompany || !newOppDeadline) {
+      toast('Please fill in all required fields.', { icon: '⚠️' })
+      return
+    }
+    try {
+      const res = await fetch('/api/opportunities', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newOppTitle,
+          company: newOppCompany,
+          type: newOppType,
+          deadline: newOppDeadline,
+          applyUrl: newOppApplyUrl,
+          logo: newOppLogo,
+          notes: newOppNotes,
+        })
+      })
+      if (res.ok) {
+        const data = await res.json()
+        const createdOpp = {
+          ...data.opportunity,
+          deadline: new Date(data.opportunity.deadline),
+          applied: false,
+          notes: newOppNotes,
+        }
+        setOpportunities((prev) => [createdOpp, ...prev])
+        toast('Opportunity added successfully!', { icon: '🎉' })
+        trackEvent('Opportunity saved', { title: newOppTitle, company: newOppCompany, type: newOppType });
+        
+        // Reset form
+        setNewOppTitle('')
+        setNewOppCompany('')
+        setNewOppType('internship')
+        setNewOppDeadline('')
+        setNewOppApplyUrl('')
+        setNewOppLogo('💼')
+        setNewOppNotes('')
+        setShowAddModal(false)
+      } else {
+        const errData = await res.json()
+        toast(errData.error || 'Failed to create opportunity.', { icon: '❌' })
+      }
+    } catch (err) {
+      console.error(err)
+      toast('Server error creating opportunity.', { icon: '❌' })
+    }
+  }
+
   const getDaysLeft = (date: Date) => {
     const diffTime = date.getTime() - new Date().getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return diffDays
   }
 
-  // Filter list
+  // Filter list by category and search query
   const filteredOpps = opportunities.filter((opp) => {
-    if (filterType === 'all') return true
-    return opp.type === filterType
+    const matchesType = filterType === 'all' || opp.type === filterType
+    const matchesSearch =
+      opp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      opp.company.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesType && matchesSearch
   })
 
   // Sort by deadline to get top 3 nearest
@@ -110,8 +209,6 @@ export default function OpportunitiesPage() {
   ]
 
   const getDeadlinesForDay = (day: number) => {
-    // Check against mock deadlines in July 2024/2026. Let's match by index/day
-    // amazon: 10th Aug, GSoC: 25th July, Flipkart: 5th Aug, Microsoft: 15th Sep, MLH: 28th July, Codeforces: 22nd July
     return opportunities.filter((opp) => {
       const d = opp.deadline.getDate()
       const m = opp.deadline.getMonth()
@@ -171,9 +268,13 @@ export default function OpportunitiesPage() {
               return (
                 <div
                   key={opp.id}
-                  className="!bg-white border !border-[#E2E8F0] !border-l-4 !border-l-[#F59E0B] rounded-xl p-4 shadow-sm flex items-center justify-between gap-4"
+                  onClick={() => {
+                    setSelectedOpp(opp)
+                    setEditingNotes(opp.notes || '')
+                  }}
+                  className="!bg-white border !border-[#E2E8F0] !border-l-4 !border-l-[#F59E0B] rounded-xl p-4 shadow-sm flex items-center justify-between gap-4 cursor-pointer hover:border-teal/40 transition-colors"
                 >
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-[10px] !text-[#64748B] font-bold uppercase tracking-wider">{opp.company}</span>
                     <h4 className="font-display text-sm font-bold !text-[#0F172A] truncate max-w-[150px] mt-0.5">
                       {opp.title}
@@ -191,22 +292,46 @@ export default function OpportunitiesPage() {
         </div>
       </div>
 
-      {/* Filters bar */}
-      <div className="flex flex-wrap gap-1.5 border-b border-border-subtle pb-3">
-        {(['all', 'internship', 'hackathon', 'open-source', 'fellowship'] as const).map((t) => (
+      {/* Filters & Search Toolbar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-subtle pb-4">
+        {/* Filters */}
+        <div className="flex flex-wrap gap-1.5">
+          {(['all', 'internship', 'hackathon', 'open-source', 'fellowship'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilterType(t)}
+              className={cn(
+                'text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all',
+                filterType === t
+                  ? 'bg-text-primary text-white border-text-primary shadow-sm'
+                  : 'bg-white text-text-secondary border-border-default hover:bg-bg-subtle'
+              )}
+            >
+              {t.replace('-', ' ')}
+            </button>
+          ))}
+        </div>
+
+        {/* Search & Add Action */}
+        <div className="flex items-center gap-2 self-stretch md:self-auto">
+          <div className="relative flex-1 md:w-64">
+            <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search title or company..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full text-xs pl-9 pr-4 py-2 bg-white border border-border-default rounded-lg focus:outline-none focus:border-teal"
+            />
+          </div>
           <button
-            key={t}
-            onClick={() => setFilterType(t)}
-            className={cn(
-              'text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border transition-all',
-              filterType === t
-                ? 'bg-text-primary text-white border-text-primary shadow-sm'
-                : 'bg-white text-text-secondary border-border-default hover:bg-bg-subtle'
-            )}
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-1.5 text-xs font-bold bg-teal hover:bg-teal-600 text-white px-4 py-2 rounded-lg shadow-teal-glow transition-all"
           >
-            {t.replace('-', ' ')}
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add Custom</span>
           </button>
-        ))}
+        </div>
       </div>
 
       {/* Main View Display */}
@@ -231,9 +356,17 @@ export default function OpportunitiesPage() {
                     opp.applied && 'opacity-65 bg-bg-base/30'
                   )}
                 >
-                  {/* Left info */}
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <span className="text-3xl flex-shrink-0 bg-bg-base p-2 rounded-btn border border-border-subtle">{opp.logo}</span>
+                  {/* Left info - Clickable to open Detail Drawer */}
+                  <div
+                    onClick={() => {
+                      setSelectedOpp(opp)
+                      setEditingNotes(opp.notes || '')
+                    }}
+                    className="flex items-center gap-3.5 min-w-0 flex-1 cursor-pointer group"
+                  >
+                    <span className="text-3xl flex-shrink-0 bg-bg-base p-2 rounded-btn border border-border-subtle group-hover:border-teal transition-colors">
+                      {opp.logo}
+                    </span>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-teal/5 text-teal border border-teal/10 uppercase tracking-wider">
@@ -246,7 +379,7 @@ export default function OpportunitiesPage() {
                           </span>
                         )}
                       </div>
-                      <h4 className={cn('font-display text-base font-bold text-text-primary mt-1.5 truncate', opp.applied && 'line-through')}>
+                      <h4 className={cn('font-display text-base font-bold text-text-primary mt-1.5 truncate group-hover:text-teal transition-colors', opp.applied && 'line-through')}>
                         {opp.title}
                       </h4>
                       <p className="text-[10px] text-text-muted">{opp.company}</p>
@@ -366,8 +499,12 @@ export default function OpportunitiesPage() {
                       {deadlines.map((opp) => (
                         <div
                           key={opp.id}
+                          onClick={() => {
+                            setSelectedOpp(opp)
+                            setEditingNotes(opp.notes || '')
+                          }}
                           className={cn(
-                            'text-[8px] font-bold px-1 py-0.5 rounded truncate border leading-tight',
+                            'text-[8px] font-bold px-1 py-0.5 rounded truncate border leading-tight cursor-pointer hover:opacity-80 transition-all',
                             opp.type === 'internship' && 'bg-teal/5 text-teal border-teal/10',
                             opp.type === 'hackathon' && 'bg-gold-light text-gold border-gold/10',
                             opp.type === 'open-source' && 'bg-indigo/5 text-indigo border-indigo/10',
@@ -383,6 +520,296 @@ export default function OpportunitiesPage() {
                 )
               })}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modals Container */}
+      <AnimatePresence>
+        {/* ===== ADD CUSTOM OPPORTUNITY MODAL ===== */}
+        {showAddModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white border border-border-default rounded-card w-full max-w-lg p-6 shadow-2xl relative overflow-hidden"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-bg-subtle text-text-muted hover:text-text-primary transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-2 mb-4">
+                <span className="p-2 bg-teal/5 text-teal rounded-lg">
+                  <Plus className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="font-display text-lg font-bold text-text-primary">
+                    Add Custom Opportunity
+                  </h3>
+                  <p className="text-text-muted text-xs">
+                    Manually track an off-campus job, internship, or hackathon.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleAddOpportunity} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
+                      Company Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Stripe, Razorpay"
+                      value={newOppCompany}
+                      onChange={(e) => setNewOppCompany(e.target.value)}
+                      className="w-full text-xs px-3 py-2 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
+                      Role / Title *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. SDE Intern"
+                      value={newOppTitle}
+                      onChange={(e) => setNewOppTitle(e.target.value)}
+                      className="w-full text-xs px-3 py-2 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
+                      Type *
+                    </label>
+                    <select
+                      value={newOppType}
+                      onChange={(e) => setNewOppType(e.target.value as any)}
+                      className="w-full text-xs px-2 py-2 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal"
+                    >
+                      <option value="internship">Internship</option>
+                      <option value="hackathon">Hackathon</option>
+                      <option value="open-source">Open Source</option>
+                      <option value="fellowship">Fellowship</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
+                      Deadline *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={newOppDeadline}
+                      onChange={(e) => setNewOppDeadline(e.target.value)}
+                      className="w-full text-xs px-3 py-2 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
+                      Logo (Emoji)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={4}
+                      value={newOppLogo}
+                      onChange={(e) => setNewOppLogo(e.target.value)}
+                      className="w-full text-xs px-3 py-2 bg-bg-base/40 border border-border-default rounded-lg text-center focus:outline-none focus:border-teal"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
+                    Application / Apply URL
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://company.com/careers/apply"
+                    value={newOppApplyUrl}
+                    onChange={(e) => setNewOppApplyUrl(e.target.value)}
+                    className="w-full text-xs px-3 py-2 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
+                    Preparation Notes
+                  </label>
+                  <textarea
+                    placeholder="Reference contacts, questions to prepare, portfolio links, etc."
+                    value={newOppNotes}
+                    onChange={(e) => setNewOppNotes(e.target.value)}
+                    className="w-full h-24 text-xs p-3 bg-bg-base/40 border border-border-default rounded-lg focus:outline-none focus:border-teal resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-2 justify-end pt-2 border-t border-border-subtle">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="px-4 py-2.5 border border-border-default rounded-lg text-xs font-bold text-text-secondary hover:bg-bg-subtle transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 bg-teal hover:bg-teal-600 text-white rounded-lg text-xs font-bold shadow-teal-glow transition-all"
+                  >
+                    Create Tracker
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* ===== OPPORTUNITY DETAIL & NOTES MODAL ===== */}
+        {selectedOpp && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="bg-white border border-border-default rounded-card w-full max-w-lg p-6 shadow-2xl relative overflow-hidden"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedOpp(null)}
+                className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-bg-subtle text-text-muted hover:text-text-primary transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {/* Header Info */}
+              <div className="flex items-start gap-4 mb-6 border-b border-border-subtle pb-4">
+                <span className="text-4xl p-2.5 bg-bg-base border border-border-subtle rounded-xl flex-shrink-0">
+                  {selectedOpp.logo}
+                </span>
+                <div className="min-w-0">
+                  <span className="inline-block text-[9px] font-bold px-2 py-0.5 rounded-full bg-teal/5 text-teal border border-teal/10 uppercase tracking-wider mb-1.5">
+                    {selectedOpp.type}
+                  </span>
+                  <h3 className="font-display text-xl font-bold text-text-primary leading-snug">
+                    {selectedOpp.title}
+                  </h3>
+                  <p className="text-text-muted text-xs font-medium mt-0.5">{selectedOpp.company}</p>
+                </div>
+              </div>
+
+              {/* Grid details */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-bg-subtle/50 p-3 rounded-lg border border-border-subtle/50 flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-teal flex-shrink-0" />
+                  <div>
+                    <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Deadline</span>
+                    <span className="text-xs font-bold text-text-secondary">
+                      {mounted ? selectedOpp.deadline.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) : '...'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-bg-subtle/50 p-3 rounded-lg border border-border-subtle/50 flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-teal flex-shrink-0" />
+                  <div>
+                    <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Time Left</span>
+                    <span className={cn(
+                      'text-xs font-bold block',
+                      getDaysLeft(selectedOpp.deadline) < 7 ? 'text-gold font-extrabold animate-pulse' : 'text-text-secondary'
+                    )}>
+                      {mounted ? (
+                        getDaysLeft(selectedOpp.deadline) > 0 ? `${getDaysLeft(selectedOpp.deadline)} Days Remaining` : 'Closing Today'
+                      ) : '...'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes Section */}
+              <div className="space-y-2 mb-6">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-1">
+                    <span>📝 Preparation Notes</span>
+                  </h4>
+                  {isSavingNotes && (
+                    <span className="text-[9px] text-teal font-semibold animate-pulse">Saving changes...</span>
+                  )}
+                </div>
+                <textarea
+                  value={editingNotes}
+                  onChange={(e) => setEditingNotes(e.target.value)}
+                  onBlur={handleSaveNotes}
+                  placeholder="Type preparation notes here (e.g. key skills to highlight, recruiter contacts, questions prepared). Changes auto-save when you click away."
+                  className="w-full h-32 p-3 bg-bg-base/30 border border-border-default rounded-lg focus:outline-none focus:border-teal resize-none text-xs"
+                />
+              </div>
+
+              {/* Actions Footer */}
+              <div className="flex gap-2 justify-between pt-4 border-t border-border-subtle items-center">
+                <div>
+                  <button
+                    onClick={() => {
+                      handleToggleApply(selectedOpp.id)
+                      setSelectedOpp((prev: any) => prev ? { ...prev, applied: !prev.applied } : null)
+                    }}
+                    className={cn(
+                      'px-4 py-2.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1',
+                      selectedOpp.applied
+                        ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+                        : 'bg-teal hover:bg-teal-600 border-teal text-white shadow-teal-glow'
+                    )}
+                  >
+                    {selectedOpp.applied ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Applied</span>
+                      </>
+                    ) : (
+                      'Mark Applied'
+                    )}
+                  </button>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedOpp(null)}
+                    className="px-4 py-2.5 border border-border-default rounded-lg text-xs font-bold text-text-secondary hover:bg-bg-subtle transition-colors"
+                  >
+                    Close
+                  </button>
+
+                  <a
+                    href={selectedOpp.applyUrl || 'https://example.com/apply-placeholder'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-5 py-2.5 bg-indigo hover:bg-indigo-600 border-indigo text-white rounded-lg text-xs font-bold shadow-indigo-glow flex items-center gap-1.5"
+                  >
+                    <span>Apply Official</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

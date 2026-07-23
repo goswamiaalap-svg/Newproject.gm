@@ -8,6 +8,7 @@ export interface IOpportunity extends Document {
   deadline: Date
   logo: string
   applyUrl: string
+  userId?: string
 }
 
 const OpportunitySchema = new Schema<IOpportunity>(
@@ -19,6 +20,7 @@ const OpportunitySchema = new Schema<IOpportunity>(
     deadline: { type: Date, required: true },
     logo: { type: String, required: true },
     applyUrl: { type: String, required: true },
+    userId: { type: String, required: false, index: true },
   },
   { timestamps: false }
 )

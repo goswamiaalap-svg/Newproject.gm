@@ -23,6 +23,7 @@ import { connectToDatabase } from '@/lib/mongoose'
 import Resume from '@/lib/models/Resume'
 import CareerTarget from '@/lib/models/CareerTarget'
 import { getPusherServer, getResumeChannel, RESUME_EVENTS } from '@/lib/pusher'
+import { calculateResumeMetrics } from '../route'
 
 export const dynamic = 'force-dynamic'
 
@@ -333,6 +334,7 @@ You must return ONLY valid JSON in this exact shape:
         status: 'complete',
         reviewResult,
         careerTargetAlignment: targetCompareResult,
+        resumeMetrics: calculateResumeMetrics(updatedResume?.extractedText || ''),
       })
     } catch (dbError: any) {
       console.error('[Resume Review] MongoDB update error:', dbError)

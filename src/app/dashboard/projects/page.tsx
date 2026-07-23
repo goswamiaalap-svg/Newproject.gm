@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Inter, Manrope } from "next/font/google";
+import { trackEvent } from '@/lib/events'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -302,6 +303,22 @@ export default function ProjectsPage() {
       .catch(() => {
         setGenerationNote('Ideas are ready. Add GROQ_API_KEY to enable live Groq generation.')
       })
+
+    const fetchUserProfile = () => {
+      fetch('/api/user/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.year) {
+            setYear(data.year)
+          }
+        })
+        .catch(console.error)
+    }
+
+    fetchUserProfile()
+
+    window.addEventListener('profile-updated', fetchUserProfile)
+    return () => window.removeEventListener('profile-updated', fetchUserProfile)
   }, [])
 
   const bestProject = [...projects].sort(
@@ -375,6 +392,7 @@ export default function ProjectsPage() {
         setGeneratedIdeas(ranked)
         setActiveId(ranked[0].id)
         setGenerationNote(result.note || 'Project ideas generated.')
+        trackEvent('Project idea generated', { role, selectedSkills });
       }
     } catch {
       setGenerationNote('AI generation failed, so the local zero-cost project ideas stayed active.')

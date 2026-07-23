@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { Users2, MapPin, Search, Calendar, Award, UserCheck, MessageSquare, Plus, ChevronRight, Check } from 'lucide-react'
 import { mockTeamMembers, mockHackathons } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
+import { useUser } from '@clerk/nextjs'
+import { trackEvent } from '@/lib/events'
 
 export default function TeamsPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -40,6 +42,7 @@ export default function TeamsPage() {
       setTeamRequests(teamRequests.filter((reqId) => reqId !== id))
     } else {
       setTeamRequests([...teamRequests, id])
+      trackEvent('Team profile created', { teammateId: id });
     }
 
     fetch('/api/teams', {
@@ -58,6 +61,28 @@ export default function TeamsPage() {
     
     return matchesSearch && matchesDomain
   })
+
+  const { user } = useUser()
+  const [profileName, setProfileName] = useState('')
+
+  React.useEffect(() => {
+    const fetchProfile = () => {
+      fetch('/api/user/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.name) {
+            setProfileName(data.name)
+          }
+        })
+        .catch(console.error)
+    }
+
+    fetchProfile()
+    window.addEventListener('profile-updated', fetchProfile)
+    return () => window.removeEventListener('profile-updated', fetchProfile)
+  }, [])
+
+  const activeUserName = profileName || (user ? (user.fullName || user.firstName || 'Student') : 'Student')
 
   return (
     <div className="space-y-6">
@@ -245,11 +270,15 @@ export default function TeamsPage() {
 
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-2 bg-bg-base/50 rounded-btn border border-border-subtle">
-                <div className="w-8 h-8 rounded-full bg-teal text-white flex items-center justify-center font-display font-semibold text-xs">
-                  ME
+                <div className="w-8 h-8 rounded-full bg-teal text-white flex items-center justify-center font-display font-semibold text-xs overflow-hidden">
+                  {user?.imageUrl ? (
+                    <img src={user.imageUrl} className="w-full h-full object-cover" alt={activeUserName} />
+                  ) : (
+                    activeUserName.split(' ').map((n) => n[0]).join('')
+                  )}
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-text-primary">Demo User</p>
+                  <p className="text-xs font-bold text-text-primary">{activeUserName}</p>
                   <p className="text-[9px] text-text-muted">Leader • You</p>
                 </div>
               </div>

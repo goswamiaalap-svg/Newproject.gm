@@ -11,6 +11,8 @@ export interface IUser extends Document {
   name: string
   email: string
   createdAt: Date
+  year?: string
+  collegeName?: string
 }
 
 const UserSchema = new Schema<IUser>(
@@ -29,6 +31,14 @@ const UserSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
+    },
+    year: {
+      type: String,
+      required: false,
+    },
+    collegeName: {
+      type: String,
+      required: false,
     },
   },
   {

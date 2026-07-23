@@ -5,6 +5,7 @@ export interface IOpportunityState extends Document {
   opportunityId: string
   applied: boolean
   reminded: boolean
+  notes?: string
   updatedAt: Date
 }
 
@@ -21,6 +22,7 @@ const OpportunityStateSchema = new Schema<IOpportunityState>(
     },
     applied: { type: Boolean, default: false },
     reminded: { type: Boolean, default: false },
+    notes: { type: String, default: '' },
     updatedAt: { type: Date, default: Date.now },
   },
   { timestamps: { createdAt: false, updatedAt: true } }
