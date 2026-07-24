@@ -182,14 +182,17 @@ export async function POST(req: Request) {
               .trim()
             const parsed = JSON.parse(cleanJson)
             if (parsed.questions && Array.isArray(parsed.questions) && parsed.questions.length > 0) {
-              const formatted = parsed.questions.map((q: any, idx: number) => ({
-                id: q.id || idx + 1,
-                question: q.question,
-                category: q.category || category,
-                difficulty: q.difficulty || difficulty,
-                timeLimit: q.timeLimit || (difficulty === 'Hard' ? 300 : 180),
-                hint: q.hint || 'Focus on clarity, complexity analysis, and edge cases.'
-              }))
+              const formatted = parsed.questions.map((q: any, idx: number) => {
+                const questionText = q.question || q.questionText || q.prompt || q.title || q.problem || q.text || q.description || (typeof q === 'string' ? q : '')
+                return {
+                  id: q.id || idx + 1,
+                  question: questionText || `[${company} ${difficulty} Question #${idx + 1}] Please describe your approach, algorithm complexity, and code implementation for this ${category} scenario.`,
+                  category: q.category || category,
+                  difficulty: q.difficulty || difficulty,
+                  timeLimit: q.timeLimit || (difficulty === 'Hard' ? 300 : 180),
+                  hint: q.hint || q.suggestion || 'Focus on clarity, complexity analysis, and edge cases.'
+                }
+              })
               return NextResponse.json({ questions: formatted, source: 'ai' })
             }
           }

@@ -370,7 +370,7 @@ section.hero-section {
 .dashboard-theme .dashboard-stat-card h4,
 .dashboard-theme .dashboard-stat-card h5,
 .dashboard-theme .dashboard-stat-card h6 {
-  color: #0F172A !important; /* Force dark text in light cards */
+  color: #0F172A; /* Force dark text in light cards */
 }
 .dashboard-theme .bg-white .text-text-secondary,
 .dashboard-theme .dashboard-stat-card .text-text-secondary {
@@ -439,21 +439,13 @@ section.hero-section {
 
 /* Text Colors (non-card elements) */
 .dashboard-theme .text-text-primary {
-  color: #0F172A !important;
+  color: #0F172A;
 }
 .dashboard-theme .text-text-secondary {
-  color: #475569 !important;
+  color: #475569;
 }
 .dashboard-theme .text-text-muted {
-  color: #64748B !important;
-}
-.dashboard-theme h1,
-.dashboard-theme h2,
-.dashboard-theme h3,
-.dashboard-theme h4,
-.dashboard-theme h5,
-.dashboard-theme h6 {
-  color: #0F172A !important;
+  color: #64748B;
 }
 
 /* Sidebar Active states and Hovers */
