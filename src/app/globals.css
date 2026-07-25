@@ -334,7 +334,7 @@ section.hero-section {
   --color-bg-base: #F8F9FF;
   --color-bg-subtle: #EEF2FF;
   background-color: #F8F9FF !important;
-  color: #0F172A !important;
+  color: #0F172A;
 }
 
 /* Sidebar and Navbar backgrounds */
@@ -374,11 +374,11 @@ section.hero-section {
 }
 .dashboard-theme .bg-white .text-text-secondary,
 .dashboard-theme .dashboard-stat-card .text-text-secondary {
-  color: #475569 !important;
+  color: #475569;
 }
 .dashboard-theme .bg-white .text-text-muted,
 .dashboard-theme .dashboard-stat-card .text-text-muted {
-  color: #64748B !important;
+  color: #64748B;
 }
 
 /* Custom Highlight Badges in Light Cards */
