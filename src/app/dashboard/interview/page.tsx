@@ -26,7 +26,14 @@ import {
   Check,
   FileCode,
   RotateCcw,
-  Bot
+  Bot,
+  Globe,
+  Server,
+  Brain,
+  Cloud,
+  Zap,
+  BarChart3,
+  Target
 } from 'lucide-react'
 import { trackEvent } from '@/lib/events'
 import confetti from 'canvas-confetti'
@@ -59,10 +66,14 @@ interface InterviewResult {
 }
 
 const CATEGORIES = [
-  { id: 'DSA', name: 'Data Structures & Algorithms', desc: 'Coding, complexity, & optimization', icon: Code2, color: 'from-blue-500 to-indigo-600' },
+  { id: 'DSA', name: 'Data Structures & Algorithms', desc: 'Coding, complexity & optimization', icon: Code2, color: 'from-blue-500 to-indigo-600' },
   { id: 'System Design', name: 'System Design & Architecture', desc: 'High-level scale, database & caching', icon: Layers, color: 'from-teal-500 to-emerald-600' },
   { id: 'OS Concepts', name: 'CS Core (OS, DBMS, Networks)', desc: 'Processes, concurrency, SQL & IP', icon: Cpu, color: 'from-purple-500 to-violet-600' },
   { id: 'Behavioral', name: 'Behavioral & HR Round', desc: 'STAR technique, leadership & scenarios', icon: UserCheck, color: 'from-amber-500 to-orange-600' },
+  { id: 'Frontend', name: 'Frontend Engineering', desc: 'React, CSS, DOM, browser APIs & perf', icon: Globe, color: 'from-sky-500 to-cyan-600' },
+  { id: 'Backend', name: 'Backend & API Design', desc: 'REST, GraphQL, microservices & auth', icon: Server, color: 'from-rose-500 to-pink-600' },
+  { id: 'ML/AI', name: 'Machine Learning & AI', desc: 'Models, training, NLP & deployment', icon: Brain, color: 'from-violet-500 to-fuchsia-600' },
+  { id: 'DevOps', name: 'DevOps & Cloud', desc: 'CI/CD, Docker, Kubernetes & AWS', icon: Cloud, color: 'from-orange-500 to-red-500' },
 ]
 
 const COMPANIES = [
@@ -72,12 +83,19 @@ const COMPANIES = [
   { id: 'Flipkart', name: 'Flipkart', badge: 'Machine Coding & Architecture' },
   { id: 'Microsoft', name: 'Microsoft', badge: 'Problem Solving & Systems' },
   { id: 'Meta', name: 'Meta', badge: 'Speed Coding & Behavioral' },
+  { id: 'Apple', name: 'Apple', badge: 'Frameworks, UX & Swift/ObjC' },
+  { id: 'Netflix', name: 'Netflix', badge: 'Distributed Systems & Scale' },
+  { id: 'Adobe', name: 'Adobe', badge: 'Creative Tech & APIs' },
+  { id: 'Infosys', name: 'Infosys', badge: 'Aptitude, Logic & Coding' },
+  { id: 'Wipro', name: 'Wipro', badge: 'CS Fundamentals & Projects' },
+  { id: 'Startup', name: 'Startup Round', badge: 'Full-stack, Problem Solving' },
 ]
 
 const DIFFICULTIES = [
-  { id: 'Easy', label: 'Easy (Entry Level)', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  { id: 'Medium', label: 'Medium (SDE-1 / SDE-2)', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  { id: 'Hard', label: 'Hard (Senior SDE)', color: 'bg-rose-50 text-rose-700 border-rose-200' },
+  { id: 'Internship', label: 'Internship', color: 'bg-sky-50 text-sky-700 border-sky-200' },
+  { id: 'Easy', label: 'Easy (Fresher)', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  { id: 'Medium', label: 'Medium (SDE-1)', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  { id: 'Hard', label: 'Hard (SDE-2/3)', color: 'bg-rose-50 text-rose-700 border-rose-200' },
 ]
 
 export default function MockInterviewPage() {
@@ -85,6 +103,8 @@ export default function MockInterviewPage() {
   const [category, setCategory] = useState('DSA')
   const [difficulty, setDifficulty] = useState('Medium')
   const [company, setCompany] = useState('Amazon')
+  const [numQuestions, setNumQuestions] = useState(3)
+  const [codeLanguage, setCodeLanguage] = useState('JavaScript')
   
   const [isFetchingQuestions, setIsFetchingQuestions] = useState(false)
   const [questions, setQuestions] = useState<Question[]>([])
@@ -399,7 +419,7 @@ export default function MockInterviewPage() {
               {/* Category Selector */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
-                  1. Select Category / Domain
+                  1. Select Interview Track / Domain
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {CATEGORIES.map((cat) => {
@@ -436,7 +456,7 @@ export default function MockInterviewPage() {
               {/* Company Template Selector */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
-                  2. Select Target Company Template
+                  2. Select Target Company
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {COMPANIES.map((comp) => {
@@ -468,7 +488,7 @@ export default function MockInterviewPage() {
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
                   3. Select Round Difficulty
                 </label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {DIFFICULTIES.map((diff) => {
                     const isSelected = difficulty === diff.id
                     return (
@@ -486,6 +506,53 @@ export default function MockInterviewPage() {
                       </button>
                     )
                   })}
+                </div>
+              </div>
+
+              {/* Number of Questions */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                  4. Number of Questions
+                </label>
+                <div className="grid grid-cols-4 gap-3">
+                  {[2, 3, 5, 7].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setNumQuestions(n)}
+                      className={`py-3 px-4 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer ${
+                        numQuestions === n
+                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-500/20 shadow-xs'
+                          : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      {n} Questions
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Coding Language */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                  5. Preferred Coding Language
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {['JavaScript', 'Python', 'Java', 'C++'].map((lang) => (
+                    <button
+                      key={lang}
+                      type="button"
+                      onClick={() => setCodeLanguage(lang)}
+                      className={`py-2.5 px-4 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+                        codeLanguage === lang
+                          ? 'border-violet-500 bg-violet-50 text-violet-700 ring-2 ring-violet-500/20 shadow-xs'
+                          : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Code2 className="w-3.5 h-3.5" />
+                      {lang}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -555,28 +622,77 @@ export default function MockInterviewPage() {
             initial={{ opacity: 0, scale: 0.99 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.99 }}
-            className="fixed inset-0 z-50 bg-slate-950 !text-slate-100 flex flex-col justify-between p-4 md:p-6 overflow-hidden"
+            className="fixed inset-0 z-50 bg-slate-950 !text-slate-100 flex flex-col p-4 md:p-5 overflow-hidden gap-4"
           >
-            {/* Top Control Header */}
-            <div className="bg-slate-900 text-white rounded-2xl p-4 shadow-lg border border-slate-800 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
-                <span className="font-mono text-xs !text-teal-300 font-extrabold tracking-wider uppercase">
-                  LIVE ASSESSMENT • {company} ({category})
-                </span>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-slate-800 !text-slate-200 font-semibold border border-slate-700">
-                  {difficulty} Level
+            {/* Top Control Header — single bar: breadcrumb | windowed stepper | timer */}
+            <div className="bg-slate-900 text-white rounded-2xl px-4 py-3 shadow-lg border border-slate-800 flex items-center gap-3">
+              {/* Left: session breadcrumb */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                <span className="font-mono text-[11px] !text-teal-300 font-extrabold tracking-wider uppercase hidden sm:block">
+                  {company} {category}
                 </span>
               </div>
 
-              {/* Countdown Timer */}
-              <div className="flex items-center gap-4">
-                <div className={`flex items-center gap-2 font-mono font-bold text-sm px-4 py-1.5 rounded-full border shadow-inner ${
+              {/* Center: windowed question stepper */}
+              <div className="flex-1 flex items-center justify-center gap-1 overflow-x-auto scrollbar-none">
+                {(() => {
+                  const total = questions.length
+                  const cur = currentQuestionIdx
+                  const window = 3
+                  const indices: (number | 'ellipsis-start' | 'ellipsis-end')[] = []
+
+                  if (total <= 8) {
+                    // Show all if small enough
+                    for (let i = 0; i < total; i++) indices.push(i)
+                  } else {
+                    // Always show first
+                    indices.push(0)
+                    if (cur - window > 1) indices.push('ellipsis-start')
+                    for (let i = Math.max(1, cur - window); i <= Math.min(total - 2, cur + window); i++) {
+                      indices.push(i)
+                    }
+                    if (cur + window < total - 2) indices.push('ellipsis-end')
+                    // Always show last
+                    if (total - 1 > 0) indices.push(total - 1)
+                  }
+
+                  return indices.map((item, k) => {
+                    if (item === 'ellipsis-start' || item === 'ellipsis-end') {
+                      return (
+                        <span key={`${item}-${k}`} className="text-slate-500 text-xs font-bold px-0.5">…</span>
+                      )
+                    }
+                    const idx = item as number
+                    const isActive = idx === cur
+                    const isDone = idx < cur
+                    return (
+                      <div
+                        key={idx}
+                        title={`Question ${idx + 1}`}
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-all ${
+                          isActive
+                            ? 'bg-teal-400 text-slate-900 shadow-[0_0_8px_rgba(45,212,191,0.6)] scale-110'
+                            : isDone
+                            ? 'bg-teal-800 text-teal-300 border border-teal-600'
+                            : 'bg-slate-700 text-slate-400 border border-slate-600'
+                        }`}
+                      >
+                        {isDone ? <Check className="w-3 h-3 stroke-[3]" /> : idx + 1}
+                      </div>
+                    )
+                  })
+                })()}
+              </div>
+
+              {/* Right: timer + quit */}
+              <div className="flex items-center gap-2 shrink-0">
+                <div className={`flex items-center gap-1.5 font-mono font-bold text-xs px-3 py-1.5 rounded-full border shadow-inner ${
                   timeLeft <= 30
                     ? 'bg-rose-950/80 border-rose-500/50 !text-rose-300 animate-pulse'
                     : 'bg-slate-800 border-slate-700 !text-teal-300'
                 }`}>
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3.5 h-3.5" />
                   <span>{formatTime(timeLeft)}</span>
                 </div>
                 <button
@@ -585,169 +701,270 @@ export default function MockInterviewPage() {
                       setStage('setup')
                     }
                   }}
-                  className="text-xs !text-slate-300 hover:!text-rose-400 font-semibold transition-colors px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 cursor-pointer"
+                  className="text-[11px] !text-slate-300 hover:!text-rose-400 font-semibold transition-colors px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 cursor-pointer"
                 >
-                  Quit Session
+                  Quit
                 </button>
               </div>
             </div>
 
             {/* Studio Workspace Layout */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 py-4 overflow-hidden">
-              {/* Left Column: Live Camera Feed & AI Monitor */}
-              <div className="lg:col-span-4 bg-slate-900 text-white rounded-3xl border border-slate-800 shadow-xl overflow-hidden flex flex-col justify-between p-5 relative">
-                <div className="flex justify-between items-center z-10">
-                  <span className="text-[10px] uppercase font-bold !text-slate-300 tracking-wider flex items-center gap-1.5">
-                    <Video className="w-3.5 h-3.5 text-teal-400" />
-                    Webcam & Audio Interface
-                  </span>
-                  {/* Media Controls */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={toggleCamera}
-                      title={isCameraActive ? 'Disable Camera' : 'Enable Camera'}
-                      className={`p-2 rounded-xl transition-all cursor-pointer ${
-                        isCameraActive ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40' : 'bg-slate-800 text-slate-300 hover:text-white'
-                      }`}
-                    >
-                      {isCameraActive ? <Camera className="w-4 h-4" /> : <CameraOff className="w-4 h-4" />}
-                    </button>
-                    <button
-                      onClick={toggleMic}
-                      title={isMicActive ? 'Stop Voice Recording' : 'Start Voice Recording'}
-                      className={`p-2 rounded-xl transition-all cursor-pointer ${
-                        isMicActive ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse' : 'bg-slate-800 text-slate-300 hover:text-white'
-                      }`}
-                    >
-                      {isMicActive ? <Mic className="w-4 h-4 text-rose-400" /> : <MicOff className="w-4 h-4" />}
-                    </button>
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-hidden min-h-0">
+              {/* Left Column: Camera + Analytics — h-fit so no dead gap */}
+              <div className="lg:col-span-3 flex flex-col gap-3 overflow-y-auto h-fit">
+                {/* Camera Card */}
+                <div className="bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-xl flex flex-col p-4 gap-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] uppercase font-bold !text-slate-300 tracking-wider flex items-center gap-1.5">
+                      <Video className="w-3.5 h-3.5 text-teal-400" />
+                      Camera
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={toggleCamera}
+                        title={isCameraActive ? 'Disable Camera' : 'Enable Camera'}
+                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                          isCameraActive ? 'bg-teal-500/20 text-teal-300 border border-teal-500/40' : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                        }`}
+                      >
+                        {isCameraActive ? <Camera className="w-3.5 h-3.5" /> : <CameraOff className="w-3.5 h-3.5" />}
+                      </button>
+                      <button
+                        onClick={toggleMic}
+                        title={isMicActive ? 'Stop Voice Recording' : 'Start Voice Recording'}
+                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                          isMicActive ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse' : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                        }`}
+                      >
+                        {isMicActive ? <Mic className="w-3.5 h-3.5 text-rose-400" /> : <MicOff className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Camera View Area */}
+                  <div className="w-full aspect-video rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center">
+                    {isCameraActive ? (
+                      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="flex flex-col items-center gap-3 p-4 text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center">
+                          <Bot className="w-7 h-7 text-teal-400" />
+                        </div>
+                        <p className="text-[10px] !text-slate-400">Click <Camera className="w-3 h-3 inline mb-0.5" /> to enable webcam</p>
+                        <div className="flex gap-1 items-end h-6">
+                          {[1, 2, 3, 4, 3, 2, 4, 5, 3, 2, 4, 2].map((v, i) => (
+                            <div
+                              key={i}
+                              className={`w-0.5 rounded-full ${isMicActive ? 'bg-teal-400 animate-bounce' : 'bg-slate-700'}`}
+                              style={{ height: isMicActive ? `${v * 16}%` : '20%', animationDelay: `${i * 0.1}s`, animationDuration: '0.8s' }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-[10px] !text-slate-400">
+                    <span className="flex items-center gap-1">
+                      <span className={`w-1.5 h-1.5 rounded-full ${isMicActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
+                      {isMicActive ? 'Mic On' : 'Mic Off'}
+                    </span>
+                    <span>🔒 SSL</span>
                   </div>
                 </div>
 
-                {/* Video / Audio Area */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/85">
-                  {isCameraActive ? (
-                    <video
-                      ref={videoRef}
-                      autoPlay
-                      playsInline
-                      muted
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center gap-4 p-6 text-center">
-                      <div className="w-20 h-20 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-center text-teal-400 shadow-xl">
-                        <Bot className="w-10 h-10 text-teal-400" />
+                {/* Live Analytics Card */}
+                <div className="bg-slate-900 text-white rounded-2xl border border-slate-800 p-4 space-y-3">
+                  <div className="text-[10px] uppercase font-bold !text-slate-400 tracking-wider flex items-center gap-1.5">
+                    <BarChart3 className="w-3.5 h-3.5 text-teal-400" />
+                    Live Analytics
+                  </div>
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Speaking Pace', value: '132 WPM', sub: 'Optimal', color: 'text-teal-400' },
+                      { label: 'Confidence', value: '80%', sub: 'Good', color: 'text-emerald-400' },
+                      { label: 'Eye Contact', value: '90%', sub: 'Great', color: 'text-indigo-400' },
+                    ].map(({ label, value, sub, color }) => (
+                      <div key={label} className="flex items-center justify-between">
+                        <div>
+                          <p className="text-[10px] !text-slate-500">{label}</p>
+                          <p className={`text-sm font-bold ${color}`}>{value}</p>
+                        </div>
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 ${color}`}>{sub}</span>
                       </div>
-                      <div>
-                        <h4 className="text-sm font-bold !text-slate-100">AI Recruiter Listening</h4>
-                        <p className="text-[11px] !text-slate-400 mt-0.5">Click camera icon top right to enable live preview</p>
-                      </div>
-                      {/* Audio visualizer bars */}
-                      <div className="flex gap-1.5 items-end h-8 mt-2">
-                        {[1, 2, 3, 4, 3, 2, 4, 5, 3, 2, 4, 2].map((v, i) => (
-                          <div
-                            key={i}
-                            className={`w-1 rounded-full ${isMicActive ? 'bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.6)] animate-bounce' : 'bg-slate-700'}`}
-                            style={{
-                              height: isMicActive ? `${v * 18}%` : '20%',
-                              animationDelay: `${i * 0.1}s`,
-                              animationDuration: '0.8s'
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
 
-                <div className="relative z-10 flex items-center justify-between text-[11px] !text-slate-300 bg-slate-900/90 backdrop-blur-md p-3 rounded-2xl border border-slate-800">
-                  <span className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${isMicActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
-                    {isMicActive ? 'Voice Transcript Active' : 'Mic Muted (Click Mic icon)'}
-                  </span>
-                  <span className="!text-slate-400">SSL Encrypted Session</span>
+                {/* Session Info Card — fills natural space, no forced gap */}
+                <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4 space-y-2">
+                  <div className="text-[10px] uppercase font-bold !text-slate-400 tracking-wider flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-amber-400" />
+                    Session Info
+                  </div>
+                  <div className="space-y-1.5">
+                    {[
+                      { label: 'Track', value: category },
+                      { label: 'Difficulty', value: difficulty },
+                      { label: 'Company', value: company },
+                      { label: 'Progress', value: `Q${currentQuestionIdx + 1} of ${questions.length}` },
+                    ].map(({ label, value }) => (
+                      <div key={label} className="flex items-center justify-between">
+                        <span className="text-[10px] !text-slate-500">{label}</span>
+                        <span className="text-[10px] font-bold !text-slate-300">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Evaluation Criteria Card */}
+                <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4 space-y-2">
+                  <div className="text-[10px] uppercase font-bold !text-slate-400 tracking-wider flex items-center gap-1.5">
+                    <Target className="w-3.5 h-3.5 text-violet-400" />
+                    Evaluation Criteria
+                  </div>
+                  <ul className="space-y-1.5">
+                    {[
+                      'State time & space complexity',
+                      'Cover at least one edge case',
+                      'Explain data structure choice',
+                      'Use STAR for behavioral answers',
+                      'Verify with an example',
+                    ].map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-[10px] !text-slate-300">
+                        <CheckCircle2 className="w-3 h-3 text-teal-400 shrink-0 mt-0.5" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
 
               {/* Right Column: Question & Solution Workspace */}
-              <div className="lg:col-span-8 flex flex-col gap-4 overflow-y-auto pr-1">
-                {/* Question Box - Crisp High Contrast Dark Theme */}
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-7 space-y-4 relative shadow-xl">
+              <div className="lg:col-span-9 flex flex-col gap-3 overflow-y-auto min-h-0">
+                {/* Question Box */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2.5 shadow-xl shrink-0">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs !text-teal-300 font-extrabold uppercase tracking-wider bg-teal-500/10 border border-teal-500/30 px-3.5 py-1 rounded-full shadow-xs">
-                      Question {currentQuestionIdx + 1} of {questions.length}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs !text-teal-300 font-extrabold uppercase tracking-wider bg-teal-500/10 border border-teal-500/30 px-3 py-1 rounded-full">
+                        Q{currentQuestionIdx + 1} / {questions.length}
+                      </span>
+                      <span className="text-[10px] px-2.5 py-1 rounded-full bg-slate-800 !text-slate-300 border border-slate-700 font-semibold">
+                        {questions[currentQuestionIdx]?.difficulty || difficulty}
+                      </span>
+                    </div>
                     {questions[currentQuestionIdx]?.hint && (
                       <button
                         onClick={() => setShowHint(!showHint)}
-                        className="text-xs !text-indigo-300 hover:!text-white font-bold flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 px-3.5 py-1.5 rounded-xl border border-indigo-500/30 transition-all cursor-pointer"
+                        className="text-xs !text-indigo-300 hover:!text-white font-bold flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 px-3 py-1.5 rounded-xl border border-indigo-500/30 transition-all cursor-pointer"
                       >
-                        <HelpCircle className="w-4 h-4 text-indigo-400" />
-                        <span>{showHint ? 'Hide Hint' : 'Show Hint'}</span>
+                        <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                        <span>{showHint ? 'Hide Hint' : 'Show hint'}</span>
                       </button>
                     )}
                   </div>
 
-                  <h3 className="font-display text-lg md:text-xl font-extrabold !text-white leading-relaxed pt-1">
-                    {questions[currentQuestionIdx]?.question || 'Please describe your approach, algorithm complexity, and solution.'}
+                  <h3 className="font-display text-sm md:text-base font-extrabold !text-white leading-relaxed">
+                    {questions[currentQuestionIdx]?.question || 'Describe your approach, algorithm complexity, and solution.'}
                   </h3>
 
                   {showHint && questions[currentQuestionIdx]?.hint && (
                     <motion.div
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-xs !text-amber-200 font-medium leading-relaxed shadow-xs"
+                      className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs !text-amber-200 font-medium leading-relaxed"
                     >
                       💡 <strong className="!text-amber-300 font-bold">Hint:</strong> {questions[currentQuestionIdx]?.hint}
                     </motion.div>
                   )}
                 </div>
 
-                {/* Response / Code Editor Box */}
-                <div className="flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-3xl p-5 md:p-6 gap-3 shadow-xl">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-xs !text-slate-200 uppercase font-bold tracking-wider flex items-center gap-1.5">
-                      <FileCode className="w-4 h-4 text-teal-400" />
-                      Candidate Transcript & Solution Editor
-                    </span>
-                    {/* Quick helper insertions */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => insertTemplateText('code')}
-                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 !text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
-                      >
-                        + Code Template
-                      </button>
-                      <button
-                        onClick={() => insertTemplateText('star')}
-                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 !text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
-                      >
-                        + STAR Outline
-                      </button>
-                    </div>
+                {/* Approach explanation — compact, auto-grows */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shrink-0">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-slate-800/60 border-b border-slate-700">
+                    <Brain className="w-3.5 h-3.5 text-indigo-400" />
+                    <span className="text-[10px] !text-slate-300 font-bold uppercase tracking-wider">1. Explain your approach &amp; complexity</span>
                   </div>
-
                   <textarea
-                    value={currentAnswer}
-                    onChange={(e) => setCurrentAnswer(e.target.value)}
-                    placeholder="Type or speak your solution here... Detail your thought process, algorithm steps, time/space complexity O(N), and edge case handling."
-                    className="flex-1 w-full min-h-[220px] bg-slate-950 !text-teal-300 border border-slate-800 rounded-2xl p-4 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 font-mono leading-relaxed placeholder:!text-slate-500 resize-none shadow-inner"
+                    value={currentAnswer.split('---CODE---')[0] ?? ''}
+                    onChange={(e) => {
+                      const code = currentAnswer.split('---CODE---')[1] ?? ''
+                      setCurrentAnswer(e.target.value + (code ? '---CODE---' + code : ''))
+                    }}
+                    placeholder="Describe your algorithm, time O(?), space O(?), and edge cases..."
+                    rows={3}
+                    className="w-full bg-slate-950 !text-slate-200 p-3 text-xs focus:outline-none font-mono leading-relaxed placeholder:!text-slate-600 resize-none"
+                    style={{ minHeight: '80px', maxHeight: '200px', overflowY: 'auto' }}
                   />
                 </div>
 
-                {/* Bottom Navigation CTA */}
-                <div className="flex justify-between items-center pt-2 px-1">
-                  <span className="text-xs font-bold !text-slate-300 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl shadow-xs">
-                    Question {currentQuestionIdx + 1} / {questions.length}
-                  </span>
+                {/* Code / Solution Editor */}
+                <div className="flex flex-col bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden" style={{ minHeight: '200px' }}>
+                  {/* Editor Toolbar */}
+                  <div className="flex justify-between items-center px-4 py-2.5 bg-slate-800/60 border-b border-slate-700">
+                    <div className="flex items-center gap-2">
+                      <FileCode className="w-3.5 h-3.5 text-teal-400" />
+                      <span className="text-[10px] !text-slate-200 font-bold uppercase tracking-wider">2. Code Solution</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {/* Language Selector */}
+                      <select
+                        value={codeLanguage}
+                        onChange={(e) => setCodeLanguage(e.target.value)}
+                        className="text-xs bg-slate-900 !text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 font-semibold focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer"
+                      >
+                        {['JavaScript', 'Python', 'Java', 'C++', 'TypeScript', 'Go', 'Rust', 'C#'].map(l => (
+                          <option key={l} value={l}>{l}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => insertTemplateText('code')}
+                        className="px-2 py-1 bg-slate-700 hover:bg-slate-600 !text-slate-200 rounded-lg text-[10px] font-semibold border border-slate-600 transition-colors cursor-pointer flex items-center gap-1"
+                      >
+                        <Code2 className="w-3 h-3" /> + Code
+                      </button>
+                      <button
+                        onClick={() => insertTemplateText('star')}
+                        className="px-2 py-1 bg-slate-700 hover:bg-slate-600 !text-slate-200 rounded-lg text-[10px] font-semibold border border-slate-600 transition-colors cursor-pointer flex items-center gap-1"
+                      >
+                        <Zap className="w-3 h-3" /> + STAR
+                      </button>
+                      <button
+                        onClick={() => insertTemplateText('system')}
+                        className="px-2 py-1 bg-slate-700 hover:bg-slate-600 !text-slate-200 rounded-lg text-[10px] font-semibold border border-slate-600 transition-colors cursor-pointer flex items-center gap-1"
+                      >
+                        <Layers className="w-3 h-3" /> + System
+                      </button>
+                    </div>
+                  </div>
+                  {/* Code Textarea */}
+                  <textarea
+                    value={(currentAnswer.split('---CODE---')[1] ?? currentAnswer.split('---CODE---')[0] ?? '').replace(/^---CODE---/, '')}
+                    onChange={(e) => {
+                      const approach = currentAnswer.split('---CODE---')[0] ?? ''
+                      setCurrentAnswer(approach + '---CODE---' + e.target.value)
+                    }}
+                    placeholder={`// ${codeLanguage} — Write your solution here...`}
+                    className="flex-1 w-full bg-slate-950 !text-teal-300 p-4 text-sm focus:outline-none font-mono leading-relaxed placeholder:!text-slate-600 resize-none"
+                    style={{ minHeight: '120px' }}
+                  />
+                </div>
+
+                {/* Bottom Navigation */}
+                <div className="flex justify-between items-center shrink-0">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold !text-slate-300 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl">
+                      {currentQuestionIdx + 1} / {questions.length}
+                    </span>
+                    <span className="text-xs !text-slate-500">{codeLanguage}</span>
+                  </div>
 
                   <button
                     onClick={handleNextQuestion}
-                    className="px-7 py-3 bg-teal-500 hover:bg-teal-400 !text-slate-950 font-extrabold text-xs md:text-sm rounded-2xl flex items-center gap-2 shadow-lg shadow-teal-500/20 transition-all cursor-pointer active:scale-[0.98]"
+                    className="px-6 py-3 bg-teal-500 hover:bg-teal-400 !text-slate-950 font-extrabold text-sm rounded-2xl flex items-center gap-2 shadow-lg shadow-teal-500/20 transition-all cursor-pointer active:scale-[0.98]"
                   >
                     <span>
-                      {currentQuestionIdx === questions.length - 1 ? 'Submit All & Evaluate' : 'Next Question'}
+                      {currentQuestionIdx === questions.length - 1 ? '🚀 Submit & Evaluate' : 'Next Question'}
                     </span>
                     <ArrowRight className="w-4 h-4 stroke-[3]" />
                   </button>
