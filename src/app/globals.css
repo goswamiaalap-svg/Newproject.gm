@@ -239,6 +239,29 @@ html.lenis body {
   }
 }
 
+/* ─── Hero card entrance (replaces framer-motion in Hero.tsx) ─── */
+@keyframes hero-card-in {
+  0%   { opacity: 0; transform: translateY(15px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.hero-card-enter {
+  animation: hero-card-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-card-enter {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── content-visibility: auto — defer paint for off-screen sections ─── */
+/* This tells the browser to skip layout/paint work for sections not yet in viewport */
+section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px; /* approximate height hint */
+}
+
 /* ─── Google Fonts Global Overrides (FIX 2) ─── */
 h1, h2, h3, h4, .font-heading {
   font-family: var(--font-serif), serif;

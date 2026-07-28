@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
 
 export default function Hero() {
   const router = useRouter()
@@ -22,7 +21,7 @@ export default function Hero() {
         {/* Left Card: Content */}
         <div className="bg-white rounded-[32px] p-8 md:p-12 lg:p-16 flex flex-col justify-center shadow-sm border border-gray-100">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111111] text-white text-xs font-bold w-max mb-8">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
             Join +1000 scaling engineers
           </div>
           
@@ -35,12 +34,16 @@ export default function Hero() {
           </p>
 
           <form onSubmit={handleGetStarted} className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
-            <input 
-              type="email" 
-              placeholder="What's your email?" 
+            {/* Visually hidden label for accessibility and PageSpeed audit */}
+            <label htmlFor="hero-email" className="sr-only">Email address</label>
+            <input
+              id="hero-email"
+              type="email"
+              placeholder="What's your email?"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
               className="w-full px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[#3B82F6]/20 transition-all text-[#111111] placeholder-gray-400"
             />
             <button type="submit" className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#3B82F6] hover:bg-blue-600 text-white font-bold whitespace-nowrap transition-colors shadow-lg shadow-blue-500/30">
@@ -52,11 +55,9 @@ export default function Hero() {
         {/* Right Card: Visuals */}
         <div className="bg-gradient-to-br from-[#3b82f6] via-[#818cf8] to-[#fdba74] rounded-[32px] p-6 md:p-8 flex items-center justify-center relative overflow-hidden min-h-[500px]">
           {/* Floating UI Elements representing the LaunchPad Prep Workspace */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full max-w-[440px] bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/50 z-10 flex flex-col gap-4 text-[#1E293B]"
+          {/* CSS animation replaces framer-motion for this decorative card — eliminates JS overhead at paint time */}
+          <div
+            className="w-full max-w-[440px] bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/50 z-10 flex flex-col gap-4 text-[#1E293B] hero-card-enter"
           >
             {/* Mockup Header */}
             <div className="flex items-center justify-between border-b border-slate-200/50 pb-3">
@@ -180,7 +181,7 @@ export default function Hero() {
               </div>
             </div>
 
-          </motion.div>
+          </div>
         </div>
 
       </div>

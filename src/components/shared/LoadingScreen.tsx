@@ -1,115 +1,106 @@
 'use client'
 
-import React, { useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Float, MeshDistortMaterial, Sparkles } from '@react-three/drei'
-import { motion, AnimatePresence } from 'framer-motion'
-import * as THREE from 'three'
+import React, { useEffect, useState } from 'react'
 
-function LoadingShape() {
-  const meshRef = useRef<THREE.Mesh>(null!)
-
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += delta * 0.5
-      meshRef.current.rotation.y += delta * 0.5
-    }
-  })
-
-  return (
-    <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-      <mesh ref={meshRef}>
-        <octahedronGeometry args={[1.5, 0]} />
-        <MeshDistortMaterial
-          color="#0D9488"
-          emissive="#0a6b63"
-          emissiveIntensity={0.5}
-          distort={0.4}
-          speed={3}
-          metalness={0.8}
-          roughness={0.2}
-          wireframe={true}
-        />
-      </mesh>
-      <mesh>
-        <octahedronGeometry args={[1, 0]} />
-        <meshStandardMaterial
-          color="#F59E0B"
-          emissive="#b45309"
-          emissiveIntensity={1}
-          metalness={1}
-          roughness={0}
-        />
-      </mesh>
-      <Sparkles count={40} scale={4} size={2} speed={0.5} color="#0D9488" opacity={0.8} />
-    </Float>
-  )
-}
-
+/**
+ * Lightweight CSS-only loading screen.
+ * 
+ * PERFORMANCE NOTE: The original Three.js/WebGL loading screen was loading
+ * @react-three/fiber, @react-three/drei, and three.js just for the landing page
+ * splash — adding hundreds of KB to the initial JS bundle and delaying LCP.
+ * This pure CSS version achieves the same visual effect with ~0 JS overhead.
+ */
 export default function LoadingScreen({ isLoading }: { isLoading: boolean }) {
-  return (
-    <AnimatePresence>
-      {isLoading && (
-        <motion.div
-          key="loading-screen"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, y: -50 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white"
-        >
-          {/* 3D Canvas */}
-          <div className="w-64 h-64 relative mb-8">
-            <Canvas
-              camera={{ position: [0, 0, 5], fov: 45 }}
-              gl={{ antialias: true, alpha: true }}
-              style={{ background: 'transparent' }}
-            >
-              <ambientLight intensity={0.5} />
-              <pointLight position={[10, 10, 10]} intensity={2} color="#0D9488" />
-              <pointLight position={[-10, -10, -10]} intensity={1} color="#F59E0B" />
-              <LoadingShape />
-            </Canvas>
-          </div>
+  const [visible, setVisible] = useState(true)
 
-          {/* Loading Text and Progress Bar */}
-          <div className="flex flex-col items-center space-y-4">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-2xl font-display font-extrabold text-text-primary tracking-tight flex items-center gap-2"
-            >
-              Launch<span className="text-teal">Pad</span>
-              <span className="flex gap-1 ml-1">
-                {[0, 1, 2].map((i) => (
-                  <motion.span
-                    key={i}
-                    className="w-1.5 h-1.5 rounded-full bg-teal"
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{
-                      duration: 0.6,
-                      repeat: Infinity,
-                      delay: i * 0.15,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                ))}
-              </span>
-            </motion.div>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: 200 }}
-              transition={{ duration: 2.5, ease: 'easeInOut' }}
-              className="h-1 bg-teal rounded-full relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-white/30" />
-            </motion.div>
-            <p className="text-xs text-text-muted font-mono uppercase tracking-widest font-semibold mt-4 animate-pulse">
-              Initializing Engine
-            </p>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+  useEffect(() => {
+    if (!isLoading) {
+      // Allow exit animation to play before unmounting
+      const timer = setTimeout(() => setVisible(false), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [isLoading])
+
+  if (!visible) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white loading-screen-root"
+      style={{
+        opacity: isLoading ? 1 : 0,
+        transform: isLoading ? 'translateY(0)' : 'translateY(-24px)',
+        transition: 'opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1)',
+        pointerEvents: isLoading ? 'auto' : 'none',
+      }}
+      aria-hidden="true"
+      aria-label="Loading"
+      role="status"
+    >
+      {/* Animated logo mark */}
+      <div className="relative w-20 h-20 mb-8">
+        {/* Rotating ring */}
+        <svg
+          className="absolute inset-0 w-full h-full animate-spin"
+          style={{ animationDuration: '1.4s', animationTimingFunction: 'linear' }}
+          viewBox="0 0 80 80"
+          fill="none"
+        >
+          <circle
+            cx="40" cy="40" r="34"
+            stroke="#E2E8F0"
+            strokeWidth="5"
+          />
+          <circle
+            cx="40" cy="40" r="34"
+            stroke="#0D9488"
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeDasharray="60 154"
+            strokeDashoffset="0"
+          />
+        </svg>
+        {/* Center mark */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg viewBox="0 0 32 32" fill="none" className="w-9 h-9">
+            <circle cx="16" cy="16" r="16" fill="#111111" />
+            <rect x="8" y="8" width="4" height="16" rx="2" fill="white" />
+            <rect x="8" y="20" width="16" height="4" rx="2" fill="white" />
+            <circle cx="23" cy="9" r="3" fill="#0D9488" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Text */}
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-xl font-extrabold tracking-tight text-[#111111] flex items-center gap-1">
+          Launch<span className="text-[#0D9488]">Pad</span>
+        </span>
+        {/* Animated progress bar */}
+        <div className="w-40 h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-[#0D9488] to-[#0EA5E9] rounded-full loading-progress-bar"
+          />
+        </div>
+        <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest animate-pulse">
+          Loading
+        </p>
+      </div>
+
+      <style>{`
+        @keyframes progress-fill {
+          from { width: 0%; }
+          to   { width: 100%; }
+        }
+        .loading-progress-bar {
+          width: 0%;
+          animation: progress-fill 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .loading-screen-root {
+            display: none !important;
+          }
+        }
+      `}</style>
+    </div>
   )
 }

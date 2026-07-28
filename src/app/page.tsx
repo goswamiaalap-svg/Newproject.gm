@@ -1,6 +1,6 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+// Server Component — NO 'use client' directive
+// All child components that are 'use client' still SSR their initial HTML shell.
+// Only client-interactive islands (Hero form, Navbar scroll, etc.) hydrate on the client.
 import Navbar from '@/components/landing/Navbar'
 import Hero from '@/components/landing/Hero'
 import Features from '@/components/landing/Features'
@@ -8,30 +8,21 @@ import Stats from '@/components/landing/Stats'
 import Testimonials from '@/components/landing/Testimonials'
 import FinalCTA from '@/components/landing/FinalCTA'
 import Footer from '@/components/landing/Footer'
-import LoadingScreen from '@/components/shared/LoadingScreen'
+import LandingPageClient from '@/components/landing/LandingPageClient'
 import dynamic from 'next/dynamic'
 
-// Load ambient canvas only on client (WebGL)
+// Load ambient canvas only on client (WebGL) — deferred, no SSR
 const AmbientCanvas = dynamic(
   () => import('@/components/three/AmbientCanvas'),
   { ssr: false }
-);
+)
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    // Simulate loading time for 3D assets
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [])
-
   return (
     <>
-      <LoadingScreen isLoading={isLoading} />
-      
+      {/* Loading screen — client-only, manages its own state */}
+      <LandingPageClient />
+
       <main className="relative min-h-screen overflow-x-hidden bg-[#F5F5F3]" style={{ position: 'relative', zIndex: 1 }}>
         {/* Navigation */}
         <Navbar />
@@ -61,4 +52,3 @@ export default function Home() {
     </>
   )
 }
-
