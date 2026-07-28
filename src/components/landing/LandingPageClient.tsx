@@ -12,9 +12,7 @@ export default function LandingPageClient() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Minimal delay to allow first paint before hiding loader
-    const timer = setTimeout(() => setIsLoading(false), 50)
-    return () => clearTimeout(timer)
+    setIsLoading(false)
   }, [])
 
   return <LoadingScreen isLoading={isLoading} />
