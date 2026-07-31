@@ -9,7 +9,6 @@ import Testimonials from '@/components/landing/Testimonials'
 import FinalCTA from '@/components/landing/FinalCTA'
 import Footer from '@/components/landing/Footer'
 import LandingPageClient from '@/components/landing/LandingPageClient'
-import ScrollAnimations from '@/components/landing/ScrollAnimations'
 import dynamic from 'next/dynamic'
 
 // Load ambient canvas only on client (WebGL) — deferred, no SSR
@@ -23,7 +22,6 @@ export default function Home() {
     <>
       {/* Loading screen — client-only, manages its own state */}
       <LandingPageClient />
-      <ScrollAnimations />
 
       <main className="relative min-h-screen overflow-x-hidden bg-[#F5F5F3]" style={{ position: 'relative', zIndex: 1 }}>
         {/* Navigation */}
