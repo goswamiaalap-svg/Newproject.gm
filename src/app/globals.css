@@ -78,7 +78,7 @@ html.lenis body {
 }
 
 .lenis.lenis-smooth {
-  scroll-behavior: auto !important;
+  scroll-behavior: auto;
 }
 
 .lenis.lenis-smooth [data-lenis-prevent] {
@@ -209,7 +209,7 @@ html.lenis body {
 @media (pointer: fine) {
   html.custom-cursor,
   html.custom-cursor * {
-    cursor: none !important;
+    cursor: none;
   }
 }
 
@@ -218,10 +218,10 @@ html.lenis body {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
   }
 
   .skeleton {
@@ -272,12 +272,12 @@ body, p, span, a, button, input, select, textarea, .font-body {
 
 /* ─── Global Whitespace Adjustments (FIX 5) ─── */
 section {
-  padding-top: 80px !important;
-  padding-bottom: 80px !important;
+  padding-top: 80px;
+  padding-bottom: 80px;
 }
 .feature-row {
-  padding-top: 60px !important;
-  padding-bottom: 60px !important;
+  padding-top: 60px;
+  padding-bottom: 60px;
 }
 
 /* ─── Hero Background Animated Gradient Mesh (FIX 1) ─── */
@@ -348,36 +348,36 @@ section {
 
 /* ─── Remove hero section fixed padding for hero section override ─── */
 section.hero-section {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* ─── Dashboard Light Theme Native Implementation ─── */
 .dashboard-theme {
   --color-bg-base: #F8F9FF;
   --color-bg-subtle: #EEF2FF;
-  background-color: #F8F9FF !important;
+  background-color: #F8F9FF;
   color: #0F172A;
 }
 
 /* Sidebar and Navbar backgrounds */
 .dashboard-theme aside, 
 .dashboard-theme header {
-  background-color: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
+  background-color: #FFFFFF;
+  border-color: #E2E8F0;
 }
 
 /* Default Borders in Dashboard */
 .dashboard-theme .border-border-default, 
 .dashboard-theme .border-border-subtle {
-  border-color: #E2E8F0 !important;
+  border-color: #E2E8F0;
 }
 
 /* Native Light Cards inside the Dashboard */
 .dashboard-theme .bg-white,
 .dashboard-theme .dashboard-stat-card {
-  background-color: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
+  background-color: #FFFFFF;
+  border-color: #E2E8F0;
 }
 .dashboard-theme .bg-white .text-text-primary,
 .dashboard-theme .bg-white h1,
@@ -407,57 +407,57 @@ section.hero-section {
 /* Custom Highlight Badges in Light Cards */
 .dashboard-theme .bg-white .bg-teal\/5,
 .dashboard-theme .dashboard-stat-card .bg-teal\/5 {
-  background-color: #E6FAF8 !important;
-  color: #0D9488 !important;
+  background-color: #E6FAF8;
+  color: #0D9488;
 }
 .dashboard-theme .bg-white .bg-teal\/5 *,
 .dashboard-theme .dashboard-stat-card .bg-teal\/5 * {
-  color: #0D9488 !important;
+  color: #0D9488 ;
 }
 
 .dashboard-theme .bg-white .bg-indigo\/5,
 .dashboard-theme .dashboard-stat-card .bg-indigo\/5 {
-  background-color: #EEF2FF !important;
-  color: #6366F1 !important;
+  background-color: #EEF2FF;
+  color: #6366F1;
 }
 .dashboard-theme .bg-white .bg-indigo\/5 *,
 .dashboard-theme .dashboard-stat-card .bg-indigo\/5 * {
-  color: #6366F1 !important;
+  color: #6366F1;
 }
 
 .dashboard-theme .bg-white .bg-gold\/5,
 .dashboard-theme .dashboard-stat-card .bg-gold\/5 {
-  background-color: #FFFBEB !important;
-  color: #D97706 !important;
+  background-color: #FFFBEB;
+  color: #D97706;
 }
 .dashboard-theme .bg-white .bg-gold\/5 *,
 .dashboard-theme .dashboard-stat-card .bg-gold\/5 * {
-  color: #D97706 !important;
+  color: #D97706;
 }
 
 /* Custom progress bar styles inside light cards */
 .dashboard-theme .dashboard-stat-card .bg-bg-subtle {
-  background-color: #E2E8F0 !important;
+  background-color: #E2E8F0;
 }
 .dashboard-theme .dashboard-stat-card .bg-teal {
-  background-color: #0D9488 !important;
+  background-color: #0D9488;
 }
 .dashboard-theme .dashboard-stat-card .bg-indigo {
-  background-color: #6366F1 !important;
+  background-color: #6366F1;
 }
 .dashboard-theme .dashboard-stat-card .bg-gold {
-  background-color: #F59E0B !important;
+  background-color: #F59E0B;
 }
 
 /* Accent Borders */
 .dashboard-theme .dashboard-stat-card.border-t-teal {
-  border-top-color: #0D9488 !important;
+  border-top-color: #0D9488;
 }
 .dashboard-theme .dashboard-stat-card.border-t-indigo {
-  border-top-color: #6366F1 !important;
+  border-top-color: #6366F1;
 }
 .dashboard-theme .dashboard-stat-card.border-t-gold {
-  border-top-color: #F59E0B !important;
+  border-top-color: #F59E0B;
 }
 
 /* Text Colors (non-card elements) */
@@ -473,155 +473,155 @@ section.hero-section {
 
 /* Sidebar Active states and Hovers */
 .dashboard-theme nav a {
-  color: #475569 !important;
+  color: #475569;
 }
 .dashboard-theme nav a:hover {
-  background-color: #F1F5F9 !important;
-  color: #0F172A !important;
+  background-color: #F1F5F9;
+  color: #0F172A;
 }
 .dashboard-theme nav a.bg-teal\/5 {
-  background-color: #F0FDFA !important;
-  color: #0D9488 !important;
+  background-color: #F0FDFA;
+  color: #0D9488;
 }
 .dashboard-theme nav a.bg-teal\/5 svg {
-  color: #0D9488 !important;
+  color: #0D9488;
 }
 
 /* Inputs and interactive elements */
 .dashboard-theme input {
-  background-color: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
-  color: #0F172A !important;
+  background-color: #FFFFFF;
+  border-color: #E2E8F0;
+  color: #0F172A;
 }
 .dashboard-theme input::placeholder {
-  color: #94A3B8 !important;
+  color: #94A3B8;
 }
 .dashboard-theme input:focus {
-  border-color: #0D9488 !important;
-  background-color: #FFFFFF !important;
+  border-color: #0D9488;
+  background-color: #FFFFFF;
 }
 
 /* Quick Actions Cards */
 .dashboard-theme .bg-white.text-text-primary {
-  background-color: #FFFFFF !important;
-  color: #0F172A !important;
-  border-color: #E2E8F0 !important;
+  background-color: #FFFFFF;
+  color: #0F172A;
+  border-color: #E2E8F0;
 }
 .dashboard-theme .bg-white.text-text-primary svg {
-  color: #475569 !important;
+  color: #475569;
 }
 .dashboard-theme .bg-white.text-text-primary:hover {
-  background-color: #F8FAFC !important;
-  border-color: #CBD5E1 !important;
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
 }
 
 /* Activity Feed Timeline Dot bg */
 .dashboard-theme .relative.group .absolute.-left-\[38px\] {
-  background-color: #FFFFFF !important;
-  border-color: #E2E8F0 !important;
+  background-color: #FFFFFF;
+  border-color: #E2E8F0;
 }
 
 /* Deadlines list item bg */
 .dashboard-theme .bg-bg-base\/50 {
-  background-color: #F8FAFC !important;
-  border-color: #E2E8F0 !important;
+  background-color: #F8FAFC;
+  border-color: #E2E8F0;
 }
 
 /* Muted or custom tags */
 .dashboard-theme .bg-gold-light {
-  background-color: #FEF3C7 !important;
-  color: #D97706 !important;
-  border-color: #FCD34D !important;
+  background-color: #FEF3C7;
+  color: #D97706;
+  border-color: #FCD34D;
 }
 .dashboard-theme .bg-teal-light,
 .dashboard-theme .bg-teal\/5 {
-  background-color: #E6FAF8 !important;
-  color: #0D9488 !important;
-  border-color: #99F6E4 !important;
+  background-color: #E6FAF8;
+  color: #0D9488;
+  border-color: #99F6E4;
 }
 .dashboard-theme .bg-indigo-light,
 .dashboard-theme .bg-indigo\/5 {
-  background-color: #EEF2FF !important;
-  color: #4F46E5 !important;
-  border-color: #C7D2FE !important;
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  border-color: #C7D2FE;
 }
 
 /* Resume upload drag-and-drop zone */
 .dashboard-theme .border-dashed {
-  background-color: #F8FAFC !important;
-  border-color: #CBD5E1 !important;
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
 }
 .dashboard-theme .border-dashed.border-teal {
-  background-color: #F0FDFA !important;
-  border-color: #0D9488 !important;
+  background-color: #F0FDFA;
+  border-color: #0D9488;
 }
 
 /* Weaknesses and suggestions panels in resume reviewer */
 .dashboard-theme .bg-red-50\/50 {
-  background-color: #FEF2F2 !important;
-  border-color: #FCA5A5 !important;
-  color: #991B1B !important;
+  background-color: #FEF2F2;
+  border-color: #FCA5A5;
+  color: #991B1B;
 }
 .dashboard-theme .bg-red-100 {
-  background-color: #FEE2E2 !important;
-  color: #DC2626 !important;
+  background-color: #FEE2E2;
+  color: #DC2626;
 }
 .dashboard-theme .bg-amber-50\/50 {
-  background-color: #FFFBEB !important;
-  border-color: #FDE68A !important;
-  color: #92400E !important;
+  background-color: #FFFBEB;
+  border-color: #FDE68A;
+  color: #92400E;
 }
 .dashboard-theme .bg-amber-100 {
-  background-color: #FEF3C7 !important;
-  color: #D97706 !important;
+  background-color: #FEF3C7;
+  color: #D97706;
 }
 .dashboard-theme .bg-green-50\/50 {
-  background-color: #F0FDF4 !important;
-  border-color: #BBF7D0 !important;
-  color: #166534 !important;
+  background-color: #F0FDF4;
+  border-color: #BBF7D0;
+  color: #166534;
 }
 .dashboard-theme .bg-green-100 {
-  background-color: #DCFCE7 !important;
-  color: #15803D !important;
+  background-color: #DCFCE7;
+  color: #15803D;
 }
 .dashboard-theme .bg-blue-50\/50 {
-  background-color: #EFF6FF !important;
-  border-color: #BFDBFE !important;
-  color: #1E3A8A !important;
+  background-color: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1E3A8A;
 }
 .dashboard-theme .bg-blue-600 {
-  background-color: #2563EB !important;
-  color: #FFFFFF !important;
+  background-color: #2563EB;
+  color: #FFFFFF;
 }
 .dashboard-theme .bg-rose-50\/50 {
-  background-color: #FFF1F2 !important;
-  border-color: #FECDD3 !important;
-  color: #881337 !important;
+  background-color: #FFF1F2;
+  border-color: #FECDD3;
+  color: #881337;
 }
 .dashboard-theme .bg-rose-600 {
-  background-color: #E11D48 !important;
-  color: #FFFFFF !important;
+  background-color: #E11D48;
+  color: #FFFFFF;
 }
 .dashboard-theme .border-black\/5 {
-  border-color: #E2E8F0 !important;
+  border-color: #E2E8F0;
 }
 .dashboard-theme .bg-bg-subtle {
-  background-color: #F8FAFC !important;
-  border-color: #E2E8F0 !important;
+  background-color: #F8FAFC;
+  border-color: #E2E8F0;
 }
 
 /* User Card bottom in Sidebar */
 .dashboard-theme .bg-bg-base\/30 {
-  background-color: #F8FAFC !important;
+  background-color: #F8FAFC;
 }
 .dashboard-theme button.text-red-600:hover {
-  background-color: #FEE2E2 !important;
+  background-color: #FEE2E2;
 }
 
 /* Mobile Navigation Bottom bar */
 .dashboard-theme nav.md\:hidden {
-  background-color: #FFFFFF !important;
-  border-top-color: #E2E8F0 !important;
+  background-color: #FFFFFF;
+  border-top-color: #E2E8F0;
 }
 
 /* Hide Clerk development mode and footer branding */
@@ -629,5 +629,5 @@ section.hero-section {
 [class^="cl-footer"],
 .cl-internal-b3826t,
 [class*="cl-internal-b3826t"] {
-  display: none !important;
+  display: none;
 }

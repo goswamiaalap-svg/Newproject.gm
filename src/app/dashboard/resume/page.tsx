@@ -440,7 +440,7 @@ export default function ResumePage() {
 
                   {/* Green Box: Impact Quantification */}
                   <div className="p-3 bg-teal/5 border border-teal/10 rounded-lg">
-                    <span className="text-[9px] font-extrabold bg-teal-600 text-white px-2 py-0.5 rounded uppercase">QUANTIFIED METRICS</span>
+                    <span className="text-[9px] font-extrabold bg-teal-600 !text-white px-2 py-0.5 rounded uppercase">QUANTIFIED METRICS</span>
                     <h5 className="font-bold text-xs text-text-primary mt-1.5">Quantify Your Achievements</h5>
                     <p className="text-[10px] text-text-secondary mt-0.5 leading-normal">
                       Use the Google X-Y-Z formula: "Accomplished [X] as measured by [Y], by doing [Z]". Always back up your SDE bullets with numbers (e.g. latency, scale).
@@ -449,7 +449,7 @@ export default function ResumePage() {
 
                   {/* Purple Box: Core Sections */}
                   <div className="p-3 bg-indigo/5 border border-indigo/10 rounded-lg">
-                    <span className="text-[9px] font-extrabold bg-indigo-600 text-white px-2 py-0.5 rounded uppercase">CORE STRUCTURE</span>
+                    <span className="text-[9px] font-extrabold bg-indigo-600 !text-white px-2 py-0.5 rounded uppercase">CORE STRUCTURE</span>
                     <h5 className="font-bold text-xs text-text-primary mt-1.5">Include Standard Sections</h5>
                     <p className="text-[10px] text-text-secondary mt-0.5 leading-normal font-medium">
                       Ensure your document clearly labels: **Education**, **Experience**, **Projects**, and **Skills**. Creative headers can confuse parser parsers.
